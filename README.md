@@ -69,7 +69,7 @@ Know Issues or Bugs
 
 This is a non-comprehensive list of known issues and bugs that I intend to fix.
 
-* Memory leeaks like a sieve.
+* Leaks memory like a sieve.
 * Error messages are obtuse and unfriendly.
 * Parser and Lexer have 0 error recovery.
 * Usage prints out full path of binary instead of just the name.
