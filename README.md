@@ -1,7 +1,9 @@
 DLang
 ==============================================
 Version:      0.1a
+
 Created By:   Michael D. Lowis
+
 Email:        <mike@mdlowis.com>
 
 About This Project
