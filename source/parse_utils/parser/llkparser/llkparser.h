@@ -2,30 +2,30 @@
 #define LLK_PARSER_H
 
 #include <exception>
-#include "parser.h"
-#include "lexer.h"
+#include "iparser.h"
+#include "ilexer.h"
 #include "ast.h"
 
-class LLKParser : public Parser
+class LLKParser : public IParser
 {
-	private:
-		int k;
-		int next;
-		Lexer*  lexer;
-		Token** lookahead;
-	public:
-		LLKParser(int k_val, Lexer* lxer);
-		~LLKParser();
+    private:
+        int k;
+        int next;
+        ILexer*  lexer;
+        Token** lookahead;
+    public:
+        LLKParser(int k_val, ILexer* lxer);
+        ~LLKParser();
 
-		void setInput(char* in);
-		void setInput(string& in);
-		void setInput(istream* in);
+        void setInput(char* in);
+        void setInput(string& in);
+        void setInput(istream* in);
 
-		void         consume(void);
-		void         match(TokenType_T type);
-		Token*       lookaheadToken(int i);
-		TokenType_T  lookaheadType(int i);
-		virtual void parse(void) = 0;
+        void         consume(void);
+        void         match(TokenType_T type);
+        Token*       lookaheadToken(int i);
+        TokenType_T  lookaheadType(int i);
+        virtual void parse(void) = 0;
 };
 
 #endif

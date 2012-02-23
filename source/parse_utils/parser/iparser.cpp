@@ -18,38 +18,39 @@
  * Includes and Prototypes
  *****************************************************************************/
 #include <stdio.h>
-#include "parser.h"
+#include "iparser.h"
+#include "cork.h"
 
 using namespace std;
 
 /******************************************************************************
  * Public Functions
  *****************************************************************************/
-Parser::Parser() : input(NULL)
+IParser::IParser() : input(NULL)
 {
 }
 
-Parser::~Parser()
+IParser::~IParser()
 {
-	if(input != NULL)
-	{
-		delete input;
-	}
+    if(input != NULL)
+    {
+        delete input;
+    }
 }
 
-void Parser::setInput(char* in)
+void IParser::setInput(char* in)
 {
-	input = new istringstream( string( in ) );
+    input = _new istringstream( string( in ) );
 }
 
-void Parser::setInput(string& in)
+void IParser::setInput(string& in)
 {
-	input = new istringstream( in );
+    input = _new istringstream( in );
 }
 
-void Parser::setInput(istream* in)
+void IParser::setInput(istream* in)
 {
-	input = in;
+    input = in;
 }
 
 

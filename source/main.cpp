@@ -5,6 +5,7 @@
 #include "dlparser.h"
 #include "sexp.h"
 #include "scheme.h"
+#include "cork.h"
 
 using namespace std;
 
@@ -13,75 +14,90 @@ static string createTempFileName(string fname);
 
 int main(int argc, char** argv)
 {
-	int ret = 0;
+    int ret = 0;
 
-	if( (argc == 2) && fileExists( argv[1] ) )
-	{
-		string input_fname(argv[1]);
-		string temp_fname = createTempFileName( input_fname );
-		DLParser parser;
-		Scheme* visitor = NULL;
+    if( (argc == 2) && fileExists( argv[1] ) )
+    {
+        //string input_fname(argv[1]);
+        //string temp_fname = createTempFileName( input_fname );
+        //ifstream input(input_fname.c_str());
+        //DLLexer lexer;
+        //lexer.setInput(&input);
+        //lexer.next();
+        //(void)temp_fname;
 
-		// Open the input and output files
-		ifstream input(input_fname.c_str());
-		ofstream output(temp_fname.c_str());
+        string input_fname(argv[1]);
+        string temp_fname = createTempFileName( input_fname );
+        (void)temp_fname;
+        DLParser parser;
+        Scheme* visitor = NULL;
+        AST* parse_tree = NULL;
 
-		// Parse the file
-		parser.setInput(&input);
-		parser.parse();
+        // Open the input and output files
+        ifstream input(input_fname.c_str());
+        //ofstream output(temp_fname.c_str());
 
-		// Translate the AST
-		visitor = new Scheme( parser.getAST() );
-		visitor->visit();
+        // Parse the file
+        parser.setInput(&input);
+        parser.parse();
+        parse_tree = parser.getAST();
 
-		// Write to a temp file
-		output << visitor->str();
-		cout << visitor->str();
-		output.close();
+        // Translate the AST
+        visitor = _new Scheme( parse_tree );
+        //visitor->visit();
 
-		// Compile temp file
-		system(("csc " + temp_fname).c_str());
+        // Write to a temp file
+        //output << visitor->str();
+        //cout << visitor->str();
+        //output.close();
 
-		//// delete temp file
-		remove(temp_fname.c_str());
-	}
-	else
-	{
-		ret = 1;
-	}
+        // Compile temp file
+        //system(("csc " + temp_fname).c_str());
 
-	if(ret != 0)
-	{
-		// Print error code specific error
-		cout << "Usage: " << argv[0] << " <filename>\n" << endl;
-		cerr << "Error: No input files." << endl;
-	}
+        //// delete temp file
+        //remove(temp_fname.c_str());
+        //delete visitor;
+        delete parse_tree;
+    }
+    else
+    {
+        ret = 1;
+    }
 
-	return ret;
+    if(ret != 0)
+    {
+        // Print error code specific error
+        cout << "Usage: " << argv[0] << " <filename>\n" << endl;
+        cerr << "Error: No input files." << endl;
+    }
+
+    REPORT_LEAKS();
+
+    return ret;
 }
 
 bool fileExists(char* fname)
 {
-	string in_fname(fname);
-	ifstream file(fname,ifstream::in);
-	return (file != NULL);
+    string in_fname(fname);
+    ifstream file(fname,ifstream::in);
+    return (file != NULL);
 }
 
 string createTempFileName(string fname)
 {
-	string ret_str;
-	size_t ext_index = fname.find_last_of('.');
-	// If we did NOT find a match, assume no extension given 
-	if (ext_index == string::npos)
-	{
-		ret_str = fname + ".scm";
-	}
-	// else replace the existing extension
-	else
-	{
-		ret_str = fname;
-		ret_str.replace(ext_index, (ret_str.size() -1), ".scm");
-	}
-	return ret_str;
+    string ret_str;
+    size_t ext_index = fname.find_last_of('.');
+    // If we did NOT find a match, assume no extension given
+    if (ext_index == string::npos)
+    {
+        ret_str = fname + ".scm";
+    }
+    // else replace the existing extension
+    else
+    {
+        ret_str = fname;
+        ret_str.replace(ext_index, (ret_str.size() -1), ".scm");
+    }
+    return ret_str;
 }
 

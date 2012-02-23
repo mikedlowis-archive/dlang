@@ -20,21 +20,21 @@
 #include <string>
 #include <sstream>
 #include "ast.h"
-#include "visitor.h"
+#include "ivisitor.h"
 
 using namespace std;
 
-class Parser {
-	private:
-		istream* input;
-	public:
-		Parser();
-		virtual ~Parser();
-		virtual void parse() = 0;
+class IParser {
+    private:
+        istream* input;
+    public:
+        IParser();
+        virtual ~IParser();
+        virtual void parse() = 0;
 
-		void setInput(char* in);
-		void setInput(string& in);
-		void setInput(istream* in);
+        void setInput(char* in);
+        void setInput(string& in);
+        void setInput(istream* in);
 };
 
 #endif
