@@ -1,3 +1,6 @@
 [submodule "tools/rake_utils"]
 	path = tools/rake_utils
 	url = git@github.com:mikedlowis/rake_utils.git
+[submodule "deps/cork"]
+	path = deps/cork
+	url = git@github.com:mikedlowis/cork.git
