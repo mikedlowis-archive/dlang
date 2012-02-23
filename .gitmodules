@@ -1,0 +1,3 @@
+[submodule "tools/rake_utils"]
+	path = tools/rake_utils
+	url = git@github.com:mikedlowis/rake_utils.git
