@@ -8,7 +8,7 @@ require 'tools/rake_utils/source/tests.rb'
 # Configuration for the binary artifact
 DLangParser = Binary.new({
     :name => 'dlang',
-    :output_dir => 'build/parser'
+    :output_dir => 'build/parser',
     :compiler_options => [ '-c', '-Wall', '-Werror', '-o' ],
     :source_files => [ 'source/**/*.c*' ],
     :include_dirs => [ 'source/**/' ],
