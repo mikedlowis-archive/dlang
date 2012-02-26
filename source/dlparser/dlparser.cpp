@@ -73,14 +73,14 @@ AST* DLParser::Expression(void)
         match(ASSIGN);
         ret = _new AST( ASSIGN, 2, id_node, Expression());
     }
-    else if( (lookaheadType(1) == MACRO) && (lookaheadType(2) == ID))
-    {
-        ret = MacroDefinition();
-    }
-    else if( isMacro( lookaheadToken(1) ) )
-    {
-        ret = MacroExpansion();
-    }
+    //else if( (lookaheadType(1) == MACRO) && (lookaheadType(2) == ID))
+    //{
+    //    ret = MacroDefinition();
+    //}
+    //else if( isMacro( lookaheadToken(1) ) )
+    //{
+    //    ret = MacroExpansion();
+    //}
     else
     {
         ret = LogicalExpr();

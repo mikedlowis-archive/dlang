@@ -20,7 +20,10 @@ Param::Param(AST* param_def)
 
 Param::~Param()
 {
-    delete param_value;
+    if( param_value != NULL )
+    {
+        delete param_value;
+    }
 }
 
 std::string Param::name(void)
