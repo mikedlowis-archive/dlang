@@ -14,10 +14,6 @@ class ILexer
         char current;
         std::istream* input;
 
-        void consume(void);
-        void match(char x);
-        bool eof(void);
-
     public:
         ILexer();
         virtual ~ILexer();
@@ -25,6 +21,10 @@ class ILexer
         void setInput(char* in);
         void setInput(std::string& in);
         void setInput(std::istream* in);
+
+        void consume(void);
+        void match(char x);
+        bool eof(void);
 
         virtual Token next(void) = 0;
 };

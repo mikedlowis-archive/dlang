@@ -18,49 +18,33 @@ int main(int argc, char** argv)
 
     if( (argc == 2) && fileExists( argv[1] ) )
     {
-        //string input_fname(argv[1]);
-        //string temp_fname = createTempFileName( input_fname );
-        //ifstream input(input_fname.c_str());
-        //DLLexer lexer;
-        //Token tok;
-        //lexer.setInput(&input);
-        //while( tok.type() != EOF )
-        //{
-        //    tok = lexer.next();
-        //}
-        //(void)temp_fname;
-
         string input_fname(argv[1]);
         string temp_fname = createTempFileName( input_fname );
-        (void)temp_fname;
         DLParser parser;
-        //Scheme* visitor = NULL;
-        AST* parse_tree = NULL;
+        Scheme* visitor = NULL;
 
         // Open the input and output files
         ifstream input(input_fname.c_str());
-        //ofstream output(temp_fname.c_str());
+        ofstream output(temp_fname.c_str());
 
         // Parse the file
         parser.setInput(&input);
-        parse_tree = parser.parse();
 
         // Translate the AST
-        //visitor = _new Scheme( parse_tree );
-        //visitor->visit();
+        visitor = _new Scheme( parser.parse() );
+        visitor->visit();
 
         // Write to a temp file
-        //output << visitor->str();
-        //cout << visitor->str();
-        //output.close();
+        output << visitor->str();
+        cout << visitor->str();
+        output.close();
 
         // Compile temp file
-        //system(("csc " + temp_fname).c_str());
+        system(("csc " + temp_fname).c_str());
 
-        //// delete temp file
-        //remove(temp_fname.c_str());
-        //delete visitor;
-        delete parse_tree;
+        // delete temp file
+        remove(temp_fname.c_str());
+        delete visitor;
     }
     else
     {

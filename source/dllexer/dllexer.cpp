@@ -61,7 +61,7 @@ bool DLLexer::isStringChar(void)
 Token DLLexer::next(void)
 {
     Token ret;
-    while ( (!input->eof()) && (ret.type() != EOF) )
+    while ( (!input->eof()) && (ret.type() == EOF) )
     {
         if (isWhiteSpace())
         {
@@ -100,7 +100,6 @@ Token DLLexer::next(void)
             SingleCharOp(ret);
         }
     }
-
     return ret;
 }
 
@@ -234,7 +233,11 @@ void DLLexer::SingleCharOp(Token& tok)
             tok = Token( Single_Character_Matches[i].type, line, column );
         }
     }
-    throw Exception(line,column);
+
+    if( tok.type() == EOF)
+    {
+        throw Exception(line,column);
+    }
 }
 
 void DLLexer::MultiCharOp(Token& tok)
