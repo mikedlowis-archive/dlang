@@ -68,14 +68,14 @@ class DLLexer : public ILexer {
         void COMMENT(void);
 
         Token next(void);
-        Token* Id(void);
-        Token* Number(void);
-        Token* Decimal(std::ostringstream& oss);
-        Token* Char(void);
-        Token* String(void);
-        Token* Symbol(void);
-        Token* SingleCharOp(void);
-        Token* MultiCharOp(void);
+        void Id(Token& tok);
+        void Number(Token& tok);
+        void Decimal(Token& tok, std::ostringstream& oss);
+        void Char(Token& tok);
+        void String(Token& tok);
+        void Symbol(Token& tok);
+        void SingleCharOp(Token& tok);
+        void MultiCharOp(Token& tok);
 };
 
 

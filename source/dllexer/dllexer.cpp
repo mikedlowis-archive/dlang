@@ -61,8 +61,7 @@ bool DLLexer::isStringChar(void)
 Token DLLexer::next(void)
 {
     Token ret;
-    Token* temp = NULL;
-    while ( (!input->eof()) && (temp == NULL) )
+    while ( (!input->eof()) && (ret.type() != EOF) )
     {
         if (isWhiteSpace())
         {
@@ -74,38 +73,32 @@ Token DLLexer::next(void)
         }
         else if (isLetter())
         {
-            temp = Id();
+            Id(ret);
         }
         else if( isOperator() )
         {
-            temp = MultiCharOp();
+            MultiCharOp(ret);
         }
         else if (isDigit())
         {
-            temp = Number();
+            Number(ret);
         }
         else if(current == '\'')
         {
-            temp = Char();
+            Char(ret);
         }
         else if(current == '"')
         {
-            temp = String();
+            String(ret);
         }
         else if(current == '$')
         {
-            temp = Symbol();
+            Symbol(ret);
         }
         else
         {
-            temp = SingleCharOp();
+            SingleCharOp(ret);
         }
-    }
-
-    if(temp !=  NULL)
-    {
-        ret = *(temp);
-        delete temp;
     }
 
     return ret;
@@ -132,7 +125,7 @@ void DLLexer::COMMENT(void)
 
 }
 
-Token* DLLexer::Id(void)
+void DLLexer::Id(Token& tok)
 {
     ostringstream oss;
     do
@@ -141,10 +134,10 @@ Token* DLLexer::Id(void)
         consume();
     }
     while(isLetter() || isDigit() || current == '_');
-    return _new Token(ID, oss.str(), line, column);
+    tok = Token(ID, oss.str(), line, column);
 }
 
-Token* DLLexer::Number(void)
+void DLLexer::Number(Token& tok)
 {
     ostringstream oss;
     do
@@ -156,13 +149,13 @@ Token* DLLexer::Number(void)
 
     if(current == '.')
     {
-        return Decimal(oss);
+        Decimal(tok, oss);
     }
 
-    return _new Token(NUM, oss.str(), line, column);
+    tok = Token(NUM, oss.str(), line, column);
 }
 
-Token* DLLexer::Decimal(ostringstream& oss)
+void DLLexer::Decimal(Token& tok, std::ostringstream& oss)
 {
     oss << current;
     consume();
@@ -181,10 +174,10 @@ Token* DLLexer::Decimal(ostringstream& oss)
     }
     while ( isDigit() );
 
-    return _new Token(NUM, oss.str(), line, column);
+    tok = Token(NUM, oss.str(), line, column);
 }
 
-Token* DLLexer::Char(void)
+void DLLexer::Char(Token& tok)
 {
     ostringstream oss;
 
@@ -202,10 +195,10 @@ Token* DLLexer::Char(void)
     }
     match('\'');
 
-    return _new Token( CHAR, oss.str(), line, column );
+    tok = Token( CHAR, oss.str(), line, column );
 }
 
-Token* DLLexer::String(void)
+void DLLexer::String(Token& tok)
 {
     ostringstream oss;
     match('"');
@@ -215,10 +208,10 @@ Token* DLLexer::String(void)
         consume();
     }
     match('"');
-    return _new Token( STRING, oss.str(), line, column );
+    tok = Token( STRING, oss.str(), line, column );
 }
 
-Token* DLLexer::Symbol(void)
+void DLLexer::Symbol(Token& tok)
 {
     ostringstream oss;
     match('$');
@@ -228,25 +221,24 @@ Token* DLLexer::Symbol(void)
         consume();
     }
     while(isLetter() || isDigit() || current == '_');
-    return _new Token( SYMBOL, oss.str(), line, column );
+    tok = Token( SYMBOL, oss.str(), line, column );
 }
 
-Token* DLLexer::SingleCharOp(void)
+void DLLexer::SingleCharOp(Token& tok)
 {
     for(int i = 0; i < NUM_SINGLE_CHAR_MATCHES; i++)
     {
         if(current == Single_Character_Matches[i].match)
         {
             consume();
-            return _new Token( Single_Character_Matches[i].type, line, column );
+            tok = Token( Single_Character_Matches[i].type, line, column );
         }
     }
     throw Exception(line,column);
 }
 
-Token* DLLexer::MultiCharOp(void)
+void DLLexer::MultiCharOp(Token& tok)
 {
-    Token* tok = NULL;
     // save the current token so we can refer back to it
     char last = current;
     // remove the current token from the buffer so we cna see the next
@@ -257,11 +249,11 @@ Token* DLLexer::MultiCharOp(void)
         if(current == '=')
         {
             consume();
-            tok = _new Token(EQ, line, column);
+            tok = Token(EQ, line, column);
         }
         else
         {
-            tok = _new Token(ASSIGN, line, column);
+            tok = Token(ASSIGN, line, column);
         }
     }
     else if(last == '!')
@@ -269,11 +261,11 @@ Token* DLLexer::MultiCharOp(void)
         if(current == '=')
         {
             consume();
-            tok = _new Token(NE, line, column);
+            tok = Token(NE, line, column);
         }
         else
         {
-            tok = _new Token(NOT, line, column);
+            tok = Token(NOT, line, column);
         }
     }
     else if(last == '<')
@@ -281,11 +273,11 @@ Token* DLLexer::MultiCharOp(void)
         if(current == '=')
         {
             consume();
-            tok = _new Token(LTE, line, column);
+            tok = Token(LTE, line, column);
         }
         else
         {
-            tok = _new Token(LT, line, column);
+            tok = Token(LT, line, column);
         }
     }
     else if(last == '>')
@@ -293,11 +285,11 @@ Token* DLLexer::MultiCharOp(void)
         if(current == '=')
         {
             consume();
-            tok = _new Token(GTE, line, column);
+            tok = Token(GTE, line, column);
         }
         else
         {
-            tok = _new Token(GT, line, column);
+            tok = Token(GT, line, column);
         }
     }
     else if(last == '|')
@@ -305,21 +297,20 @@ Token* DLLexer::MultiCharOp(void)
         if(current == '|')
         {
             consume();
-            tok = _new Token(OR, line, column);
+            tok = Token(OR, line, column);
         }
         else
         {
-            tok = _new Token(PIPE, line, column);
+            tok = Token(PIPE, line, column);
         }
     }
     else if((last == '&') && (current == '&'))
     {
         consume();
-        tok = _new Token(AND, line, column);
+        tok = Token(AND, line, column);
     }
     else
     {
         throw Exception(line,column);
     }
-    return tok;
 }
