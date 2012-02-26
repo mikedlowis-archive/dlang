@@ -21,6 +21,11 @@ Macro::Macro(AST* macro_def)
 
 Macro::~Macro()
 {
+
+    std::list<Param*>::iterator iter;
+    for (iter = macro_params.begin(); iter != macro_params.end(); ++iter) {
+        delete *iter;
+    }
     delete macro_body;
 }
 

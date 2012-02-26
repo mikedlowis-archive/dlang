@@ -26,7 +26,7 @@ class ILexer
         void setInput(std::string& in);
         void setInput(std::istream* in);
 
-        virtual Token* next(void) = 0;
+        virtual Token next(void) = 0;
 };
 
 #endif

@@ -2,24 +2,27 @@
 #include "exception.h"
 #include "cork.h"
 
-DLParser::DLParser() : BTParser(_new DLLexer()), ast(NULL)
+DLParser::DLParser() : BTParser(_new DLLexer())
 {
 }
 
-void DLParser::parse(void)
+DLParser::~DLParser()
 {
-    ast = Program();
+    std::map<std::string,Macro*>::iterator iter;
+    for (iter = macros.begin(); iter != macros.end(); ++iter) {
+        delete (iter->second);
+    }
 }
 
-AST* DLParser::getAST(void)
+AST* DLParser::parse(void)
 {
-    return ast;
+    return Program();
 }
 
-bool DLParser::isMacro( Token* token )
+bool DLParser::isMacro( Token& token )
 {
     bool ret = false;
-    if( (token->type() == ID) && (macros.find(token->text()) != macros.end()) )
+    if( (token.type() == ID) && (macros.find(token.text()) != macros.end()) )
     {
         ret = true;
     }
@@ -40,10 +43,10 @@ AST* DLParser::parseMacroParam(Param* param)
             break;
 
         default:
-            Token* tok = lookaheadToken(1);
+            Token& tok = lookaheadToken(1);
             ostringstream oss;
-            oss << "Expected macro parameter type. Expected " << param->type() << ", received " << tok->type() << ".";
-            Exception ex( tok->line(), tok->column() );
+            oss << "Expected macro parameter type. Expected " << param->type() << ", received " << tok.type() << ".";
+            Exception ex( tok.line(), tok.column() );
             ex.setMessage(oss.str());
             break;
     }
@@ -65,7 +68,7 @@ AST* DLParser::Expression(void)
     AST* ret = NULL;
     if((lookaheadType(1) == ID) && (lookaheadType(2) == ASSIGN))
     {
-        AST* id_node = _new AST( ID,(char*)(lookaheadToken(1)->text().c_str()) );
+        AST* id_node = _new AST( ID,(char*)(lookaheadToken(1).text().c_str()) );
         consume();
         match(ASSIGN);
         ret = _new AST( ASSIGN, 2, id_node, Expression());
@@ -200,39 +203,39 @@ AST* DLParser::Literal(void)
 
         // Literal = ID
         case ID:
-            node = _new AST( ID, lookaheadToken(1)->text() );
+            node = _new AST( ID, lookaheadToken(1).text() );
             consume();
             break;
 
         // Literal = NUM
         case NUM:
-            node = _new AST( NUM, lookaheadToken(1)->text() );
+            node = _new AST( NUM, lookaheadToken(1).text() );
             consume();
             break;
 
         // Literal = CHAR
         case CHAR:
-            node = _new AST( CHAR, lookaheadToken(1)->text() );
+            node = _new AST( CHAR, lookaheadToken(1).text() );
             consume();
             break;
 
         // Literal = STRING
         case STRING:
-            node = _new AST( STRING, lookaheadToken(1)->text() );
+            node = _new AST( STRING, lookaheadToken(1).text() );
             consume();
             break;
 
         // Literal = SYMBOL
         case SYMBOL:
-            node = _new AST( SYMBOL, lookaheadToken(1)->text() );
+            node = _new AST( SYMBOL, lookaheadToken(1).text() );
             consume();
             break;
 
         default:
-            Token* tok = lookaheadToken(1);
+            Token& tok = lookaheadToken(1);
             ostringstream oss;
-            oss << "Expected literal type, recieved type " << tok->type() << ".";
-            Exception ex( tok->line(), tok->column() );
+            oss << "Expected literal type, recieved type " << tok.type() << ".";
+            Exception ex( tok.line(), tok.column() );
             ex.setMessage(oss.str());
             throw ex;
     }
@@ -288,7 +291,7 @@ AST* DLParser::MacroDefinition(void)
     Macro* macro = NULL;
 
     match(MACRO);
-    id = _new AST( ID, lookaheadToken(1)->text() );
+    id = _new AST( ID, lookaheadToken(1).text() );
     consume();
     match(LPAR);
     params = MacroParamList();
@@ -307,7 +310,7 @@ AST* DLParser::MacroDefinition(void)
 AST* DLParser::MacroExpansion(void)
 {
     AST* ret = NULL;
-    Macro* cur_macro = macros[ lookaheadToken(1)->text() ];
+    Macro* cur_macro = macros[ lookaheadToken(1).text() ];
     list<Param*>::const_iterator it = cur_macro->params().begin();
 
     consume();
@@ -336,12 +339,12 @@ AST* DLParser::MacroParamList(void)
 // MacroParam = ID (':' ID)?
 AST* DLParser::MacroParam(void)
 {
-    AST* ret = _new AST( ID, lookaheadToken(1)->text() );
+    AST* ret = _new AST( ID, lookaheadToken(1).text() );
     consume();
     if( lookaheadType(1) == SEP )
     {
         match(SEP);
-        AST* type = _new AST( ID, lookaheadToken(1)->text() );
+        AST* type = _new AST( ID, lookaheadToken(1).text() );
         consume();
         ret = _new AST(SEP, 2, ret, type);
     }

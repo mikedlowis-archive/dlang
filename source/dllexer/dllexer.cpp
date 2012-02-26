@@ -58,10 +58,11 @@ bool DLLexer::isStringChar(void)
              && (current != '\n'));
 }
 
-Token* DLLexer::next(void)
+Token DLLexer::next(void)
 {
-    Token* ret = NULL;
-    while ( (!input->eof()) && (ret == NULL) )
+    Token ret;
+    Token* temp = NULL;
+    while ( (!input->eof()) && (temp == NULL) )
     {
         if (isWhiteSpace())
         {
@@ -73,33 +74,40 @@ Token* DLLexer::next(void)
         }
         else if (isLetter())
         {
-            ret = Id();
+            temp = Id();
         }
         else if( isOperator() )
         {
-            ret = MultiCharOp();
+            temp = MultiCharOp();
         }
         else if (isDigit())
         {
-            ret = Number();
+            temp = Number();
         }
         else if(current == '\'')
         {
-            ret = Char();
+            temp = Char();
         }
         else if(current == '"')
         {
-            ret = String();
+            temp = String();
         }
         else if(current == '$')
         {
-            ret = Symbol();
+            temp = Symbol();
         }
         else
         {
-            ret = SingleCharOp();
+            temp = SingleCharOp();
         }
     }
+
+    if(temp !=  NULL)
+    {
+        ret = *(temp);
+        delete temp;
+    }
+
     return ret;
 }
 

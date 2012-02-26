@@ -67,7 +67,7 @@ class DLLexer : public ILexer {
         void WS(void);
         void COMMENT(void);
 
-        Token* next(void);
+        Token next(void);
         Token* Id(void);
         Token* Number(void);
         Token* Decimal(std::ostringstream& oss);

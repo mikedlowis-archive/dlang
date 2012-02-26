@@ -22,15 +22,19 @@ int main(int argc, char** argv)
         //string temp_fname = createTempFileName( input_fname );
         //ifstream input(input_fname.c_str());
         //DLLexer lexer;
+        //Token tok;
         //lexer.setInput(&input);
-        //lexer.next();
+        //while( tok.type() != EOF )
+        //{
+        //    tok = lexer.next();
+        //}
         //(void)temp_fname;
 
         string input_fname(argv[1]);
         string temp_fname = createTempFileName( input_fname );
         (void)temp_fname;
         DLParser parser;
-        Scheme* visitor = NULL;
+        //Scheme* visitor = NULL;
         AST* parse_tree = NULL;
 
         // Open the input and output files
@@ -39,11 +43,10 @@ int main(int argc, char** argv)
 
         // Parse the file
         parser.setInput(&input);
-        parser.parse();
-        parse_tree = parser.getAST();
+        parse_tree = parser.parse();
 
         // Translate the AST
-        visitor = _new Scheme( parse_tree );
+        //visitor = _new Scheme( parse_tree );
         //visitor->visit();
 
         // Write to a temp file
@@ -71,7 +74,7 @@ int main(int argc, char** argv)
         cerr << "Error: No input files." << endl;
     }
 
-    REPORT_LEAKS();
+    Cork_ReportMemoryLeaks();
 
     return ret;
 }

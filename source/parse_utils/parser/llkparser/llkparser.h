@@ -12,7 +12,7 @@ class LLKParser : public IParser
         int k;
         int next;
         ILexer*  lexer;
-        Token** lookahead;
+        Token* lookahead;
     public:
         LLKParser(int k_val, ILexer* lxer);
         ~LLKParser();
@@ -23,9 +23,9 @@ class LLKParser : public IParser
 
         void         consume(void);
         void         match(TokenType_T type);
-        Token*       lookaheadToken(int i);
+        Token&       lookaheadToken(int i);
         TokenType_T  lookaheadType(int i);
-        virtual void parse(void) = 0;
+        virtual AST* parse(void) = 0;
 };
 
 #endif

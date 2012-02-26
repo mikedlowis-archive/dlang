@@ -10,9 +10,13 @@ DLangParser = Binary.new({
     :name => 'dlang',
     :output_dir => 'build/parser',
     :compiler_options => [ '-c', '-Wall', '-Werror', '-o' ],
+    :static_libs => [ './deps/cork/build/static/bin/libcork.a' ],
     :source_files => [ 'source/**/*.c*' ],
-    :include_dirs => [ 'source/**/' ],
-    :preprocessor_defines => [ 'DETECT_MEM_LEAKS' ]
+    :include_dirs => [
+        'source/**/',
+        'deps/cork/source/**/'
+    ],
+    #:preprocessor_defines => [ 'DETECT_MEM_LEAKS' ]
 })
 DLangParser.setup_default_rake_tasks()
 

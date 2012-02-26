@@ -71,15 +71,15 @@ void BTParser::match(TokenType_T type)
     }
     else
     {
-        Token* tok = lookaheadToken(1);
+        Token& tok = lookaheadToken(1);
         ostringstream oss;
-        oss << "Expected token type. Expected " << type << ", received " << tok->type() << ".";
-        Exception ex( tok->line(), tok->column() );
+        oss << "Expected token type. Expected " << type << ", received " << tok.type() << ".";
+        Exception ex( tok.line(), tok.column() );
         ex.setMessage(oss.str());
     }
 }
 
-Token* BTParser::lookaheadToken(unsigned int i)
+Token& BTParser::lookaheadToken(unsigned int i)
 {
     sync(i);
     return lookahead.at( current + i - 1 );
@@ -87,9 +87,7 @@ Token* BTParser::lookaheadToken(unsigned int i)
 
 TokenType_T BTParser::lookaheadType(unsigned int i)
 {
-
-    Token* tok = lookaheadToken(i);
-    return (tok != NULL) ? tok->type() : EOF;
+    return lookaheadToken(i).type();
 }
 
 unsigned int BTParser::mark(void)

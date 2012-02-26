@@ -6,7 +6,7 @@ LLKParser::LLKParser(int k_val, ILexer* lxer) : k(k_val), next(0), lexer(lxer)
 {
     if ( lexer != NULL )
     {
-        lookahead = new Token*[k];
+        lookahead = new Token[k];
     }
     else
     {
@@ -79,13 +79,9 @@ void LLKParser::match(TokenType_T type)
     }
 }
 
-Token* LLKParser::lookaheadToken(int i)
+Token& LLKParser::lookaheadToken(int i)
 {
-    Token* ret = NULL;
-    if( lookahead != NULL )
-    {
-        ret = lookahead[(next + i - 1) % k];
-    }
+    Token& ret = lookahead[(next + i - 1) % k];
     return ret;
 }
 
@@ -94,8 +90,7 @@ TokenType_T LLKParser::lookaheadType(int i)
     TokenType_T ret = EOF;
     if( lookahead != NULL )
     {
-        Token* tok = lookaheadToken(i);
-        ret = (tok != NULL) ? tok->type() : EOF;
+        ret = lookaheadToken(i).type();
     }
     return ret;
 }

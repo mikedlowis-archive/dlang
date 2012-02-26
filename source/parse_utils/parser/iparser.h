@@ -30,7 +30,7 @@ class IParser {
     public:
         IParser();
         virtual ~IParser();
-        virtual void parse() = 0;
+        virtual AST* parse() = 0;
 
         void setInput(char* in);
         void setInput(string& in);
