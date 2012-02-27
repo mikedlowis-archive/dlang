@@ -32,10 +32,6 @@ IParser::IParser() : input(NULL)
 
 IParser::~IParser()
 {
-    if(input != NULL)
-    {
-        delete input;
-    }
 }
 
 void IParser::setInput(char* in)
