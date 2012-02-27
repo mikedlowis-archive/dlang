@@ -20,6 +20,15 @@ if (1 == 1)
     print("1 Hello, World!")
 }
 
+if (1 == 1)
+{
+
+}
+else
+{
+
+}
+
 if (1 == 0)
 {
     print("Hello, World!")

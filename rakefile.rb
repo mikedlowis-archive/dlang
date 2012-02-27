@@ -1,6 +1,11 @@
 include Rake::DSL
+require 'rake/clean'
 require 'tools/rake_utils/source/binary.rb'
 require 'tools/rake_utils/source/tests.rb'
+
+PROJECT_ROOT  = File.expand_path(File.dirname(__FILE__))
+CLOBBER.include('./deps/cork/build/static')
+CLOBBER.include('./deps/cork/build/shared')
 
 #------------------------------------------------------------------------------
 # Configuration Objects
@@ -16,7 +21,6 @@ DLangParser = Binary.new({
         'source/**/',
         'deps/cork/source/**/'
     ],
-    #:preprocessor_defines => [ 'DETECT_MEM_LEAKS' ]
 })
 DLangParser.setup_default_rake_tasks()
 
@@ -28,4 +32,10 @@ UnitTest = Tests.new({
 UnitTest.setup_default_rake_tasks()
 
 desc 'Build and link all artifacts'
-task :release => [ DLangParser.name() ]
+task :release => [ :cork, DLangParser.name() ]
+
+task :cork do
+    Dir.chdir('./deps/cork')
+    sh 'rake release'
+    Dir.chdir(PROJECT_ROOT)
+end
