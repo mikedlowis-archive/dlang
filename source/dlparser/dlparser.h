@@ -53,7 +53,7 @@ class DLParser : public BTParser
         //
         // VectorLiteral =  '[' ExpList ']'
         //
-        // ListLiteral = '`' '(' ExpList ')'
+        // ListLiteral = '(' ExpList ')'
         //
         // FuncLiteral = '{' ExpBlock '}'
         //             |  '{' '|' ExpList '|' ExpBlock '}'

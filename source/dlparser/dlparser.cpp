@@ -73,14 +73,14 @@ AST* DLParser::Expression(void)
         match(ASSIGN);
         ret = _new AST( ASSIGN, 2, id_node, Expression());
     }
-    else if( (lookaheadType(1) == MACRO) && (lookaheadType(2) == ID))
-    {
-        ret = MacroDefinition();
-    }
-    else if( isMacro( lookaheadToken(1) ) )
-    {
-        ret = MacroExpansion();
-    }
+    //else if( (lookaheadType(1) == MACRO) && (lookaheadType(2) == ID))
+    //{
+    //    ret = MacroDefinition();
+    //}
+    //else if( isMacro( lookaheadToken(1) ) )
+    //{
+    //    ret = MacroExpansion();
+    //}
     else
     {
         ret = LogicalExpr();
@@ -156,13 +156,13 @@ AST* DLParser::UnaryExpr(void)
 AST* DLParser::GroupExpr(void)
 {
     AST* ret = NULL;
-    if(lookaheadType(1) == LPAR)
-    {
-        match(LPAR);
-        ret = LogicalExpr();
-        match(RPAR);
-    }
-    else
+    //if(lookaheadType(1) == LPAR)
+    //{
+    //    match(LPAR);
+    //    ret = LogicalExpr();
+    //    match(RPAR);
+    //}
+    //else
     {
         ret = Literal();
         if( lookaheadType(1) == LPAR )
@@ -192,7 +192,7 @@ AST* DLParser::Literal(void)
             break;
 
         // Literal = ListLiteral
-        case LIST:
+        case LPAR:
             node = ListLiteral();
             break;
 
@@ -254,7 +254,6 @@ AST* DLParser::VectorLiteral(void)
 AST* DLParser::ListLiteral(void)
 {
     AST* ret = NULL;
-    match(LIST);
     match(LPAR);
     ret = ExpList(LIST, RPAR);
     match(RPAR);

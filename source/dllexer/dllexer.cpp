@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define NUM_SINGLE_CHAR_MATCHES 14
+#define NUM_SINGLE_CHAR_MATCHES 13
 SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '[', LBRACK },
     { ']', RBRACK },
@@ -17,7 +17,6 @@ SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '-', SUB },
     { '*', MUL },
     { '/', DIV },
-    { '`', LIST },
     { '%', MACRO },
     { ':', SEP },
 };
@@ -100,6 +99,7 @@ Token DLLexer::next(void)
             SingleCharOp(ret);
         }
     }
+    cout << "token: " << ret.type() << endl;
     return ret;
 }
 
@@ -231,6 +231,7 @@ void DLLexer::SingleCharOp(Token& tok)
         {
             consume();
             tok = Token( Single_Character_Matches[i].type, line, column );
+            break;
         }
     }
 
