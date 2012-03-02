@@ -62,17 +62,20 @@ class DLParser : public BTParser
         // FuncLiteral = '{' ExpBlock '}'
         //             |  '{' '|' ExpList '|' ExpBlock '}'
         //
-        // MacroDefinition = '%' ID '(' MacroParamList ')' '{' Expression '}'
+        // MacroDefinition = '%' ID '[' MacroParamList ']'
         //
-        // MacroParamList = MacroParam (',' MacroParam)*
+        // MacroPatternList = MacroPattern (',' MacroPattern)*
         //
-        // MacroParam = ID (':' ID)?
+        // MacroPattern = '(' ID+ ')' ':' LogicalExpr
         //
         // ExpList = (GroupExpr (',' GroupExpr)*)?
         //
         // ExpBlock = Expression*
     private:
+        // Entry Rules
         AST* Program(void);
+
+        // Order of Precedence rules for expressions
         AST* Expression(void);
         AST* LogicalExpr(void);
         AST* CompExpr(void);
@@ -80,14 +83,20 @@ class DLParser : public BTParser
         AST* MulDivExpr(void);
         AST* UnaryExpr(void);
         AST* GroupExpr(void);
+
+        // Literal Type Rules
         AST* Literal(void);
         AST* VectorLiteral(void);
         AST* ListLiteral(void);
         AST* FuncLiteral(void);
+
+        // Macro Rules
         AST* MacroDefinition(void);
         AST* MacroExpansion(void);
-        AST* MacroParamList(void);
-        AST* MacroParam(void);
+        AST* MacroPatternList(void);
+        AST* MacroPattern(void);
+
+        // Helper rules for lists and blocks of expressions
         AST* ExpList(TokenType_T node_type, TokenType_T terminator);
         AST* ExpBlock(TokenType_T node_type, TokenType_T terminator);
 };

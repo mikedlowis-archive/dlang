@@ -8,3 +8,7 @@ foo = ""
 foo = "1"
 foo = "12"
 
+% if [
+    (Ex Bk) : exec_if($1, $2),
+    (Ex Bk Bk) : exec_if($1, $2, $3)
+]

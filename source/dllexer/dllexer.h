@@ -49,7 +49,8 @@ typedef enum TokenTypes
     BLOCK    = 43,
     FN_CALL  = 44,
     PARAMS   = 45,
-    ARRY_IDX = 46
+    ARRY_IDX = 46,
+    PATT     = 47,
 } eTokenTypes;
 
 typedef struct {

@@ -63,7 +63,7 @@ bool DLParser::speculate_GroupExpr(void)
     try
     {
         match(LPAR);
-        throw_away = LogicalExpr();
+        delete LogicalExpr();
         match(RPAR);
     }
     catch (Exception e)
@@ -100,10 +100,10 @@ AST* DLParser::Expression(void)
         match(ASSIGN);
         ret = _new AST( ASSIGN, 2, id_node, Expression());
     }
-    //else if( (lookaheadType(1) == MACRO) && (lookaheadType(2) == ID))
-    //{
-    //    ret = MacroDefinition();
-    //}
+    else if( (lookaheadType(1) == MACRO) && (lookaheadType(2) == ID))
+    {
+        ret = MacroDefinition();
+    }
     //else if( isMacro( lookaheadToken(1) ) )
     //{
     //    ret = MacroExpansion();
@@ -310,28 +310,28 @@ AST* DLParser::FuncLiteral(void)
     return ret;
 }
 
-// MacroDefinition = '%' ID '(' MacroParamList ')' '{' Expression '}'
+// MacroDefinition = '%' ID '[' MacroPatternList ']'
 AST* DLParser::MacroDefinition(void)
 {
-    AST* ret = NULL;
+    AST* macro = NULL;
     AST* id = NULL;
-    AST* params = NULL;
-    AST* body = NULL;
-    Macro* macro = NULL;
-
+    AST* patt_list = NULL;
     match(MACRO);
+
+    // Get the macro's name
     id = _new AST( ID, lookaheadToken(1).text() );
     consume();
-    match(LPAR);
-    params = MacroParamList();
-    match(RPAR);
-    match(LBRACE);
-    body = Expression();
-    match(RBRACE);
-    ret = _new AST( MACRO, 3, id, params, body );
 
-    macro = _new Macro( ret );
-    macros.insert( std::pair<std::string,Macro*>(id->text(), macro) );
+    // Parse the macro param list
+    match(LBRACK);
+    patt_list = MacroPatternList();
+    match(RBRACK);
+
+    // Build and register the macro
+    macro = _new AST(MACRO,2,id,patt_list);
+    //macros.insert( std::pair<std::string,Macro*>(id->text(), macro) );
+
+    delete macro;
 
     return _new AST(MACRO);
 }
@@ -352,31 +352,44 @@ AST* DLParser::MacroExpansion(void)
     return ret;
 }
 
-// MacroParamList = MacroParam (',' MacroParam)*
-AST* DLParser::MacroParamList(void)
+// MacroPatternList = MacroPattern (',' MacroPattern)*
+AST* DLParser::MacroPatternList(void)
 {
-    AST* ret = _new AST( PARAMS );
-    ret->addChild( MacroParam() );
+    AST* ret = _new AST( LIST );
+    ret->addChild( MacroPattern() );
     while(lookaheadType(1) == COMMA)
     {
         match(COMMA);
-        ret->addChild( MacroParam() );
+        ret->addChild( MacroPattern() );
     }
     return ret;
 }
 
-// MacroParam = ID (':' ID)?
-AST* DLParser::MacroParam(void)
+// MacroPattern = '(' ID+ ')' ':' LogicalExpr
+AST* DLParser::MacroPattern(void)
 {
-    AST* ret = _new AST( ID, lookaheadToken(1).text() );
-    consume();
-    if( lookaheadType(1) == SEP )
+    AST* ret = _new AST(LIST);
+
+    match(LPAR);
+    do
     {
-        match(SEP);
-        AST* type = _new AST( ID, lookaheadToken(1).text() );
+        ret->addChild( _new AST( ID, lookaheadToken(1).text() ) );
         consume();
-        ret = _new AST(SEP, 2, ret, type);
     }
+    while( lookaheadType(1) == ID );
+    match(RPAR);
+    match(SEP);
+    ret = _new AST(PATT, 2, ret, LogicalExpr());
+
+    //AST* ret = _new AST( ID, lookaheadToken(1).text() );
+    //consume();
+    //if( lookaheadType(1) == SEP )
+    //{
+    //    match(SEP);
+    //    AST* type = _new AST( ID, lookaheadToken(1).text() );
+    //    consume();
+    //    ret = _new AST(SEP, 2, ret, type);
+    //}
     return ret;
 }
 
