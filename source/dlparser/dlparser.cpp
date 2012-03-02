@@ -48,9 +48,36 @@ AST* DLParser::parseMacroParam(Param* param)
             oss << "Expected macro parameter type. Expected " << param->type() << ", received " << tok.type() << ".";
             Exception ex( tok.line(), tok.column() );
             ex.setMessage(oss.str());
+            throw ex;
             break;
     }
     return ret;
+}
+
+bool DLParser::speculate_GroupExpr(void)
+{
+    AST* throw_away = NULL;
+    bool success = true;
+
+    mark();
+    try
+    {
+        match(LPAR);
+        throw_away = LogicalExpr();
+        match(RPAR);
+    }
+    catch (Exception e)
+    {
+        success = false;
+    }
+    release();
+
+    if (throw_away != NULL)
+    {
+        delete throw_away;
+    }
+
+    return success;
 }
 
 AST* DLParser::Program(void)
@@ -156,28 +183,31 @@ AST* DLParser::UnaryExpr(void)
 AST* DLParser::GroupExpr(void)
 {
     AST* ret = NULL;
-    //if(lookaheadType(1) == LPAR)
-    //{
-    //    match(LPAR);
-    //    ret = LogicalExpr();
-    //    match(RPAR);
-    //}
-    //else
+
+    if(speculate_GroupExpr())
+    {
+        match(LPAR);
+        ret = LogicalExpr();
+        match(RPAR);
+    }
+    else
     {
         ret = Literal();
-        if( lookaheadType(1) == LPAR )
-        {
-            match(LPAR);
-            ret = _new AST( FN_CALL, 2, ret, ExpList( LIST, RPAR ) );
-            match(RPAR);
-        }
-        else if( lookaheadType(1) == LBRACK )
-        {
-            match(LBRACK);
-            ret = _new AST( ARRY_IDX, 2, ret, LogicalExpr() );
-            match(RBRACK);
-        }
     }
+
+    if( lookaheadType(1) == LPAR )
+    {
+        match(LPAR);
+        ret = _new AST( FN_CALL, 2, ret, ExpList( LIST, RPAR ) );
+        match(RPAR);
+    }
+    else if( lookaheadType(1) == LBRACK )
+    {
+        match(LBRACK);
+        ret = _new AST( ARRY_IDX, 2, ret, LogicalExpr() );
+        match(RBRACK);
+    }
+
     return ret;
 }
 

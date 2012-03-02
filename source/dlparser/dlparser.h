@@ -16,6 +16,7 @@ class DLParser : public BTParser
         AST* parse(void);
         bool isMacro(Token& token);
         AST* parseMacroParam(Param* param);
+        bool speculate_GroupExpr(void);
 
         /**********************************************************************
          * EBNF Syntax Grammar
@@ -39,19 +40,22 @@ class DLParser : public BTParser
         //           | GroupExpr
         //
         // GroupExpr = '(' LogicalExpr ')'
-        //           | Literal '(' ExpList ')'
+        //           | '(' LogicalExpr ')' '(' ExpList ')'
+        //           | '(' LogicalExpr ')' '[' LogicalExpr ']'
         //           | Literal
+        //           | Literal '(' ExpList ')'
+        //           | Literal '[' LogicalExpr ']'
         //
-        // Literal    = VectorLiteral
-        //            | ListLiteral
-        //            | FuncLiteral
-        //            | ID
-        //            | NUM
-        //            | CHAR
-        //            | STRING
-        //            | SYMBOL
+        // Literal = VectorLiteral
+        //         | ListLiteral
+        //         | FuncLiteral
+        //         | ID
+        //         | NUM
+        //         | CHAR
+        //         | STRING
+        //         | SYMBOL
         //
-        // VectorLiteral =  '[' ExpList ']'
+        // VectorLiteral = '[' ExpList ']'
         //
         // ListLiteral = '(' ExpList ')'
         //
@@ -64,9 +68,9 @@ class DLParser : public BTParser
         //
         // MacroParam = ID (':' ID)?
         //
-        // ExpList    = (GroupExpr (',' GroupExpr)*)?
+        // ExpList = (GroupExpr (',' GroupExpr)*)?
         //
-        // ExpBlock   = Expression*
+        // ExpBlock = Expression*
     private:
         AST* Program(void);
         AST* Expression(void);
