@@ -4,7 +4,8 @@
 #include <map>
 #include "btparser.h"
 #include "dllexer.h"
-#include "macro.h"
+
+class Macro{};
 
 class DLParser : public BTParser
 {
@@ -15,7 +16,6 @@ class DLParser : public BTParser
         ~DLParser();
         AST* parse(void);
         bool isMacro(Token& token);
-        AST* parseMacroParam(Param* param);
         bool speculate_GroupExpr(void);
 
         /**********************************************************************
@@ -92,7 +92,6 @@ class DLParser : public BTParser
 
         // Macro Rules
         AST* MacroDefinition(void);
-        AST* MacroExpansion(void);
         AST* MacroPatternList(void);
         AST* MacroPattern(void);
 

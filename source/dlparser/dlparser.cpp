@@ -29,31 +29,6 @@ bool DLParser::isMacro( Token& token )
     return ret;
 }
 
-AST* DLParser::parseMacroParam(Param* param)
-{
-    AST* ret = NULL;
-    switch( param->type() )
-    {
-        case ExpTyp:
-            ret = LogicalExpr();
-            break;
-
-        case BlockTyp:
-            ret = FuncLiteral();
-            break;
-
-        default:
-            Token& tok = lookaheadToken(1);
-            ostringstream oss;
-            oss << "Expected macro parameter type. Expected " << param->type() << ", received " << tok.type() << ".";
-            Exception ex( tok.line(), tok.column() );
-            ex.setMessage(oss.str());
-            throw ex;
-            break;
-    }
-    return ret;
-}
-
 bool DLParser::speculate_GroupExpr(void)
 {
     AST* throw_away = NULL;
@@ -336,22 +311,6 @@ AST* DLParser::MacroDefinition(void)
     return _new AST(MACRO);
 }
 
-AST* DLParser::MacroExpansion(void)
-{
-    AST* ret = NULL;
-    Macro* cur_macro = macros[ lookaheadToken(1).text() ];
-    list<Param*>::const_iterator it = cur_macro->params().begin();
-
-    consume();
-    for(; it != cur_macro->params().end(); it++)
-    {
-        (*it)->setValue( parseMacroParam( *it ) );
-    }
-    ret = cur_macro->apply();
-
-    return ret;
-}
-
 // MacroPatternList = MacroPattern (',' MacroPattern)*
 AST* DLParser::MacroPatternList(void)
 {
@@ -381,15 +340,6 @@ AST* DLParser::MacroPattern(void)
     match(SEP);
     ret = _new AST(PATT, 2, ret, LogicalExpr());
 
-    //AST* ret = _new AST( ID, lookaheadToken(1).text() );
-    //consume();
-    //if( lookaheadType(1) == SEP )
-    //{
-    //    match(SEP);
-    //    AST* type = _new AST( ID, lookaheadToken(1).text() );
-    //    consume();
-    //    ret = _new AST(SEP, 2, ret, type);
-    //}
     return ret;
 }
 
