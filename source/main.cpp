@@ -3,7 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include "dlparser.h"
-#include "sexp.h"
+#include "astprinter.h"
 #include "scheme.h"
 #include "cork.h"
 
@@ -20,30 +20,23 @@ int main(int argc, char** argv)
     {
         string input_fname(argv[1]);
         string temp_fname = createTempFileName( input_fname );
+        (void)temp_fname;
         DLParser parser;
-        Scheme* visitor = NULL;
+        ASTPrinter* visitor = NULL;
 
         // Open the input and output files
         ifstream input(input_fname.c_str());
-        ofstream output(temp_fname.c_str());
 
         // Parse the file
         parser.setInput(&input);
 
         // Translate the AST
-        visitor = _new Scheme( parser.parse() );
+        visitor = _new ASTPrinter( parser.parse() );
         visitor->visit();
 
-        // Write to a temp file
-        output << visitor->str();
+        // Write output to screen
         cout << visitor->str();
-        output.close();
 
-        // Compile temp file
-        system(("csc " + temp_fname).c_str());
-
-        // delete temp file
-        remove(temp_fname.c_str());
         delete visitor;
     }
     else

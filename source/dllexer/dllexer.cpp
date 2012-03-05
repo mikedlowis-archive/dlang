@@ -100,7 +100,6 @@ Token DLLexer::next(void)
             SingleCharOp(ret);
         }
     }
-    cout << "token: " << ret.type() << endl;
     return ret;
 }
 
