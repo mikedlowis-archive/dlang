@@ -17,6 +17,7 @@ class DLParser : public BTParser
         AST* parse(void);
         bool isMacro(Token& token);
         bool speculate_GroupExpr(void);
+        bool speculate_MapLiteral(void);
 
         /**********************************************************************
          * EBNF Syntax Grammar
@@ -27,6 +28,8 @@ class DLParser : public BTParser
         //            | MacroDefinition
         //            | $MacroExpansion$
         //            | LogicalExpr
+        //
+        // AssignExpr = LogicalExpr '=' LogicalExpr
         //
         // LogicalExpr = CompExpr (('&&' | '||') CompExpr)*
         //
@@ -45,6 +48,8 @@ class DLParser : public BTParser
         //           | Literal
         //           | Literal '(' ExpList ')'
         //           | Literal '[' LogicalExpr ']'
+        //
+        // MemberExpr = Literal '.' LogicalExpr
         //
         // Literal = VectorLiteral
         //         | ListLiteral
@@ -77,15 +82,18 @@ class DLParser : public BTParser
 
         // Order of Precedence rules for expressions
         AST* Expression(void);
+        AST* AssignExpr(void);
         AST* LogicalExpr(void);
         AST* CompExpr(void);
         AST* AddSubExpr(void);
         AST* MulDivExpr(void);
         AST* UnaryExpr(void);
         AST* GroupExpr(void);
+        AST* MemberExpr(void);
 
         // Literal Type Rules
         AST* Literal(void);
+        AST* MapLiteral(void);
         AST* VectorLiteral(void);
         AST* ListLiteral(void);
         AST* FuncLiteral(void);

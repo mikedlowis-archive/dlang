@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define NUM_SINGLE_CHAR_MATCHES 13
+#define NUM_SINGLE_CHAR_MATCHES 14
 SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '[', LBRACK },
     { ']', RBRACK },
@@ -19,6 +19,7 @@ SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '/', DIV },
     { '%', MACRO },
     { ':', SEP },
+    { '.', MEMB },
 };
 
 bool DLLexer::isWhiteSpace(void)

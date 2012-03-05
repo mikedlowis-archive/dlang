@@ -41,6 +41,7 @@ typedef enum TokenTypes
     SUB      = 31,
     MUL      = 32,
     DIV      = 33,
+    MEMB     = 34,
 
     // AST "Virtual" Node Types
     MACRO    = 40,

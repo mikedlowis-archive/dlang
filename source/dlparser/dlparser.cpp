@@ -31,7 +31,6 @@ bool DLParser::isMacro( Token& token )
 
 bool DLParser::speculate_GroupExpr(void)
 {
-    AST* throw_away = NULL;
     bool success = true;
 
     mark();
@@ -47,10 +46,23 @@ bool DLParser::speculate_GroupExpr(void)
     }
     release();
 
-    if (throw_away != NULL)
+    return success;
+}
+
+bool DLParser::speculate_MapLiteral(void)
+{
+    bool success = true;
+
+    mark();
+    try
     {
-        delete throw_away;
+        delete MapLiteral();
     }
+    catch (Exception e)
+    {
+        success = false;
+    }
+    release();
 
     return success;
 }
@@ -68,14 +80,8 @@ AST* DLParser::Program(void)
 AST* DLParser::Expression(void)
 {
     AST* ret = NULL;
-    if((lookaheadType(1) == ID) && (lookaheadType(2) == ASSIGN))
-    {
-        AST* id_node = _new AST( ID,(char*)(lookaheadToken(1).text().c_str()) );
-        consume();
-        match(ASSIGN);
-        ret = _new AST( ASSIGN, 2, id_node, Expression());
-    }
-    else if( (lookaheadType(1) == MACRO) && (lookaheadType(2) == ID))
+
+    if( (lookaheadType(1) == MACRO) && (lookaheadType(2) == ID))
     {
         ret = MacroDefinition();
     }
@@ -85,7 +91,19 @@ AST* DLParser::Expression(void)
     //}
     else
     {
-        ret = LogicalExpr();
+        ret = AssignExpr();
+    }
+    return ret;
+}
+
+AST* DLParser::AssignExpr(void)
+{
+    AST* ret = NULL;
+    ret = LogicalExpr();
+    if(lookaheadType(1) == ASSIGN)
+    {
+        match(ASSIGN);
+        ret = new AST(ASSIGN, 2, ret, LogicalExpr());
     }
     return ret;
 }
@@ -167,7 +185,7 @@ AST* DLParser::GroupExpr(void)
     }
     else
     {
-        ret = Literal();
+        ret = MemberExpr();
     }
 
     if( lookaheadType(1) == LPAR )
@@ -186,65 +204,91 @@ AST* DLParser::GroupExpr(void)
     return ret;
 }
 
+AST* DLParser::MemberExpr(void)
+{
+    AST* ret = NULL;
+    ret = Literal();
+    if ( lookaheadType(1) == MEMB )
+    {
+        match(MEMB);
+        ret = new AST(MEMB, 2, ret, LogicalExpr());
+    }
+    return ret;
+}
+
 AST* DLParser::Literal(void)
 {
     AST* node = NULL;
-    switch(lookaheadType(1))
+    if(speculate_MapLiteral())
     {
-        // Literal = VectorLiteral
-        case LBRACK:
-            node = VectorLiteral();
-            break;
+        node = MapLiteral();
+    }
+    else
+    {
+        switch(lookaheadType(1))
+        {
+            // Literal = VectorLiteral
+            case LBRACK:
+                node = VectorLiteral();
+                break;
 
-        // Literal = ListLiteral
-        case LPAR:
-            node = ListLiteral();
-            break;
+            // Literal = ListLiteral
+            case LPAR:
+                node = ListLiteral();
+                break;
 
-        // Literal = FuncLiteral
-        case LBRACE:
-            node = FuncLiteral();
-            break;
+            // Literal = FuncLiteral
+            case LBRACE:
+                node = FuncLiteral();
+                break;
 
-        // Literal = ID
-        case ID:
-            node = _new AST( ID, lookaheadToken(1).text() );
-            consume();
-            break;
+            // Literal = ID
+            case ID:
+                node = _new AST( ID, lookaheadToken(1).text() );
+                consume();
+                break;
 
-        // Literal = NUM
-        case NUM:
-            node = _new AST( NUM, lookaheadToken(1).text() );
-            consume();
-            break;
+            // Literal = NUM
+            case NUM:
+                node = _new AST( NUM, lookaheadToken(1).text() );
+                consume();
+                break;
 
-        // Literal = CHAR
-        case CHAR:
-            node = _new AST( CHAR, lookaheadToken(1).text() );
-            consume();
-            break;
+            // Literal = CHAR
+            case CHAR:
+                node = _new AST( CHAR, lookaheadToken(1).text() );
+                consume();
+                break;
 
-        // Literal = STRING
-        case STRING:
-            node = _new AST( STRING, lookaheadToken(1).text() );
-            consume();
-            break;
+            // Literal = STRING
+            case STRING:
+                node = _new AST( STRING, lookaheadToken(1).text() );
+                consume();
+                break;
 
-        // Literal = SYMBOL
-        case SYMBOL:
-            node = _new AST( SYMBOL, lookaheadToken(1).text() );
-            consume();
-            break;
+            // Literal = SYMBOL
+            case SYMBOL:
+                node = _new AST( SYMBOL, lookaheadToken(1).text() );
+                consume();
+                break;
 
-        default:
-            Token& tok = lookaheadToken(1);
-            ostringstream oss;
-            oss << "Expected literal type, recieved type " << tok.type() << ".";
-            Exception ex( tok.line(), tok.column() );
-            ex.setMessage(oss.str());
-            throw ex;
+            default:
+                Token& tok = lookaheadToken(1);
+                ostringstream oss;
+                oss << "Expected literal type, recieved type " << tok.type() << ".";
+                Exception ex( tok.line(), tok.column() );
+                ex.setMessage(oss.str());
+                throw ex;
+        }
     }
     return node;
+}
+
+AST* DLParser::MapLiteral(void)
+{
+    AST* ret = NULL;
+    throw Exception(lookaheadToken(1).line(), lookaheadToken(1).column());
+    return ret;
 }
 
 AST* DLParser::VectorLiteral(void)

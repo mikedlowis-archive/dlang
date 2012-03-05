@@ -1,14 +1,46 @@
-foo = ()
-foo = (1)
-foo = (1,2)
+#------------------------------------------------------------------------------
+# Literals
+#------------------------------------------------------------------------------
+
+# VectorLiteral
 foo = []
 foo = [1]
-foo = [1,2]
-foo = ""
-foo = "1"
-foo = "12"
+foo = [1,2,3]
+foo = foo[1]
+foo = [1,2,3,4,5][2]
 
-% if [
-    (Ex Bk) : exec_if($1, $2),
-    (Ex Bk Bk) : exec_if($1, $2, $3)
-]
+# ListLiteral
+foo = ()
+foo = (1,2,3)
+foo = foo[1]
+foo = (1,2,3,4,5)[2]
+
+# FuncLiteral
+foo = { 1 + 1 }
+foo = {|a| a + 1}
+foo = {|a,b| a + b }
+foo = foo(1,2)
+foo = ({|a,b| a + b })(1,2)
+
+# ID
+foo = bar
+foo.bar = bar
+
+# NUM
+foo = 1
+foo = 1.0
+
+# CHAR
+foo = 'a'
+
+# STRING
+foo = "some string"
+foo = "12345"[2]
+
+# SYMBOL
+foo = $some_symbol
+
+#% if [
+#    (Ex Bk) : exec_if($1, $2),
+#    (Ex Bk Bk) : exec_if($1, $2, $3)
+#]
