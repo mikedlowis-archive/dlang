@@ -47,7 +47,8 @@ foo = {
     $stuff : 3 + 3
 }
 
-#% if [
-#    (Ex Bk) : exec_if($1, $2),
-#    (Ex Bk Bk) : exec_if($1, $2, $3)
-#]
+# Macro
+% if [
+    (Ex Bk) : exec_if($1, $2),
+    (Ex Bk Bk) : exec_if($1, $2, $3)
+]
