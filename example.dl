@@ -40,6 +40,13 @@ foo = "12345"[2]
 # SYMBOL
 foo = $some_symbol
 
+# MAP
+foo = {
+    $foo : 1 + 1,
+    $bar : 2 + 2,
+    $stuff : 3 + 3
+}
+
 #% if [
 #    (Ex Bk) : exec_if($1, $2),
 #    (Ex Bk Bk) : exec_if($1, $2, $3)

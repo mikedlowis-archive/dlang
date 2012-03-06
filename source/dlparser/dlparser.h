@@ -60,6 +60,7 @@ class DLParser : public BTParser
         //         | STRING
         //         | SYMBOL
         //
+        // MapLiteral = '{' (Literal ':' AssignExpr)* '}'
         // VectorLiteral = '[' ExpList ']'
         //
         // ListLiteral = '(' ExpList ')'

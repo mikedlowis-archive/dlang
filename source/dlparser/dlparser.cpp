@@ -284,10 +284,27 @@ AST* DLParser::Literal(void)
     return node;
 }
 
+// MapLiteral = '{' (Literal ':' LogicalExpr)* '}'
 AST* DLParser::MapLiteral(void)
 {
     AST* ret = NULL;
-    throw Exception(lookaheadToken(1).line(), lookaheadToken(1).column());
+
+    //throw Exception(lookaheadToken(1).line(),lookaheadToken(1).column());
+    match(LBRACE);
+    do
+    {
+        if( lookaheadType(1) == COMMA ) consume();
+
+        AST* child = Literal();
+        match(SEP);
+        child = _new AST(SEP, 2, child, LogicalExpr());
+
+        ret = ((ret == NULL) ? _new AST(MAP) : ret);
+        ret->addChild(child);
+    }
+    while( lookaheadType(1) == COMMA );
+    match(RBRACE);
+
     return ret;
 }
 

@@ -20,7 +20,6 @@ int main(int argc, char** argv)
     {
         string input_fname(argv[1]);
         string temp_fname = createTempFileName( input_fname );
-        (void)temp_fname;
         DLParser parser;
         ASTPrinter* visitor = NULL;
 

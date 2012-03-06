@@ -15,6 +15,7 @@ typedef enum TokenTypes
     LIST     = 5,
     VECTOR   = 6,
     FUNC     = 7,
+    MAP      = 8,
 
     // Symbols
     LBRACK   = 10,
