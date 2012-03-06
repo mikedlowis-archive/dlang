@@ -81,10 +81,6 @@ AST* DLParser::Expression(void)
     {
         ret = MacroDefinition();
     }
-    //else if( isMacro( lookaheadToken(1) ) )
-    //{
-    //    ret = MacroExpansion();
-    //}
     else
     {
         ret = AssignExpr();
@@ -95,12 +91,19 @@ AST* DLParser::Expression(void)
 AST* DLParser::AssignExpr(void)
 {
     AST* ret = NULL;
-    ret = LogicalExpr();
-    if(lookaheadType(1) == ASSIGN)
-    {
-        match(ASSIGN);
-        ret = new AST(ASSIGN, 2, ret, LogicalExpr());
-    }
+    //if( isMacro( lookaheadToken(1) ) )
+    //{
+    //    ret = MacroExpansion();
+    //}
+    //else
+    //{
+        ret = LogicalExpr();
+        if(lookaheadType(1) == ASSIGN)
+        {
+            match(ASSIGN);
+            ret = new AST(ASSIGN, 2, ret, LogicalExpr());
+        }
+    //}
     return ret;
 }
 
