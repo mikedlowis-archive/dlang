@@ -8,3 +8,13 @@ Pattern::~Pattern()
 {
 }
 
+std::list<PatternType_T>::iterator Pattern::begin()
+{
+    return pattern.begin();
+}
+
+std::list<PatternType_T>::iterator Pattern::end()
+{
+    return pattern.end();
+}
+

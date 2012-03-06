@@ -7,7 +7,7 @@
 typedef enum {
     MAP_TYP,
     VECT_TYP,
-    LiST_TYP,
+    LIST_TYP,
     BLK_TYP,
     ID_TYP,
     NUM_TYP,
@@ -24,6 +24,8 @@ class Pattern {
     public:
         Pattern(const std::list<PatternType_T>& patt, const AST* ast);
         ~Pattern();
+        std::list<PatternType_T>::iterator begin();
+        std::list<PatternType_T>::iterator end();
 };
 
 #endif

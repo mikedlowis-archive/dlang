@@ -18,6 +18,7 @@ class DLParser : public BTParser
         bool isMacro(Token& token);
         bool speculate_GroupExpr(void);
         bool speculate_MapLiteral(void);
+        bool speculate_MacroPatternMatch(Pattern patt);
 
         /**********************************************************************
          * EBNF Syntax Grammar
@@ -103,6 +104,8 @@ class DLParser : public BTParser
         AST* MacroDefinition(void);
         std::list<Pattern> MacroPatternList(void);
         Pattern MacroPattern(void);
+        AST* MacroExpansion();
+        AST* MacroPatternMatch(Pattern patt);
 
         // Helper rules for lists and blocks of expressions
         AST* ExpList(TokenType_T node_type, TokenType_T terminator);

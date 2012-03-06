@@ -18,11 +18,119 @@ AST* DLParser::parse(void)
 bool DLParser::isMacro( Token& token )
 {
     bool ret = false;
-    if( (token.type() == ID) && (macros.find(token.text()) != macros.end()) )
+    if( (token.type() == ID)
+        && (macros.find(token.text()) != macros.end()) )
     {
         ret = true;
     }
     return ret;
+}
+
+AST* DLParser::MacroExpansion()
+{
+    AST* ret = NULL;
+    Macro macro = macros[ lookaheadToken(1).text() ];
+    std::list<Pattern>::iterator patt_it;
+
+    for(patt_it = macro.begin(); patt_it != macro.end(); patt_it++)
+    {
+        if( speculate_MacroPatternMatch(*patt_it) )
+        {
+            ret = MacroPatternMatch(*patt_it);
+            break;
+        }
+    }
+
+    if (ret == NULL)
+    {
+        throw "Did not find a matching pattern for keyword <macro-name>";
+    }
+
+    return ret;
+}
+
+bool DLParser::speculate_MacroPatternMatch(Pattern patt)
+{
+    bool success = false;
+
+    mark();
+    try
+    {
+        delete MacroPatternMatch(patt);
+    }
+    catch (Exception e)
+    {
+        success = false;
+    }
+    release();
+
+    return success;
+
+}
+
+AST* DLParser::MacroPatternMatch(Pattern patt)
+{
+    std::list<AST*> params;
+    std::list<PatternType_T>::iterator patt_it;
+
+    for(patt_it = patt.begin(); patt_it != patt.end(); patt_it++)
+    {
+        AST* param = NULL;
+        string text = lookaheadToken(1).text();
+        switch( *patt_it )
+        {
+            case MAP_TYP:
+                param = MapLiteral();
+                break;
+
+            case VECT_TYP:
+                param = VectorLiteral();
+                break;
+
+            case LIST_TYP:
+                break;
+
+            case BLK_TYP:
+                param = FuncLiteral();
+                break;
+
+            case ID_TYP:
+                match(ID);
+                param = _new AST(ID,text);
+                break;
+
+            case NUM_TYP:
+                match(NUM);
+                param = _new AST(NUM,text);
+                break;
+
+            case CHAR_TYP:
+                match(CHAR);
+                param = _new AST(CHAR,text);
+                break;
+
+            case STR_TYP:
+                match(STRING);
+                param = _new AST(STRING,text);
+                break;
+
+            case SYM_TYP:
+                match(SYMBOL);
+                param = _new AST(SYMBOL,text);
+                break;
+
+            case EXPR_TYP:
+                param = Literal();
+                break;
+
+            default:
+                throw Exception(lookaheadToken(1).line(), lookaheadToken(1).column());
+                break;
+        }
+        params.push_back(param);
+    }
+
+    return NULL;
 }
 
 bool DLParser::speculate_GroupExpr(void)
@@ -91,19 +199,19 @@ AST* DLParser::Expression(void)
 AST* DLParser::AssignExpr(void)
 {
     AST* ret = NULL;
-    //if( isMacro( lookaheadToken(1) ) )
-    //{
-    //    ret = MacroExpansion();
-    //}
-    //else
-    //{
+    if( isMacro( lookaheadToken(1) ) )
+    {
+        ret = MacroExpansion();
+    }
+    else
+    {
         ret = LogicalExpr();
         if(lookaheadType(1) == ASSIGN)
         {
             match(ASSIGN);
             ret = new AST(ASSIGN, 2, ret, LogicalExpr());
         }
-    //}
+    }
     return ret;
 }
 
