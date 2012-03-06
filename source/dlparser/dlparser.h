@@ -4,13 +4,13 @@
 #include <map>
 #include "btparser.h"
 #include "dllexer.h"
-
-class Macro{};
+#include "macro.h"
 
 class DLParser : public BTParser
 {
     private:
-        std::map<std::string,Macro*> macros;
+        std::map<std::string,Macro> macros;
+        std::map<std::string,PatternType_T> pattern_types;
     public:
         DLParser();
         ~DLParser();
@@ -101,8 +101,8 @@ class DLParser : public BTParser
 
         // Macro Rules
         AST* MacroDefinition(void);
-        AST* MacroPatternList(void);
-        AST* MacroPattern(void);
+        std::list<Pattern> MacroPatternList(void);
+        Pattern MacroPattern(void);
 
         // Helper rules for lists and blocks of expressions
         AST* ExpList(TokenType_T node_type, TokenType_T terminator);

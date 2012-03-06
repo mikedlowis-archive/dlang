@@ -6,6 +6,7 @@
 #include "astprinter.h"
 #include "scheme.h"
 #include "cork.h"
+#include "macro.h"
 
 using namespace std;
 

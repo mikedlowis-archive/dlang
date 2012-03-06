@@ -8,10 +8,6 @@ DLParser::DLParser() : BTParser(_new DLLexer())
 
 DLParser::~DLParser()
 {
-    std::map<std::string,Macro*>::iterator iter;
-    for (iter = macros.begin(); iter != macros.end(); ++iter) {
-        delete (iter->second);
-    }
 }
 
 AST* DLParser::parse(void)
@@ -289,7 +285,6 @@ AST* DLParser::MapLiteral(void)
 {
     AST* ret = NULL;
 
-    //throw Exception(lookaheadToken(1).line(),lookaheadToken(1).column());
     match(LBRACE);
     do
     {
@@ -349,59 +344,61 @@ AST* DLParser::FuncLiteral(void)
 // MacroDefinition = '%' ID '[' MacroPatternList ']'
 AST* DLParser::MacroDefinition(void)
 {
-    AST* macro = NULL;
-    AST* id = NULL;
-    AST* patt_list = NULL;
+    std::list<Pattern> patterns;
+    std::string name;
+
     match(MACRO);
 
     // Get the macro's name
-    id = _new AST( ID, lookaheadToken(1).text() );
-    consume();
+    name = lookaheadToken(1).text();
+    match(ID);
 
     // Parse the macro param list
     match(LBRACK);
-    patt_list = MacroPatternList();
+    patterns = MacroPatternList();
     match(RBRACK);
 
     // Build and register the macro
-    macro = _new AST(MACRO,2,id,patt_list);
-    //macros.insert( std::pair<std::string,Macro*>(id->text(), macro) );
-
-    delete macro;
+    macros.insert( std::pair<std::string,Macro>(name, Macro(patterns)) );
 
     return _new AST(MACRO);
 }
 
 // MacroPatternList = MacroPattern (',' MacroPattern)*
-AST* DLParser::MacroPatternList(void)
+std::list<Pattern> DLParser::MacroPatternList(void)
 {
-    AST* ret = _new AST( LIST );
-    ret->addChild( MacroPattern() );
+    std::list<Pattern> patterns;
+
+    patterns.push_back( MacroPattern() );
     while(lookaheadType(1) == COMMA)
     {
         match(COMMA);
-        ret->addChild( MacroPattern() );
+        patterns.push_back( MacroPattern() );
     }
-    return ret;
+
+    return patterns;
 }
 
 // MacroPattern = '(' ID+ ')' ':' LogicalExpr
-AST* DLParser::MacroPattern(void)
+Pattern DLParser::MacroPattern(void)
 {
-    AST* ret = _new AST(LIST);
+    AST* expr = NULL;
+    std::list<PatternType_T> pattern;
 
     match(LPAR);
     do
     {
-        ret->addChild( _new AST( ID, lookaheadToken(1).text() ) );
-        consume();
+        std::string text = lookaheadToken(1).text();
+        match(ID);
+        //pattern.push_back( str_to_patt_type(text) );
+        pattern.push_back( EXPR_TYP );
     }
     while( lookaheadType(1) == ID );
     match(RPAR);
     match(SEP);
-    ret = _new AST(PATT, 2, ret, LogicalExpr());
+    expr = LogicalExpr();
 
-    return ret;
+    return Pattern( pattern, expr );
 }
 
 // ExpList = (Expression (',' Expression)*)?
