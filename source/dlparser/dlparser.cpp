@@ -4,6 +4,16 @@
 
 DLParser::DLParser() : BTParser(_new DLLexer())
 {
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "Map", MAP_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "Vector", VECT_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "List", LIST_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "Block", BLK_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "Id", ID_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "Num", NUM_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "Char", CHAR_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "String", STR_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "Symbol", SYM_TYP ));
+    pattern_types.insert( std::pair<std::string,PatternType_T>( "Expression", EXPR_TYP ));
 }
 
 DLParser::~DLParser()
@@ -51,7 +61,7 @@ AST* DLParser::MacroExpansion()
 
 bool DLParser::speculate_MacroPatternMatch(Pattern patt)
 {
-    bool success = false;
+    bool success = true;
 
     mark();
     try
@@ -70,9 +80,8 @@ bool DLParser::speculate_MacroPatternMatch(Pattern patt)
 
 AST* DLParser::MacroPatternMatch(Pattern patt)
 {
-    std::list<AST*> params;
+    std::vector<AST*> params;
     std::list<PatternType_T>::iterator patt_it;
-
     for(patt_it = patt.begin(); patt_it != patt.end(); patt_it++)
     {
         AST* param = NULL;
@@ -88,6 +97,7 @@ AST* DLParser::MacroPatternMatch(Pattern patt)
                 break;
 
             case LIST_TYP:
+                param = ListLiteral();
                 break;
 
             case BLK_TYP:
@@ -120,7 +130,7 @@ AST* DLParser::MacroPatternMatch(Pattern patt)
                 break;
 
             case EXPR_TYP:
-                param = Literal();
+                param = LogicalExpr();
                 break;
 
             default:
@@ -130,7 +140,7 @@ AST* DLParser::MacroPatternMatch(Pattern patt)
         params.push_back(param);
     }
 
-    return NULL;
+    return patt.accept( params );
 }
 
 bool DLParser::speculate_GroupExpr(void)
@@ -502,7 +512,14 @@ Pattern DLParser::MacroPattern(void)
         std::string text = lookaheadToken(1).text();
         match(ID);
         //pattern.push_back( str_to_patt_type(text) );
-        pattern.push_back( EXPR_TYP );
+        if( pattern_types.find(text) != pattern_types.end() )
+        {
+            pattern.push_back( pattern_types[ text ] );
+        }
+        else
+        {
+            throw Exception(lookaheadToken(1).line(), lookaheadToken(1).column());
+        }
     }
     while( lookaheadType(1) == ID );
     match(RPAR);

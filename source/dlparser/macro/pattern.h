@@ -2,19 +2,20 @@
 #define PATTERN_H
 
 #include <list>
+#include <vector>
 #include "ast.h"
 
 typedef enum {
-    MAP_TYP,
-    VECT_TYP,
-    LIST_TYP,
-    BLK_TYP,
-    ID_TYP,
-    NUM_TYP,
-    CHAR_TYP,
-    STR_TYP,
-    SYM_TYP,
-    EXPR_TYP
+    MAP_TYP  = 0,
+    VECT_TYP = 1,
+    LIST_TYP = 2,
+    BLK_TYP  = 3,
+    ID_TYP   = 4,
+    NUM_TYP  = 5,
+    CHAR_TYP = 6,
+    STR_TYP  = 7,
+    SYM_TYP  = 8,
+    EXPR_TYP = 9
 } PatternType_T;
 
 class Pattern {
@@ -26,6 +27,7 @@ class Pattern {
         ~Pattern();
         std::list<PatternType_T>::iterator begin();
         std::list<PatternType_T>::iterator end();
+        AST* accept(std::vector<AST*>& params);
 };
 
 #endif

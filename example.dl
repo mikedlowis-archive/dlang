@@ -49,11 +49,18 @@ foo = {
 
 # Macro
 % if [
-    (Ex Bk) : exec_if($1, $2),
-    (Ex Bk Bk) : exec_if($1, $2, $3)
+    (Expression Block Block) : exec_if($1, $2, $3),
+    (Expression Block) : exec_if($1, $2)
 ]
 
-#if (1==1)
-#{
-#
-#}
+if (1==1)
+{
+    1 + 1
+}{
+
+}
+
+if (1 == 1)
+{
+
+}
