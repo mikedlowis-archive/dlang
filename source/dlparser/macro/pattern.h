@@ -26,6 +26,7 @@ class Pattern {
         void apply(AST* cur,std::vector<AST*>& params);
     public:
         Pattern(const std::list<PatternType_T>& patt, const AST* ast);
+        Pattern(const Pattern& patt);
         ~Pattern();
         std::list<PatternType_T>::iterator begin();
         std::list<PatternType_T>::iterator end();

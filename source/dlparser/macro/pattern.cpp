@@ -5,8 +5,15 @@ Pattern::Pattern(const std::list<PatternType_T>& patt, const AST* ast) : pattern
 {
 }
 
+Pattern::Pattern(const Pattern& patt)
+{
+    pattern = patt.pattern;
+    expr_ast = patt.expr_ast->clone();
+}
+
 Pattern::~Pattern()
 {
+    delete expr_ast;
 }
 
 std::list<PatternType_T>::iterator Pattern::begin()

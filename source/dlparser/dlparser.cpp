@@ -1,6 +1,6 @@
 #include "dlparser.h"
 #include "exception.h"
-#include "cork.h"
+#include "common.h"
 
 DLParser::DLParser() : BTParser(_new DLLexer())
 {
@@ -417,22 +417,30 @@ AST* DLParser::Literal(void)
 AST* DLParser::MapLiteral(void)
 {
     AST* ret = NULL;
-
-    match(LBRACE);
-    do
+    AST* child = NULL;
+    try
     {
-        if( lookaheadType(1) == COMMA ) consume();
+        match(LBRACE);
+        do
+        {
+            if( lookaheadType(1) == COMMA ) consume();
 
-        AST* child = Literal();
-        match(SEP);
-        child = _new AST(SEP, 2, child, LogicalExpr());
+            child = Literal();
+            match(SEP);
+            child = _new AST(SEP, 2, child, LogicalExpr());
 
-        ret = ((ret == NULL) ? _new AST(MAP) : ret);
-        ret->addChild(child);
+            ret = ((ret == NULL) ? _new AST(MAP) : ret);
+            ret->addChild(child);
+        }
+        while( lookaheadType(1) == COMMA );
+        match(RBRACE);
     }
-    while( lookaheadType(1) == COMMA );
-    match(RBRACE);
-
+    catch(Exception e)
+    {
+        if(ret != NULL) delete ret;
+        if(child != NULL) delete child;
+        throw e;
+    }
     return ret;
 }
 

@@ -5,7 +5,7 @@
 #include "dlparser.h"
 #include "astprinter.h"
 #include "scheme.h"
-#include "cork.h"
+#include "common.h"
 #include "macro.h"
 
 using namespace std;
@@ -51,7 +51,9 @@ int main(int argc, char** argv)
         cerr << "Error: No input files." << endl;
     }
 
+#ifdef DEBUG
     Cork_ReportMemoryLeaks();
+#endif
 
     return ret;
 }

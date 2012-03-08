@@ -1,6 +1,6 @@
 #include "dllexer.h"
 #include "exception.h"
-#include "cork.h"
+#include "common.h"
 
 using namespace std;
 

@@ -15,15 +15,32 @@ CLOBBER.include('./deps/parse-utils/build/shared')
 #------------------------------------------------------------------------------
 # Configuration Objects
 #------------------------------------------------------------------------------
-# Configuration for the binary artifact
+# Configuration for the release binary artifact
 DLangParser = Binary.new({
     :name => 'dlang',
-    :output_dir => 'build/parser',
+    :output_dir => 'build/release',
+    :compiler_options => [ '-c', '-Wall', '-Werror', '-o' ],
+    :static_libs => [
+        './deps/parse-utils/build/static/bin/libparse-utils.a',
+    ],
+    :source_files => [ 'source/**/*.c*' ],
+    :include_dirs => [
+        'source/**/',
+        'deps/parse-utils/source/**/'
+    ],
+})
+DLangParser.setup_default_rake_tasks()
+
+# Configuration for the release binary artifact
+DLangDebug = Binary.new({
+    :name => 'dlang',
+    :output_dir => 'build/debug',
     :compiler_options => [ '-c', '-Wall', '-Werror', '-o' ],
     :static_libs => [
         './deps/cork/build/static/bin/libcork.a',
         './deps/parse-utils/build/static/bin/libparse-utils.a',
     ],
+    :preprocessor_defines => [ 'DEBUG' ],
     :source_files => [ 'source/**/*.c*' ],
     :include_dirs => [
         'source/**/',
@@ -31,7 +48,7 @@ DLangParser = Binary.new({
         'deps/parse-utils/source/**/'
     ],
 })
-DLangParser.setup_default_rake_tasks()
+DLangDebug.setup_default_rake_tasks()
 
 # Configuration for the unit tests
 UnitTest = Tests.new({
@@ -39,8 +56,12 @@ UnitTest = Tests.new({
 })
 UnitTest.setup_default_rake_tasks()
 
+#------------------------------------------------------------------------------
+# Main Tasks
+#------------------------------------------------------------------------------
 desc 'Build and link all artifacts'
-task :release => [ :cork, :parse_utils, DLangParser.name() ]
+task :release => [ :parse_utils, DLangParser.name() ]
+task :debug => [ :cork, :parse_utils, DLangDebug.name() ]
 
 desc 'Build the cork memory leak detector'
 task :cork do
