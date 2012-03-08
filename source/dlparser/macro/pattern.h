@@ -19,9 +19,11 @@ typedef enum {
 } PatternType_T;
 
 class Pattern {
-    private:
+    protected:
         std::list<PatternType_T> pattern;
         const AST* expr_ast;
+    private:
+        void apply(AST* cur,std::vector<AST*>& params);
     public:
         Pattern(const std::list<PatternType_T>& patt, const AST* ast);
         ~Pattern();

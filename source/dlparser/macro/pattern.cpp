@@ -1,4 +1,5 @@
 #include "pattern.h"
+#include "dllexer.h"
 
 Pattern::Pattern(const std::list<PatternType_T>& patt, const AST* ast) : pattern(patt), expr_ast(ast)
 {
@@ -18,16 +19,44 @@ std::list<PatternType_T>::iterator Pattern::end()
     return pattern.end();
 }
 
+void Pattern::apply(AST* cur,std::vector<AST*>& params)
+{
+    if  (cur != NULL)
+    {
+        list<AST*>* children = cur->children();
+        list<AST*>::iterator it = children->begin();
+
+        // Visit the tree
+        for(; it != children->end(); it++)
+        {
+            if ((*it)->type() == SYMBOL)
+            {
+                unsigned int arg;
+                istringstream((*it)->text()) >> arg;
+
+                if (arg <= params.size())
+                {
+                    AST* temp = *it;
+                    *it = params[ arg - 1 ];
+                    delete temp;
+                }
+                else
+                {
+                    throw "Invalid parameter number";
+                }
+            }
+            else
+            {
+                apply( *it, params );
+            }
+        }
+    }
+}
+
 AST* Pattern::accept(std::vector<AST*>& params)
 {
     AST* ret = expr_ast->clone();
-    // TODO: Perform AST substitution
-    // if size == to expected
-    //      clone exp tree
-    //      replace symbols with params
-    // else
-    //      Throw exception
-    // endif
+    apply( ret, params );
     return ret;
 }
 

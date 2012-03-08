@@ -80,8 +80,10 @@ bool DLParser::speculate_MacroPatternMatch(Pattern patt)
 
 AST* DLParser::MacroPatternMatch(Pattern patt)
 {
+    AST* ret = NULL;
     std::vector<AST*> params;
     std::list<PatternType_T>::iterator patt_it;
+
     for(patt_it = patt.begin(); patt_it != patt.end(); patt_it++)
     {
         AST* param = NULL;
@@ -137,10 +139,20 @@ AST* DLParser::MacroPatternMatch(Pattern patt)
                 throw Exception(lookaheadToken(1).line(), lookaheadToken(1).column());
                 break;
         }
-        params.push_back(param);
+
+        if( !isSpeculating() )
+        {
+            params.push_back(param);
+        }
+        else
+        {
+            delete param;
+        }
     }
 
-    return patt.accept( params );
+    ret = (isSpeculating()) ? _new AST(MACRO) : patt.accept( params );
+
+    return ret;
 }
 
 bool DLParser::speculate_GroupExpr(void)
@@ -511,7 +523,6 @@ Pattern DLParser::MacroPattern(void)
     {
         std::string text = lookaheadToken(1).text();
         match(ID);
-        //pattern.push_back( str_to_patt_type(text) );
         if( pattern_types.find(text) != pattern_types.end() )
         {
             pattern.push_back( pattern_types[ text ] );
