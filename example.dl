@@ -1,53 +1,56 @@
 #------------------------------------------------------------------------------
-# Literals
+# Literal Definition and Usage
 #------------------------------------------------------------------------------
 
-# VectorLiteral
-foo = []
-foo = [1]
-foo = [1,2,3]
-foo = foo[1]
-foo = [1,2,3,4,5][2]
-
-# ListLiteral
-foo = ()
-foo = (1,2,3)
-foo = foo[1]
-foo = (1,2,3,4,5)[2]
-
-# FuncLiteral
-foo = { 1 + 1 }
-foo = {|a| a + 1}
-foo = {|a,b| a + b }
-foo = foo(1,2)
-foo = ({|a,b| a + b })(1,2)
-
-# ID
-foo = bar
-foo.bar = bar
-
-# NUM
+# Nums
 foo = 1
 foo = 1.0
 
-# CHAR
+# Char
 foo = 'a'
 
-# STRING
+# String
 foo = "some string"
 foo = "12345"[2]
 
-# SYMBOL
+# Symbol
 foo = $some_symbol
 
-# MAP
+# Id
+foo = bar
+foo.bar = bar
+
+# Map
 foo = {
     $foo : 1 + 1,
     $bar : 2 + 2,
     $stuff : 3 + 3
 }
 
-# Macro
+# Vector
+foo = []
+foo = [1]
+foo = [1,2,3]
+foo = foo[1]
+foo = [1,2,3,4,5][2]
+
+# List
+foo = ()
+foo = (1,2,3)
+foo = foo[1]
+foo = (1,2,3,4,5)[2]
+
+# Block
+foo = { 1 + 1 }
+foo = {|a| a + 1}
+foo = {|a,b| a + b }
+foo = foo(1,2)
+foo = ({|a,b| a + b })(1,2)
+
+#------------------------------------------------------------------------------
+# Macro Definition and Usage
+#------------------------------------------------------------------------------
+
 % if [
     (Expression Block Block) : exec_if($1, $2, $3),
     (Expression Block) : exec_if($1, $2)
@@ -64,3 +67,14 @@ if (1 == 1)
 {
 
 }
+
+#------------------------------------------------------------------------------
+# Delayed Evaluation
+#------------------------------------------------------------------------------
+
+% delay [ (Expression) : make_promise({ $1 }) ]
+% force [ (Expression) : $1 ]
+
+foo = delay 1 + 1
+foo = force foo
+

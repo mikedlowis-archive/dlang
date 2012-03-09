@@ -15,12 +15,14 @@
 (define FN_CALL apply)
 (define (ARRY_IDX coll idx)
   (cond
-	((list? coll)
-	  (list-ref coll idx))
-	((vector? coll)
-	  (vector-ref coll idx))
-	((string? coll)
-	  (string-ref coll idx))))
+    ((list? coll)
+      (list-ref coll idx))
+    ((vector? coll)
+      (vector-ref coll idx))
+    ((hash-table? coll)
+      (hash-table-ref coll idx))
+    ((string? coll)
+      (string-ref coll idx))))
 
 ;------------------------------------------------------------------------------
 ; Built-in datatype constructors
@@ -35,6 +37,7 @@
 ;------------------------------------------------------------------------------
 (require-extension srfi-1)     ; List library
 (require-extension srfi-13)    ; String library
+(require-extension srfi-69)    ; Hash library
 (require-extension vector-lib) ; Vector library
 
 ;------------------------------------------------------------------------------
@@ -52,6 +55,7 @@
 (define dl/Char 'dl/Char)
 (define dl/List 'dl/List)
 (define dl/Vector 'dl/Vector)
+(define dl/Hash 'dl/Hash)
 (define dl/String 'dl/String)
 (define dl/Symbol 'dl/Symbol)
 (define dl/Block 'dl/Block)
@@ -68,11 +72,13 @@
 (define dl/list_map map)
 (define dl/vector_map vector-map)
 (define dl/string_map string-map)
+(define dl/hash_map hash-table-map)
 
 ; for_each function definitions
 (define dl/list_for_each for-each)
 (define dl/vector_for_each vector-for-each)
 (define dl/string_for_each string-for-each)
+(define dl/hash_for_each hash-table-for-each)
 
 ; any function definitions
 (define dl/list_any any)
@@ -88,6 +94,7 @@
 (define dl/list_fold fold)
 (define dl/vector_fold vector-fold)
 (define dl/string_fold string-fold)
+(define dl/hash_table_fold hash-table-fold)
 
 ; fold_right function definitions
 (define dl/list_fold_right fold-right)
@@ -103,100 +110,106 @@
 (define dl/list_concat concatenate)
 (define dl/vector_concat vector-concatenate)
 (define dl/string_concat string-concatenate)
+(define dl/hash_concat hash-table-merge)
 
 ; Define type symbols
 (define (dl/typeof var)
   (cond
-	((number? var)    dl/Num)
-	((char? var)      dl/Char)
-	((list? var)      dl/List)
-	((vector? var)    dl/Vector)
-	((string? var)    dl/String)
-	((symbol? var)    dl/Symbol)
-	((procedure? var) dl/Block) ))
+    ((number? var)     dl/Num)
+    ((char? var)       dl/Char)
+    ((list? var)       dl/List)
+    ((vector? var)     dl/Vector)
+    ((hash-table? var) dl/Hash)
+    ((string? var)     dl/String)
+    ((symbol? var)     dl/Symbol)
+    ((procedure? var)  dl/Block) ))
 
 (define (dl/assert cnd . msg)
   ; If condition is false
-  (if (not cnd) 
-	; If message is defined
-	(if (not (null? msg))
-	  ; Display the message
-	  (error (car msg))
-	  ; Otherwise display a default message
-	  (error "Assertion failed.") )))
+  (if (not cnd)
+    ; If message is defined
+    (if (not (null? msg))
+      ; Display the message
+      (error (car msg))
+      ; Otherwise display a default message
+      (error "Assertion failed.") )))
 
-(define (dl/exec_if a b . c) 
-  (if a 
-	; call b as function
-	(b)
-	; If c exists
-	(if (not (null? c))
-	  ; Call the head of c as a function
-	  ((car c)) )))
+(define (dl/exec_if a b . c)
+  (if a
+    ; call b as function
+    (b)
+    ; If c exists
+    (if (not (null? c))
+      ; Call the head of c as a function
+      ((car c)) )))
 
 (define (dl/map . args)
   (let ((ls (list-ref args 1)))
-  	(cond
-		((list? ls)   (apply map args))
-		((vector? ls) (apply vector-map args))
-		((string? ls) (apply string-map args)) )))
+    (cond
+        ((list? ls)   (apply map args))
+        ((vector? ls) (apply vector-map args))
+        ((hash-table? ls) (apply hash-table-map args))
+        ((string? ls) (apply string-map args)) )))
 
 (define (dl/for_each . args)
   (let ((ls (list-ref args 1)))
-  	(cond
-		((list? ls)   (apply for-each args))
-		((vector? ls) (apply vector-for-each args))
-		((string? ls) (apply string-for-each args)) )))
+    (cond
+        ((list? ls)   (apply for-each args))
+        ((vector? ls) (apply vector-for-each args))
+        ((hash-table? ls) (apply hash-table-for-each args))
+        ((string? ls) (apply string-for-each args)) )))
 
 (define (dl/any . args)
   (let ((ls (list-ref args 1)))
-  	(cond
-		((list? ls)   (apply any args))
-		((vector? ls) (apply vector-any args))
-		((string? ls) (apply string-any args)) )))
+    (cond
+        ((list? ls)   (apply any args))
+        ((vector? ls) (apply vector-any args))
+        ((string? ls) (apply string-any args)) )))
 
 (define (dl/for_all . args)
   (let ((ls (list-ref args 1)))
-  	(cond
-		((list? ls)   (apply every args))
-		((vector? ls) (apply vector-every args))
-		((string? ls) (apply string-every args)) )))
+    (cond
+        ((list? ls)   (apply every args))
+        ((vector? ls) (apply vector-every args))
+        ((string? ls) (apply string-every args)) )))
 
 (define (dl/fold_left . args)
   (let ((ls (list-ref args 2)))
-  	(cond
-		((list? ls)   (apply fold args))
-		((vector? ls) (apply vector-fold args))
-		((string? ls) (apply string-fold args)) )))
+    (cond
+        ((list? ls)   (apply fold args))
+        ((vector? ls) (apply vector-fold args))
+        ((hash-table? ls) (apply hash-table-fold args))
+        ((string? ls) (apply string-fold args)) )))
 
 (define (dl/fold_right . args)
   (let ((ls (list-ref args 2)))
-  	(cond
-		((list? ls)   (apply fold-right args))
-		((vector? ls) (apply vector-fold-right args))
-		((string? ls) (apply string-fold-right args)) )))
+    (cond
+        ((list? ls)   (apply fold-right args))
+        ((vector? ls) (apply vector-fold-right args))
+        ((string? ls) (apply string-fold-right args)) )))
 
 (define (dl/append . args)
   (let ((ls (list-ref args 1)))
-  	(cond
-		((list? ls)   (apply append args))
-		((vector? ls) (apply vector-append args))
-		((string? ls) (apply string-append args)) )))
+    (cond
+        ((list? ls)   (apply append args))
+        ((vector? ls) (apply vector-append args))
+        ((string? ls) (apply string-append args)) )))
 
 (define (dl/concat . args)
   (let ((ls (list-ref args 1)))
-  	(cond
-		((list? ls)   (apply concatenate args))
-		((vector? ls) (apply vector-concatenate args))
-		((string? ls) (apply string-concatenate args)) )))
+    (cond
+        ((list? ls)   (apply concatenate args))
+        ((vector? ls) (apply vector-concatenate args))
+        ((hash-table? ls) (apply hash-table-concatenate args))
+        ((string? ls) (apply string-concatenate args)) )))
 
 (define (error reason . args)
       (display "Error: ")
       (display reason)
-      (for-each (lambda (arg) 
+      (for-each (lambda (arg)
                   (display " ")
-		  (write arg))
-		args)
+          (write arg))
+        args)
       (newline))
 
 (define dl/error error)
