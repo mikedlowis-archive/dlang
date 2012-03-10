@@ -18,32 +18,32 @@ int main(int argc, char** argv)
 
     if( (argc == 2) && fileExists( argv[1] ) )
     {
+        // Setup input and output files
         string input_fname(argv[1]);
         string temp_fname = createTempFileName( input_fname );
+
+        // Open input and output streams
         ifstream input(input_fname.c_str());
         ofstream output(temp_fname.c_str());
+
+        // Setup Parser and Visitors
         DLParser parser;
         Scheme printer(output);
         parser.input(new DLLexer(input));
+
+        // Parse the input stream
         parser.parse();
+
+        // Post process the AST (converts to scheme and prints to output file)
         parser.process( printer );
 
-        //string input_fname(argv[1]);
-        //string temp_fname = createTempFileName( input_fname );
-        //ASTPrinter* visitor = NULL;
+        // Close the output file
+        output.close();
 
-        //// Open the input and output files
-        //ifstream input(input_fname.c_str());
+        // Compile the temporary file with chicken scheme
+        system( string("csc -O5 " + temp_fname).c_str() );
 
-        //// Parse the file
-        //parser.setInput(&input);
-
-        //// Translate the AST
-        //visitor = _new ASTPrinter( parser.parse() );
-        //visitor->visit();
-
-        //// Write output to screen
-        //cout << visitor->str();
+        (void)remove( temp_fname.c_str() );
     }
     else
     {
