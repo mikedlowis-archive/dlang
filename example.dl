@@ -18,14 +18,14 @@ foo = $some_symbol
 
 # Id
 foo = bar
-foo.bar = bar
+#foo.bar = bar
 
 # Map
-foo = {
-    $foo : 1 + 1,
-    $bar : 2 + 2,
-    $stuff : 3 + 3
-}
+#foo = {
+#    $foo : 1 + 1,
+#    $bar : 2 + 2,
+#    $stuff : 3 + 3
+#}
 
 # Vector
 foo = []
@@ -58,23 +58,28 @@ foo = ({|a,b| a + b })(1,2)
 
 if (1==1)
 {
-    1 + 1
+    print(1 + 1)
 }{
-
+    print(2 + 2)
 }
 
 if (1 == 1)
 {
-
+    print(1 + 1)
 }
 
 #------------------------------------------------------------------------------
 # Delayed Evaluation
 #------------------------------------------------------------------------------
 
-% delay [ (Expression) : make_promise({ $1 }) ]
-% force [ (Expression) : $1 ]
-
-foo = delay 1 + 1
-foo = force foo
+#% delay [
+#    (Expression) : make_promise({ $1 })
+#]
+#
+#% force [
+#    (Expression) : $1
+#]
+#
+#foo = delay 1 + 1
+#foo = force foo
 

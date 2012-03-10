@@ -3,7 +3,6 @@
 #include <sstream>
 #include <fstream>
 #include "dlparser.h"
-#include "astprinter.h"
 #include "scheme.h"
 #include "common.h"
 #include "macro.h"
@@ -21,23 +20,29 @@ int main(int argc, char** argv)
     {
         string input_fname(argv[1]);
         string temp_fname = createTempFileName( input_fname );
-        DLParser parser;
-        ASTPrinter* visitor = NULL;
-
-        // Open the input and output files
         ifstream input(input_fname.c_str());
+        DLParser parser;
+        Scheme printer;
+        parser.input(new DLLexer(input));
+        parser.parse();
+        parser.process( printer );
 
-        // Parse the file
-        parser.setInput(&input);
+        //string input_fname(argv[1]);
+        //string temp_fname = createTempFileName( input_fname );
+        //ASTPrinter* visitor = NULL;
 
-        // Translate the AST
-        visitor = _new ASTPrinter( parser.parse() );
-        visitor->visit();
+        //// Open the input and output files
+        //ifstream input(input_fname.c_str());
 
-        // Write output to screen
-        cout << visitor->str();
+        //// Parse the file
+        //parser.setInput(&input);
 
-        delete visitor;
+        //// Translate the AST
+        //visitor = _new ASTPrinter( parser.parse() );
+        //visitor->visit();
+
+        //// Write output to screen
+        //cout << visitor->str();
     }
     else
     {

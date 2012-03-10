@@ -62,6 +62,7 @@ typedef struct {
 
 class DLLexer : public ILexer {
     public:
+        DLLexer(std::istream& in);
         bool isWhiteSpace(void);
         bool isLetter(void);
         bool isDigit(void);

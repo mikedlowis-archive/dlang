@@ -2,7 +2,7 @@
 #include "exception.h"
 #include "common.h"
 
-DLParser::DLParser() : BTParser(_new DLLexer())
+DLParser::DLParser() : BTParser()
 {
     pattern_types.insert( std::pair<std::string,PatternType_T>( "Map", MAP_TYP ));
     pattern_types.insert( std::pair<std::string,PatternType_T>( "Vector", VECT_TYP ));
@@ -20,9 +20,9 @@ DLParser::~DLParser()
 {
 }
 
-AST* DLParser::parse(void)
+void DLParser::parse(void)
 {
-    return Program();
+    result = Program();
 }
 
 bool DLParser::isMacro( Token& token )

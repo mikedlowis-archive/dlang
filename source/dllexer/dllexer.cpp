@@ -22,6 +22,10 @@ SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '.', MEMB },
 };
 
+DLLexer::DLLexer(std::istream& in) : ILexer(in)
+{
+}
+
 bool DLLexer::isWhiteSpace(void)
 {
     return (current == ' ') ||
@@ -61,7 +65,7 @@ bool DLLexer::isStringChar(void)
 Token DLLexer::next(void)
 {
     Token ret;
-    while ( (!input->eof()) && (ret.type() == EOF) )
+    while ( !eof() && (ret.type() == EOF) )
     {
         if (isWhiteSpace())
         {

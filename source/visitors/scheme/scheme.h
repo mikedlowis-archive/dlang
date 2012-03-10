@@ -7,11 +7,8 @@
 #include "dllexer.h"
 
 class Scheme : public IVisitor {
-    protected:
-        ostringstream stream;
     public:
-        Scheme(AST* root);
-        string str();
+        Scheme();
         string typeToString(ASTNodeType type);
         bool isDatatype(ASTNodeType type);
         void printDatatype(AST* cur);

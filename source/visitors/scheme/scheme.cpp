@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Scheme::Scheme(AST* root) : IVisitor(root) {
+Scheme::Scheme() : IVisitor() {
     ifstream input("res/environment.scm");
     if (input.is_open())
     {
@@ -11,15 +11,10 @@ Scheme::Scheme(AST* root) : IVisitor(root) {
         {
             string line;
             getline(input,line);
-            stream << line << endl;
+            cout << line << endl;
         }
     }
     input.close();
-}
-
-string Scheme::str()
-{
-    return stream.str();
 }
 
 string Scheme::typeToString(ASTNodeType type)
@@ -93,7 +88,7 @@ void Scheme::beforeVisit(AST* cur, int depth)
 
 void Scheme::afterVisit(AST* cur, int depth)
 {
-    stream << endl;
+    cout << endl;
 }
 
 void Scheme::beforeChildren(AST* cur, int depth)
@@ -104,7 +99,7 @@ void Scheme::beforeChildren(AST* cur, int depth)
     }
     else
     {
-        stream << "(" << typeToString( cur->type() ) << cur->text();
+        cout << "(" << typeToString( cur->type() ) << cur->text();
     }
 }
 
@@ -112,16 +107,16 @@ void Scheme::afterChildren(AST* cur, int depth)
 {
     if( !isDatatype( cur->type() ) )
     {
-        stream << ")";
+        cout << ")";
     }
 }
 
 void Scheme::beforeChild(AST* cur, int depth)
 {
-    stream << endl;
+    cout << endl;
     for(int i = 0; i< depth; i++)
     {
-        stream << "  ";
+        cout << "  ";
     }
 }
 
@@ -152,19 +147,19 @@ void Scheme::printDatatype(AST* cur)
     switch(cur->type())
     {
         case ID:
-            stream << "dl/" << cur->text();
+            cout << "dl/" << cur->text();
             break;
         case NUM:
-            stream << cur->text();
+            cout << cur->text();
             break;
         case CHAR:
             charToString( cur->text() );
             break;
         case STRING:
-            stream << '"' << cur->text() << '"';
+            cout << '"' << cur->text() << '"';
             break;
         case SYMBOL:
-            stream << '\'' << cur->text();
+            cout << '\'' << cur->text();
             break;
         default:
             break;
@@ -176,15 +171,15 @@ void Scheme::charToString(string ch)
     switch(ch.at(0))
     {
         case ' ':
-            stream << "#\\space";
+            cout << "#\\space";
             break;
         case '\n':
-            stream << "#\\newline";
+            cout << "#\\newline";
             break;
         case '\r':
-            stream << "#\\return";
+            cout << "#\\return";
             break;
         default:
-            stream << "#\\" << ch;
+            cout << "#\\" << ch;
     }
 }

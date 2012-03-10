@@ -14,7 +14,7 @@ class DLParser : public BTParser
     public:
         DLParser();
         ~DLParser();
-        AST* parse(void);
+        void parse(void);
         bool isMacro(Token& token);
         bool speculate_GroupExpr(void);
         bool speculate_MapLiteral(void);
