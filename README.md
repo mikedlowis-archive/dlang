@@ -1,7 +1,7 @@
 DLang
 ==============================================
 
-    Version:    0.1a
+    Version:    0.2
     Created By: Michael D. Lowis
     Email:      mike@mdlowis.com
 
@@ -39,8 +39,8 @@ You build dlang with the following command:
 The resulting binary is placed in 'build/bin'. You can test it with the
 following commands:
 
-    build/bin/dlang example.dl
-    ./example.exe
+    build/release/bin/dlang example.dl
+    ./example
 
 Installation
 ----------------------------------------------
@@ -70,13 +70,17 @@ Know Issues or Bugs
 This is a non-comprehensive list of known issues and bugs that I intend to fix.
 
 * The parser segfaults on \*nix systems due to freeing invalid pointers and other memory management issues
-* Leaks memory like a sieve.
 * Error messages are obtuse and unfriendly.
 * Parser and Lexer have 0 error recovery.
-* Usage prints out full path of binary instead of just the name.
 
 Version History
 ----------------------------------------------
+
+### Version 0.2
+
+This version includes a much improved macro syntax with support for multiple
+patterns similar to scheme macros. There is also a map data type and a cleaner
+syntax for list literals. See example.dl for an example of the updated syntax.
 
 ### Version 0.1a
 
@@ -91,11 +95,7 @@ This is a list of features are not yet supported, but may be at some point in
 the future.
 
 * Command line options
-* Overloaded macros.
 * Multi-file support
-* Inline function definition and application
-* Inline array definition and access
-* Inline list definition and access
 
 More Info
 ----------------------------------------------
