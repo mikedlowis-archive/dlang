@@ -6,16 +6,16 @@ using namespace std;
 
 DLParser::DLParser() : BTParser()
 {
-    pattern_types.insert( pair<string,PatternType_T>( "Map", MAP_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "Vector", VECT_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "List", LIST_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "Block", BLK_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "Id", ID_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "Num", NUM_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "Char", CHAR_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "String", STR_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "Symbol", SYM_TYP ));
-    pattern_types.insert( pair<string,PatternType_T>( "Expression", EXPR_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "M", MAP_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "V", VECT_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "L", LIST_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "B", BLK_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "I", ID_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "N", NUM_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "C", CHAR_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "St", STR_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Sy", SYM_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "E", EXPR_TYP ));
 }
 
 DLParser::~DLParser()

@@ -52,8 +52,8 @@ foo = ({|a,b| a + b })(1,2)
 #------------------------------------------------------------------------------
 
 % if [
-    (Expression Block Block) : exec_if($1, $2, $3),
-    (Expression Block) : exec_if($1, $2)
+    (E B B) : exec_if($1, $2, $3),
+    (E B)   : exec_if($1, $2)
 ]
 
 if (1==1)
@@ -73,11 +73,11 @@ if (1 == 1)
 #------------------------------------------------------------------------------
 
 % delay [
-    (Expression) : make_promise({ $1 })
+    (E) : make_promise({ $1 })
 ]
 
 % force [
-    (Expression) : $1()
+    (E) : $1()
 ]
 
 foo = delay 1 + 1
