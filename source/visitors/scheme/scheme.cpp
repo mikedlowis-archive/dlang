@@ -101,10 +101,7 @@ void Scheme::beforeChildren(AST* cur, int depth)
 {
     if (cur->type() == MEMB)
     {
-        AST* temp = cur->children()->back();
-        cur->children()->pop_back();
-        cur->children()->push_back( new AST(STRING, temp->text()) );
-        delete temp;
+        cur->children()->back()->type(STRING);
     }
 
     if( isDatatype( cur->type() ) )
