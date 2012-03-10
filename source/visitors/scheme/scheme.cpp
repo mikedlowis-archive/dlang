@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Scheme::Scheme() : IVisitor() {
+Scheme::Scheme(std::ostream& out) : IVisitor(), stream(out) {
     ifstream input("res/environment.scm");
     if (input.is_open())
     {
@@ -11,7 +11,7 @@ Scheme::Scheme() : IVisitor() {
         {
             string line;
             getline(input,line);
-            cout << line << endl;
+            stream << line << endl;
         }
     }
     input.close();
@@ -27,6 +27,8 @@ string Scheme::typeToString(ASTNodeType type)
             ret << "ID "; break;
         case NUM:
             ret << "NUM "; break;
+        case MAP:
+            ret << "MAP "; break;
         case CHAR:
             ret << "CHAR "; break;
         case ADD:
@@ -73,6 +75,10 @@ string Scheme::typeToString(ASTNodeType type)
             ret << "FN_CALL "; break;
         case ARRY_IDX:
             ret << "ARRY_IDX "; break;
+        case SEP:
+            ret << "cons "; break;
+        case MEMB:
+            ret << "hash-table-ref "; break;
         case PARAMS:
             break;
         default:
@@ -88,18 +94,26 @@ void Scheme::beforeVisit(AST* cur, int depth)
 
 void Scheme::afterVisit(AST* cur, int depth)
 {
-    cout << endl;
+    stream << endl;
 }
 
 void Scheme::beforeChildren(AST* cur, int depth)
 {
+    if (cur->type() == MEMB)
+    {
+        AST* temp = cur->children()->back();
+        cur->children()->pop_back();
+        cur->children()->push_back( new AST(STRING, temp->text()) );
+        delete temp;
+    }
+
     if( isDatatype( cur->type() ) )
     {
         printDatatype( cur );
     }
     else
     {
-        cout << "(" << typeToString( cur->type() ) << cur->text();
+        stream << "(" << typeToString( cur->type() ) << cur->text();
     }
 }
 
@@ -107,16 +121,16 @@ void Scheme::afterChildren(AST* cur, int depth)
 {
     if( !isDatatype( cur->type() ) )
     {
-        cout << ")";
+        stream << ")";
     }
 }
 
 void Scheme::beforeChild(AST* cur, int depth)
 {
-    cout << endl;
+    stream << endl;
     for(int i = 0; i< depth; i++)
     {
-        cout << "  ";
+        stream << "  ";
     }
 }
 
@@ -147,19 +161,19 @@ void Scheme::printDatatype(AST* cur)
     switch(cur->type())
     {
         case ID:
-            cout << "dl/" << cur->text();
+            stream << "dl/" << cur->text();
             break;
         case NUM:
-            cout << cur->text();
+            stream << cur->text();
             break;
         case CHAR:
             charToString( cur->text() );
             break;
         case STRING:
-            cout << '"' << cur->text() << '"';
+            stream << '"' << cur->text() << '"';
             break;
         case SYMBOL:
-            cout << '\'' << cur->text();
+            stream << '\'' << cur->text();
             break;
         default:
             break;
@@ -171,15 +185,15 @@ void Scheme::charToString(string ch)
     switch(ch.at(0))
     {
         case ' ':
-            cout << "#\\space";
+            stream << "#\\space";
             break;
         case '\n':
-            cout << "#\\newline";
+            stream << "#\\newline";
             break;
         case '\r':
-            cout << "#\\return";
+            stream << "#\\return";
             break;
         default:
-            cout << "#\\" << ch;
+            stream << "#\\" << ch;
     }
 }

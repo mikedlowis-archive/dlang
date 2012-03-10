@@ -1,6 +1,8 @@
 #include "pattern.h"
 #include "dllexer.h"
 
+using namespace std;
+
 Pattern::Pattern(const std::list<PatternType_T>& patt, const AST* ast) : pattern(patt), expr_ast(ast)
 {
 }

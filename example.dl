@@ -16,16 +16,16 @@ foo = "12345"[2]
 # Symbol
 foo = $some_symbol
 
-# Id
-foo = bar
-#foo.bar = bar
-
 # Map
-#foo = {
-#    $foo : 1 + 1,
-#    $bar : 2 + 2,
-#    $stuff : 3 + 3
-#}
+foo = {
+    $foo : 1 + 1,
+    "stuff" : 2 + 2,
+    $bar : 3 + 3
+}
+
+print( foo[$bar] )
+print( foo["stuff"] )
+print( foo.stuff )
 
 # Vector
 foo = []
@@ -72,14 +72,14 @@ if (1 == 1)
 # Delayed Evaluation
 #------------------------------------------------------------------------------
 
-#% delay [
-#    (Expression) : make_promise({ $1 })
-#]
-#
-#% force [
-#    (Expression) : $1
-#]
-#
-#foo = delay 1 + 1
-#foo = force foo
+% delay [
+    (Expression) : make_promise({ $1 })
+]
+
+% force [
+    (Expression) : $1()
+]
+
+foo = delay 1 + 1
+foo = force foo
 

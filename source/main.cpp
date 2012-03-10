@@ -21,8 +21,9 @@ int main(int argc, char** argv)
         string input_fname(argv[1]);
         string temp_fname = createTempFileName( input_fname );
         ifstream input(input_fname.c_str());
+        ofstream output(temp_fname.c_str());
         DLParser parser;
-        Scheme printer;
+        Scheme printer(output);
         parser.input(new DLLexer(input));
         parser.parse();
         parser.process( printer );

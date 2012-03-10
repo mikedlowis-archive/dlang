@@ -2,18 +2,20 @@
 #include "exception.h"
 #include "common.h"
 
+using namespace std;
+
 DLParser::DLParser() : BTParser()
 {
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "Map", MAP_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "Vector", VECT_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "List", LIST_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "Block", BLK_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "Id", ID_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "Num", NUM_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "Char", CHAR_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "String", STR_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "Symbol", SYM_TYP ));
-    pattern_types.insert( std::pair<std::string,PatternType_T>( "Expression", EXPR_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Map", MAP_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Vector", VECT_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "List", LIST_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Block", BLK_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Id", ID_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Num", NUM_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Char", CHAR_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "String", STR_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Symbol", SYM_TYP ));
+    pattern_types.insert( pair<string,PatternType_T>( "Expression", EXPR_TYP ));
 }
 
 DLParser::~DLParser()
@@ -42,6 +44,7 @@ AST* DLParser::MacroExpansion()
     Macro macro = macros[ lookaheadToken(1).text() ];
     std::list<Pattern>::iterator patt_it;
 
+    match(ID);
     for(patt_it = macro.begin(); patt_it != macro.end(); patt_it++)
     {
         if( speculate_MacroPatternMatch(*patt_it) )
@@ -220,6 +223,17 @@ AST* DLParser::Expression(void)
 
 AST* DLParser::AssignExpr(void)
 {
+    AST* ret = LogicalExpr();
+    if(lookaheadType(1) == ASSIGN)
+    {
+        match(ASSIGN);
+        ret = new AST(ASSIGN, 2, ret, LogicalExpr());
+    }
+    return ret;
+}
+
+AST* DLParser::LogicalExpr(void)
+{
     AST* ret = NULL;
     if( isMacro( lookaheadToken(1) ) )
     {
@@ -227,24 +241,13 @@ AST* DLParser::AssignExpr(void)
     }
     else
     {
-        ret = LogicalExpr();
-        if(lookaheadType(1) == ASSIGN)
+        ret = CompExpr();
+        while((lookaheadType(1) == AND) || (lookaheadType(1) == OR))
         {
-            match(ASSIGN);
-            ret = new AST(ASSIGN, 2, ret, LogicalExpr());
+            ret = _new AST( lookaheadType(1), 1, ret);
+            consume();
+            ret->addChild( CompExpr() );
         }
-    }
-    return ret;
-}
-
-AST* DLParser::LogicalExpr(void)
-{
-    AST* ret = CompExpr();
-    while((lookaheadType(1) == AND) || (lookaheadType(1) == OR))
-    {
-        ret = _new AST( lookaheadType(1), 1, ret);
-        consume();
-        ret->addChild( CompExpr() );
     }
     return ret;
 }

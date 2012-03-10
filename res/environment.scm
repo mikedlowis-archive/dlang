@@ -30,6 +30,7 @@
 (define VECTOR vector)
 (define LIST list)
 (define PARAMS list)
+(define (MAP . args) (alist->hash-table args))
 (define (MACRO) '())
 
 ;------------------------------------------------------------------------------

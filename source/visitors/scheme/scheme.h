@@ -7,12 +7,14 @@
 #include "dllexer.h"
 
 class Scheme : public IVisitor {
+    protected:
+        std::ostream& stream;
     public:
-        Scheme();
-        string typeToString(ASTNodeType type);
+        Scheme(std::ostream& in);
+        std::string typeToString(ASTNodeType type);
         bool isDatatype(ASTNodeType type);
         void printDatatype(AST* cur);
-        void charToString(string ch);
+        void charToString(std::string ch);
     private:
         void beforeVisit(AST* cur, int depth);
         void afterVisit(AST* cur, int depth);
