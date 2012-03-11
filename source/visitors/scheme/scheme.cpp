@@ -32,55 +32,61 @@ string Scheme::typeToString(ASTNodeType type)
         case CHAR:
             ret << "CHAR "; break;
         case ADD:
-            ret << "ADD "; break;
+            ret << "+ "; break;
         case SUB:
-            ret << "SUB "; break;
+            ret << "- "; break;
         case MUL:
-            ret << "MUL "; break;
+            ret << "* "; break;
         case DIV:
-            ret << "DIV "; break;
+            ret << "/ "; break;
         case AND:
             ret << "and "; break;
         case OR:
             ret << "or "; break;
         case NOT:
-            ret << "NOT "; break;
+            ret << "not "; break;
         case EQ:
-            ret << "EQ "; break;
+            ret << "equal? "; break;
         case NE:
             ret << "NE "; break;
         case LT:
-            ret << "LT "; break;
+            ret << "< "; break;
         case GT:
-            ret << "GT "; break;
+            ret << "> "; break;
         case LTE:
-            ret << "LTE "; break;
+            ret << "<= "; break;
         case GTE:
-            ret << "GTE "; break;
-        case MACRO:
-            ret << "MACRO "; break;
-        case ASSIGN:
+            ret << ">= "; break;
+        case DEFN:
             ret << "define "; break;
+        case ASSIGN:
+            ret << "set! "; break;
         case PROGRAM:
             ret << "begin "; break;
         case VECTOR:
-            ret << "VECTOR "; break;
+            ret << "vector "; break;
         case LIST:
-            ret << "LIST "; break;
+            ret << "list "; break;
         case BLOCK:
             ret << "begin "; break;
         case FUNC:
             ret << "lambda "; break;
         case FN_CALL:
-            ret << "FN_CALL "; break;
+            ret << "apply "; break;
         case ARRY_IDX:
             ret << "ARRY_IDX "; break;
         case SEP:
             ret << "cons "; break;
         case MEMB:
             ret << "hash-table-ref "; break;
+
+        // Print nothing for the following nodes
+        case MACRO:
         case PARAMS:
             break;
+
+        // Print out the type id (this will probably cause an error but also
+        // alert us to the fact that it is not properly handled)
         default:
             ret << type; break;
     }
@@ -99,24 +105,27 @@ void Scheme::afterVisit(AST* cur, int depth)
 
 void Scheme::beforeChildren(AST* cur, int depth)
 {
-    if (cur->type() == MEMB)
+    if( cur->type() != MACRO )
     {
-        cur->children()->back()->type(STRING);
-    }
+        if (cur->type() == MEMB)
+        {
+            cur->children()->back()->type(STRING);
+        }
 
-    if( isDatatype( cur->type() ) )
-    {
-        printDatatype( cur );
-    }
-    else
-    {
-        stream << "(" << typeToString( cur->type() ) << cur->text();
+        if( isDatatype( cur->type() ) )
+        {
+            printDatatype( cur );
+        }
+        else
+        {
+            stream << "(" << typeToString( cur->type() ) << cur->text();
+        }
     }
 }
 
 void Scheme::afterChildren(AST* cur, int depth)
 {
-    if( !isDatatype( cur->type() ) )
+    if( !isDatatype( cur->type() ) && (cur->type() != MACRO))
     {
         stream << ")";
     }

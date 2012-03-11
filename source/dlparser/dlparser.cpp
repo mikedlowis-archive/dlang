@@ -224,7 +224,12 @@ AST* DLParser::Expression(void)
 AST* DLParser::AssignExpr(void)
 {
     AST* ret = LogicalExpr();
-    if(lookaheadType(1) == ASSIGN)
+    if(lookaheadType(1) == DEFN)
+    {
+        match(DEFN);
+        ret = new AST(DEFN, 2, ret, LogicalExpr());
+    }
+    else if(lookaheadType(1) == ASSIGN)
     {
         match(ASSIGN);
         ret = new AST(ASSIGN, 2, ret, LogicalExpr());

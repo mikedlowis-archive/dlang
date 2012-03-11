@@ -41,8 +41,9 @@ int main(int argc, char** argv)
         output.close();
 
         // Compile the temporary file with chicken scheme
-        system( string("csc -O5 " + temp_fname).c_str() );
+        system( string("csc -O5 -v " + temp_fname).c_str() );
 
+        cout << "Removing temporary files..." << endl;
         (void)remove( temp_fname.c_str() );
     }
     else

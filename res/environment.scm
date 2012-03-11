@@ -1,18 +1,7 @@
 ;------------------------------------------------------------------------------
 ; Built-in Operators
 ;------------------------------------------------------------------------------
-(define ADD +)
-(define SUB -)
-(define MUL *)
-(define DIV /)
-(define NOT not)
-(define EQ equal?)
 (define (NE a b) (not (equal? a b)))
-(define LT <)
-(define GT >)
-(define LTE <=)
-(define GTE >=)
-(define FN_CALL apply)
 (define (ARRY_IDX coll idx)
   (cond
     ((list? coll)
@@ -27,11 +16,7 @@
 ;------------------------------------------------------------------------------
 ; Built-in datatype constructors
 ;------------------------------------------------------------------------------
-(define VECTOR vector)
-(define LIST list)
-(define PARAMS list)
 (define (MAP . args) (alist->hash-table args))
-(define (MACRO) '())
 
 ;------------------------------------------------------------------------------
 ; Import necessary libs

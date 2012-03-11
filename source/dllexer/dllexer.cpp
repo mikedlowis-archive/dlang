@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define NUM_SINGLE_CHAR_MATCHES 14
+#define NUM_SINGLE_CHAR_MATCHES 12
 SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '[', LBRACK },
     { ']', RBRACK },
@@ -17,8 +17,6 @@ SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '-', SUB },
     { '*', MUL },
     { '/', DIV },
-    { '%', MACRO },
-    { ':', SEP },
     { '.', MEMB },
 };
 
@@ -52,7 +50,9 @@ bool DLLexer::isOperator(void)
             || (current == '<')
             || (current == '>')
             || (current == '|')
-            || (current == '&'));
+            || (current == '&')
+            || (current == ':')
+            || (current == '@'));
 }
 
 bool DLLexer::isStringChar(void)
@@ -316,6 +316,30 @@ void DLLexer::MultiCharOp(Token& tok)
     {
         consume();
         tok = Token(AND, line, column);
+    }
+    else if(last == ':')
+    {
+        if(current == '=')
+        {
+            consume();
+            tok = Token(DEFN, line, column);
+        }
+        else
+        {
+            tok = Token(SEP, line, column);
+        }
+    }
+    else if(last == '@')
+    {
+        if(current == '=')
+        {
+            consume();
+            tok = Token(IMPORT, line, column);
+        }
+        else
+        {
+            tok = Token(MACRO, line, column);
+        }
     }
     else
     {
