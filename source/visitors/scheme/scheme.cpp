@@ -3,18 +3,11 @@
 
 using namespace std;
 
+extern char binary_res_environment_scm_start;
+
 Scheme::Scheme(std::ostream& out) : IVisitor(), stream(out) {
-    ifstream input("res/environment.scm");
-    if (input.is_open())
-    {
-        while ( input.good() )
-        {
-            string line;
-            getline(input,line);
-            stream << line << endl;
-        }
-    }
-    input.close();
+    // Print scheme environment to output stream
+    stream << &binary_res_environment_scm_start << endl;
 }
 
 string Scheme::typeToString(ASTNodeType type)
