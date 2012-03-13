@@ -5,10 +5,12 @@
 #include <sstream>
 #include "ivisitor.h"
 #include "dllexer.h"
+#include "scopestack.h"
 
 class Scheme : public IVisitor {
     protected:
         std::ostream& stream;
+        ScopeStack scope_stack;
     public:
         Scheme(std::ostream& in);
         std::string typeToString(ASTNodeType type);
@@ -22,6 +24,11 @@ class Scheme : public IVisitor {
         void afterChildren(AST* cur, int depth);
         void beforeChild(AST* cur, int depth);
         void afterChild(AST* cur, int depth);
+        void nodeTypeBeginAction(AST* cur);
+        void nodeTypeEndAction(AST* cur);
+        void defineSymbol(AST* cur);
+        void assignSymbol(AST* cur);
+        void referenceSymbol(AST* cur);
 };
 
 #endif

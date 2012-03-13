@@ -1,5 +1,6 @@
 #include <fstream>
 #include "scheme.h"
+#include "exception.h"
 
 using namespace std;
 
@@ -98,13 +99,9 @@ void Scheme::afterVisit(AST* cur, int depth)
 
 void Scheme::beforeChildren(AST* cur, int depth)
 {
+    nodeTypeBeginAction(cur);
     if( cur->type() != MACRO )
     {
-        if (cur->type() == MEMB)
-        {
-            cur->children()->back()->type(STRING);
-        }
-
         if( isDatatype( cur->type() ) )
         {
             printDatatype( cur );
@@ -118,6 +115,7 @@ void Scheme::beforeChildren(AST* cur, int depth)
 
 void Scheme::afterChildren(AST* cur, int depth)
 {
+    nodeTypeEndAction(cur);
     if( !isDatatype( cur->type() ) && (cur->type() != MACRO))
     {
         stream << ")";
@@ -194,5 +192,86 @@ void Scheme::charToString(string ch)
             break;
         default:
             stream << "#\\" << ch;
+    }
+}
+
+void Scheme::nodeTypeBeginAction(AST* cur)
+{
+    std::string text = cur->text();
+    switch( cur->type() )
+    {
+        case MEMB:
+            cur->children()->back()->type( STRING );
+            break;
+
+        case BLOCK:
+            scope_stack.startScope();
+            break;
+
+        case DEFN:
+            defineSymbol(cur);
+            break;
+
+        case ASSIGN:
+            assignSymbol(cur);
+            break;
+
+        //TODO: Define builtin symbols and enable adding function args to scope
+        //case ID:
+        //    referenceSymbol(cur);
+        //    break;
+
+        default:
+            break;
+    }
+}
+
+void Scheme::nodeTypeEndAction(AST* cur)
+{
+    switch( cur->type() )
+    {
+        case BLOCK:
+            scope_stack.stopScope();
+            break;
+
+        default:
+            break;
+    }
+}
+
+void Scheme::defineSymbol(AST* cur)
+{
+    string text = cur->children()->front()->text();
+    if( scope_stack.lookup( text ) == NULL )
+    {
+        scope_stack.define( text );
+    }
+    else if ( scope_stack.isLocal(text) )
+    {
+        Exception ex;
+        ex << "Redefining local symbol: '" << text << "'.";
+        throw ex;
+    }
+}
+
+void Scheme::assignSymbol(AST* cur)
+{
+    string text = cur->children()->front()->text();
+    if( scope_stack.lookup( text ) == NULL )
+    {
+        Exception ex;
+        ex << "Symbol '" << text << "' has not been defined in this scope.";
+        throw ex;
+    }
+}
+
+void Scheme::referenceSymbol(AST* cur)
+{
+    string text = cur->text();
+    if( scope_stack.lookup( text ) == NULL )
+    {
+        Exception ex;
+        ex << "Symbol '" << text << "' has not been defined in this scope.";
+        throw ex;
     }
 }
