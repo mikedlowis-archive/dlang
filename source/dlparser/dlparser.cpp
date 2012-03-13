@@ -139,7 +139,7 @@ AST* DLParser::MacroPatternMatch(Pattern patt)
                 break;
 
             default:
-                throw Exception(lookaheadToken(1).line(), lookaheadToken(1).column());
+                throw Exception( lookaheadToken(1) );
                 break;
         }
 
@@ -410,11 +410,8 @@ AST* DLParser::Literal(void)
                 break;
 
             default:
-                Token& tok = lookaheadToken(1);
-                ostringstream oss;
-                oss << "Expected literal type, recieved type " << tok.type() << ".";
-                Exception ex( tok.line(), tok.column() );
-                ex.setMessage(oss.str());
+                Exception ex( lookaheadToken(1) );
+                ex << "Expected literal type, recieved type " << lookaheadToken(1).type() << ".";
                 throw ex;
         }
     }
@@ -545,7 +542,7 @@ Pattern DLParser::MacroPattern(void)
         }
         else
         {
-            throw Exception(lookaheadToken(1).line(), lookaheadToken(1).column());
+            throw Exception( lookaheadToken(1) );
         }
     }
     while( lookaheadType(1) == ID );

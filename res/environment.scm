@@ -222,3 +222,14 @@
 ; Start User Defined Code
 ;------------------------------------------------------------------------------
 
+; Potential implementation of prototype objects
+;(define Proto
+;  (list (make-hash-table)))
+;
+;(define (proto-clone p)
+;  (list (make-hash-table) p))
+;
+;(define (proto? p))
+;(define (proto-value p))
+;(define (proto-member name))
+

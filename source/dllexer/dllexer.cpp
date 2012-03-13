@@ -166,7 +166,7 @@ void DLLexer::Decimal(Token& tok, std::ostringstream& oss)
     if(!isDigit())
     {
         Exception ex(line,column);
-        ex.setMessage("Missing fractional portion of floating point number.");
+        ex << "Missing fractional portion of floating point number.";
         throw ex;
     }
 
@@ -193,7 +193,7 @@ void DLLexer::Char(Token& tok)
     else
     {
         Exception ex(line,column);
-        ex.setMessage("Invalid character literal.");
+        ex << "Invalid character literal.";
         throw ex;
     }
     match('\'');
@@ -241,7 +241,9 @@ void DLLexer::SingleCharOp(Token& tok)
 
     if( tok.type() == EOF)
     {
-        throw Exception(line,column);
+        Exception ex(line,column);
+        ex << "Unrecognized token";
+        throw ex;
     }
 }
 
@@ -343,6 +345,8 @@ void DLLexer::MultiCharOp(Token& tok)
     }
     else
     {
-        throw Exception(line,column);
+        Exception ex(line,column);
+        ex << "Unexpected token";
+        throw ex;
     }
 }
