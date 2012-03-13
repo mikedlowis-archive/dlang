@@ -23,6 +23,7 @@ DLangParser = Binary.new({
     :static_libs => [
         './deps/parse-utils/build/static/bin/libparse-utils.a',
     ],
+    :resource_files => [ 'res/*' ],
     :source_files => [ 'source/**/*.c*' ],
     :include_dirs => [
         'source/**/',
@@ -41,6 +42,7 @@ DLangDebug = Binary.new({
         './deps/parse-utils/build/static/bin/libparse-utils.a',
     ],
     :preprocessor_defines => [ 'DEBUG' ],
+    :resource_files => [ 'res/*' ],
     :source_files => [ 'source/**/*.c*' ],
     :include_dirs => [
         'source/**/',
