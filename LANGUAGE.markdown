@@ -19,6 +19,7 @@ A Work In Progress
 Numbers are represented internally as double precision floating point numbers.
 The syntax is very similar to lanugages like C, C++, Java, and Javascript.
 Here are some examples for defining numbers:
+
     # Integer representations
     4
     -4
