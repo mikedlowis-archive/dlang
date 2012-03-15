@@ -37,6 +37,7 @@ Here are some examples for defining numbers:
 #### Characters
 
     'A'
+    '\x00'
 
 #### Symbols
 
@@ -64,12 +65,49 @@ Here are some examples for defining numbers:
     ['a', 1]    # A vector with two elements of different types
 
 #### Maps
+
+    # A Map with homogeneous keys
+    {
+        "foo": "bar",
+        "bar": "foo"
+    }
+
+    # A Map with hetergeneous keys
+    {
+        $foo: 1.5,
+        "bar": 5.1
+    }
+
 #### Strings
+
+    "This is a string\n"
 
 ### Blocks
 #### Definition and Usage
+
+    add2 = {|a|
+        a + 2    # Adds 2 to the argument and returns the result
+    }
+
+    add2(5)      # Returns 7
+
+Anonymous functions and immediate execution
+
+    ({|a| a + 2})(5)    # Returns 7
+
 #### Lexical Scoping
+
+    create_adder = {|a|
+        # Creates and returns a new function that adds a to the value passed
+        # into the new function
+        {|b| a + b }
+    }
+
+    (create_adder(2))(5)    # Returns 7
+
 #### Performance and Behavior
+
+A Work In Progress
 
 ### Streams
 
