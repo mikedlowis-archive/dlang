@@ -4,15 +4,38 @@ DLang 0.3 Language Specification
 Lanugage Overview
 ----------------------------------------------
 
+### Basic Syntax
+
 Datatypes
 ----------------------------------------------
 
 ### Prototype Objects
 
+A Work In Progress
+
 ### Basic Types
 #### Numbers
+
+Numbers are represented internally as double precision floating point numbers.
+The syntax is very similar to lanugages like C, C++, Java, and Javascript.
+Here are some examples for defining numbers:
+    # Integer representations
+    4
+    -4
+
+    # Floating point representations
+    0.4
+    -0.4
+
+    # Floating point representations with exponents
+    4.0e3
+    4.0e-3
+    -4.0e3
+    -4.0e-3
+
 #### Characters
 #### Symbols
+#### Boolean Values
 
 ### Collections
 #### Lists
@@ -30,10 +53,25 @@ Datatypes
 Operations and Operators
 ----------------------------------------------
 
+### Definition and Assignment
+#### Definition
+#### Assignment
+
 ### Arithmetic Operators
+#### Addition
+#### Subtraction
+#### Multiplication
+#### Division
+
 ### Logical Operators
+
 ### Comparison Operators
+### Indexing and Grouping Operators
+### Member Access
 ### Operator Precedence
+### Operator Definition and Overloading
+
+A Work In Progress
 
 Modules
 ----------------------------------------------
@@ -60,7 +98,8 @@ Formal Syntax and Semantics
     Expression = MacroDefinition
                | AssignExpr
 
-    AssignExpr = LogicalExpr ':=' LogicalExpr
+    AssignExpr = MacroExpansion
+               | LogicalExpr ':=' LogicalExpr
                | LogicalExpr '=' LogicalExpr
 
     LogicalExpr = CompExpr (('&&' | '||') CompExpr)*
@@ -78,12 +117,12 @@ Formal Syntax and Semantics
               | '(' LogicalExpr ')' '(' ExpList ')'
               | '(' LogicalExpr ')' '[' LogicalExpr ']'
               | Literal
-              | Literal '(' ExpList ')'
               | Literal '[' LogicalExpr ']'
 
     MemberExpr = Literal '.' LogicalExpr
 
-    Literal = VectorLiteral
+    Literal = MapLiteral
+            | VectorLiteral
             | ListLiteral
             | FuncLiteral
             | ID
