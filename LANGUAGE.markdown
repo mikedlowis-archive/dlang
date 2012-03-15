@@ -21,10 +21,22 @@ Datatypes
 #### Strings
 
 ### Blocks
+#### Definition and Usage
+#### Lexical Scoping
+#### Performance and Behavior
+
+### Streams
+
+Operations and Operators
+----------------------------------------------
+
+### Arithmetic Operators
+### Logical Operators
+### Comparison Operators
+### Operator Precedence
 
 Modules
 ----------------------------------------------
-
 
 Macros
 ----------------------------------------------
