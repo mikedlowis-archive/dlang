@@ -35,12 +35,34 @@ Here are some examples for defining numbers:
     -4.0e-3
 
 #### Characters
+
+    'A'
+
 #### Symbols
+
+    $some_symbol
+
 #### Boolean Values
+
+    True
+    False
+    Nil
 
 ### Collections
 #### Lists
+
+    ()          # An empty list
+    (1)         # This is NOT a list. This evaluates to 1
+    (1, 2)      # A list with two numbers
+    ('a', 1)    # A list with two elements of different types
+
 #### Vectors
+
+    []          # An empty vector
+    [1]         # A vector with on element
+    [1, 2]      # A vector with two number elements
+    ['a', 1]    # A vector with two elements of different types
+
 #### Maps
 #### Strings
 
@@ -50,6 +72,8 @@ Here are some examples for defining numbers:
 #### Performance and Behavior
 
 ### Streams
+
+A Work In Progress
 
 Operations and Operators
 ----------------------------------------------
@@ -76,6 +100,8 @@ A Work In Progress
 
 Modules
 ----------------------------------------------
+
+A Work In Progress
 
 Macros
 ----------------------------------------------
