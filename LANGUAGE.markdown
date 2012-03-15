@@ -37,7 +37,17 @@ Here are some examples for defining numbers:
 #### Characters
 
     'A'
-    '\x00'
+
+    \a    Bell
+    \b    Backspace
+    \f    Form feed
+    \n    New line
+    \r    Carriage return
+    \t    Tab \v Vertical Tab
+    \\    Backslash
+    \"    Double Quote
+    \x    Hexidecimal value
+    \u    Unicode character
 
 #### Symbols
 
