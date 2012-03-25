@@ -82,7 +82,7 @@ Here are some examples for defining numbers:
         "bar": "foo"
     }
 
-    # A Map with hetergeneous keys
+    # A Map with heterogeneous keys
     {
         $foo: 1.5,
         "bar": 5.1
