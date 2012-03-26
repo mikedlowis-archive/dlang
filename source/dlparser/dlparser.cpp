@@ -421,29 +421,30 @@ AST* DLParser::Literal(void)
 // MapLiteral = '{' (Literal ':' LogicalExpr)* '}'
 AST* DLParser::MapLiteral(void)
 {
-    AST* ret = NULL;
+    AST* ret = _new AST(MAP);
     AST* child = NULL;
     try
     {
         match(LBRACE);
         do
         {
-            if( lookaheadType(1) == COMMA ) consume();
-
             child = Literal();
             match(SEP);
             child = _new AST(SEP, 2, child, LogicalExpr());
-
-            ret = ((ret == NULL) ? _new AST(MAP) : ret);
             ret->addChild(child);
+
+            if( lookaheadType(1) == COMMA ) consume();
         }
-        while( lookaheadType(1) == COMMA );
+        while( lookaheadType(1) != RBRACE );
         match(RBRACE);
     }
     catch(Exception e)
     {
-        if(ret != NULL) delete ret;
+        // Cleanup our mess so we dont leak memory
+        delete ret;
         if(child != NULL) delete child;
+
+        // Re throw the exception so higher-ups can handle it
         throw e;
     }
     return ret;
@@ -516,10 +517,16 @@ std::list<Pattern> DLParser::MacroPatternList(void)
     std::list<Pattern> patterns;
 
     patterns.push_back( MacroPattern() );
-    while(lookaheadType(1) == COMMA)
+    while (lookaheadType(1) != RBRACK)
     {
-        match(COMMA);
-        patterns.push_back( MacroPattern() );
+        if ( lookaheadType(1) == COMMA )
+        {
+            consume();
+            if (lookaheadType(1) != RBRACK)
+            {
+                patterns.push_back( MacroPattern() );
+            }
+        }
     }
 
     return patterns;
@@ -560,10 +567,16 @@ AST* DLParser::ExpList(TokenType_T node_type, TokenType_T terminator)
     if(lookaheadType(1) != terminator)
     {
         node->addChild( Expression() );
-        while(lookaheadType(1) == COMMA)
+        while(lookaheadType(1) != terminator)
         {
-            match(COMMA);
-            node->addChild( Expression() );
+            if ( lookaheadType(1) == COMMA )
+            {
+                consume();
+                if (lookaheadType(1) != terminator)
+                {
+                    node->addChild( Expression() );
+                }
+            }
         }
     }
     return node;

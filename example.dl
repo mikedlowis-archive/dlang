@@ -20,7 +20,7 @@ foo = $some_symbol
 foo = {
     $foo : 1 + 1,
     "stuff" : 2 + 2,
-    $bar : 3 + 3
+    $bar : 3 + 3,
 }
 
 print( foo[$bar] )
@@ -36,6 +36,7 @@ foo = [1,2,3,4,5][2]
 
 # List
 foo = ()
+foo = (1,)
 foo = (1,2,3)
 foo = foo[1]
 foo = (1,2,3,4,5)[2]
@@ -53,7 +54,7 @@ foo = ({|a,b| a + b })(1,2)
 
 @ if [
     (E B B) : exec_if($1, $2, $3),
-    (E B)   : exec_if($1, $2)
+    (E B)   : exec_if($1, $2),
 ]
 
 if (1 < 2)
