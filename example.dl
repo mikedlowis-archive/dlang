@@ -5,12 +5,26 @@
 # Nums
 foo := 1
 foo = 1.0
+foo = 1.0e1
+foo = 1.0e1.0
+foo = -1
+foo = -1.0
+foo = -1.0e-1
+foo = -1.0e-1.0
 
 # Char
 foo = 'a'
+foo = '\a'    # bell
+foo = '\b'    # backspace
+foo = '\n'    # newline
+foo = '\r'    # return
+foo = '\t'    # tab
+foo = '\v'    # vtab
+#foo = '\xFF'  # Hex Value
 
 # String
 foo = "some string"
+foo = "foo \a \b \f \n \r \t \v \' \" \\ \xFF bar"
 foo = "12345"[2]
 
 # Symbol

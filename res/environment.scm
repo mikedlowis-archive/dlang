@@ -46,6 +46,10 @@
 (define dl/Symbol 'dl/Symbol)
 (define dl/Block 'dl/Block)
 
+; Named characters for escape sequences
+(char-name 'null (integer->char 0))
+(char-name 'formfeed (integer->char 12))
+
 ;------------------------------------------------------------------------------
 ; Built-in Functions
 ;------------------------------------------------------------------------------

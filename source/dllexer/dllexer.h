@@ -75,15 +75,15 @@ class DLLexer : public ILexer {
 
         Token next(void);
         void Id(Token& tok);
-        void Number(Token& tok);
-        void Decimal(Token& tok, std::ostringstream& oss);
+        void Number(Token& tok, bool isNegative);
+        std::string FloatingPoint(bool isNegative);
+        void Decimal(std::ostringstream& oss);
         void Char(Token& tok);
         void String(Token& tok);
         void Symbol(Token& tok);
         void SingleCharOp(Token& tok);
         void MultiCharOp(Token& tok);
+        std::string EscapeSequence();
 };
-
-
 
 #endif

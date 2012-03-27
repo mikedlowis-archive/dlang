@@ -29,12 +29,14 @@ int main(int argc, char** argv)
         // Setup Parser and Visitors
         DLParser parser;
         Scheme printer(output);
+        //Scheme debug_printer(std::cout);
         parser.input(new DLLexer(input));
 
         // Parse the input stream
         parser.parse();
 
         // Post process the AST (converts to scheme and prints to output file)
+        //parser.process( debug_printer );
         parser.process( printer );
 
         // Close the output file

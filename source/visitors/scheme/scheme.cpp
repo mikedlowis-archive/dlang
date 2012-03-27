@@ -184,12 +184,41 @@ void Scheme::charToString(string ch)
         case ' ':
             stream << "#\\space";
             break;
-        case '\n':
-            stream << "#\\newline";
+
+        // Convert escape sequence
+        case '\\':
+            switch ( ch.at(1) )
+            {
+                case 'a':
+                    stream << "#\\alarm";
+                    break;
+
+                case 'b':
+                    stream << "#\\backspace";
+                    break;
+
+                case 'n':
+                    stream << "#\\newline";
+                    break;
+
+                case 'r':
+                    stream << "#\\return";
+                    break;
+
+                case 't':
+                    stream << "#\\tab";
+                    break;
+
+                case 'v':
+                    stream << "#\\vtab";
+                    break;
+
+                default:
+                    stream << "#\\" << ch;
+                    break;
+            };
             break;
-        case '\r':
-            stream << "#\\return";
-            break;
+
         default:
             stream << "#\\" << ch;
     }

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define NUM_SINGLE_CHAR_MATCHES 12
+#define NUM_SINGLE_CHAR_MATCHES 11
 SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '[', LBRACK },
     { ']', RBRACK },
@@ -14,7 +14,6 @@ SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '}', RBRACE },
     { ',', COMMA },
     { '+', ADD },
-    { '-', SUB },
     { '*', MUL },
     { '/', DIV },
     { '.', MEMB },
@@ -85,7 +84,7 @@ Token DLLexer::next(void)
         }
         else if (isDigit())
         {
-            Number(ret);
+            Number(ret,false);
         }
         else if(current == '\'')
         {
@@ -98,6 +97,18 @@ Token DLLexer::next(void)
         else if(current == '$')
         {
             Symbol(ret);
+        }
+        else if(current == '-')
+        {
+            consume();
+            if(isDigit())
+            {
+                Number(ret,true);
+            }
+            else
+            {
+                ret = Token(SUB, line, column - 1);
+            }
         }
         else
         {
@@ -140,9 +151,43 @@ void DLLexer::Id(Token& tok)
     tok = Token(ID, oss.str(), line, column);
 }
 
-void DLLexer::Number(Token& tok)
+void DLLexer::Number(Token& tok, bool isNegative)
 {
     ostringstream oss;
+
+    // Get the first part of the number
+    oss << FloatingPoint(isNegative);
+
+    // Get teh exponent if we have one
+    if ( current == 'e')
+    {
+        // consume the 'e'
+        oss << current;
+        consume();
+
+        // Capture the sign if we have one
+        if(current == '-')
+        {
+            consume();
+            oss << FloatingPoint(true);
+        }
+        else
+        {
+            oss << FloatingPoint(false);
+        }
+    }
+
+    tok = Token(NUM, oss.str(), line, column);
+}
+
+std::string DLLexer::FloatingPoint(bool isNegative)
+{
+    ostringstream oss;
+
+    // Make sure we capture the correct sign
+    oss << ((isNegative) ? '-' : '+');
+
+    // Capture the integer part
     do
     {
         oss << current;
@@ -150,15 +195,16 @@ void DLLexer::Number(Token& tok)
     }
     while(isDigit());
 
+    // Capture the decimal point if we have one
     if(current == '.')
     {
-        Decimal(tok, oss);
+        Decimal(oss);
     }
 
-    tok = Token(NUM, oss.str(), line, column);
+    return oss.str();
 }
 
-void DLLexer::Decimal(Token& tok, std::ostringstream& oss)
+void DLLexer::Decimal(std::ostringstream& oss)
 {
     oss << current;
     consume();
@@ -176,8 +222,6 @@ void DLLexer::Decimal(Token& tok, std::ostringstream& oss)
         consume();
     }
     while ( isDigit() );
-
-    tok = Token(NUM, oss.str(), line, column);
 }
 
 void DLLexer::Char(Token& tok)
@@ -185,16 +229,14 @@ void DLLexer::Char(Token& tok)
     ostringstream oss;
 
     match('\'');
-    if(current != '\'')
+    if(current == '\\')
     {
-        oss << current;
-        consume();
+        oss << EscapeSequence();
     }
     else
     {
-        Exception ex(line,column);
-        ex << "Invalid character literal.";
-        throw ex;
+        oss << current;
+        consume();
     }
     match('\'');
 
@@ -207,8 +249,15 @@ void DLLexer::String(Token& tok)
     match('"');
     while( isStringChar() )
     {
-        oss << current;
-        consume();
+        if(current == '\\')
+        {
+            oss << EscapeSequence();
+        }
+        else
+        {
+            oss << current;
+            consume();
+        }
     }
     match('"');
     tok = Token( STRING, oss.str(), line, column );
@@ -350,3 +399,40 @@ void DLLexer::MultiCharOp(Token& tok)
         throw ex;
     }
 }
+
+std::string DLLexer::EscapeSequence()
+{
+    ostringstream oss;
+
+    oss << current;
+    consume();
+
+    if ( current == 'x' )
+    {
+        oss << current;
+        consume();
+        for(int i = 0; i < 2; i++)
+        {
+            if ( ((current >= '0') || (current <= '9')) ||
+                 ((current >= 'a') || (current <= 'f')) ||
+                 ((current >= 'A') || (current <= 'F')))
+            {
+                oss << current;
+                consume();
+            }
+            else
+            {
+                Exception ex(line,column);
+                ex << "Invalid hexadecimal escape sequence.";
+                throw ex;
+            }
+        }
+    }
+    else
+    {
+        oss << current;
+        consume();
+    }
+    return oss.str();
+}
+
