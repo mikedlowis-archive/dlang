@@ -58,7 +58,7 @@
 (define dl/print print)
 (define dl/error error)
 
-; Map
+; map function definitions
 (define dl/list_map map)
 (define dl/vector_map vector-map)
 (define dl/string_map string-map)
@@ -193,6 +193,12 @@
         ((hash-table? ls) (apply hash-table-concatenate args))
         ((string? ls) (apply string-concatenate args)) )))
 
+(define (obj-set! obj idx val)
+  (cond
+    ((vector? obj) (vector-set! obj idx val))
+    ((hash-table? obj) (hash-table-set! obj idx val))
+    ((string? obj) (string-set! obj idx val)) ))
+
 (define (error reason . args)
       (display "Error: ")
       (display reason)
@@ -218,22 +224,7 @@
                          (set! result x)
                          result))))))))
 
-(define dl/force
-  (lambda (object)
-    (object)))
-
 ;------------------------------------------------------------------------------
 ; Start User Defined Code
 ;------------------------------------------------------------------------------
-
-; Potential implementation of prototype objects
-;(define Proto
-;  (list (make-hash-table)))
-;
-;(define (proto-clone p)
-;  (list (make-hash-table) p))
-;
-;(define (proto? p))
-;(define (proto-value p))
-;(define (proto-member name))
 

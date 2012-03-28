@@ -6,11 +6,9 @@
 foo := 1
 foo = 1.0
 foo = 1.0e1
-foo = 1.0e1.0
 foo = -1
 foo = -1.0
 foo = -1.0e-1
-foo = -1.0e-1.0
 
 # Char
 foo = 'a'
@@ -34,9 +32,15 @@ foo = $some_symbol
 foo = {
     $foo : 1 + 1,
     "stuff" : 2 + 2,
+    $stuff : 2 + 2,
     $bar : 3 + 3,
 }
 
+# Setting map elements
+foo["stuff"] = 3
+foo.stuff = 5
+
+# Accessing map elements
 print( foo[$bar] )
 print( foo["stuff"] )
 print( foo.stuff )
@@ -48,12 +52,18 @@ foo = [1,2,3]
 foo = foo[1]
 foo = [1,2,3,4,5][2]
 
+# Setting Vector Elements
+foo[2] = 6
+
 # List
 foo = ()
 foo = (1,)
 foo = (1,2,3)
 foo = foo[1]
 foo = (1,2,3,4,5)[2]
+
+# Setting List Elements
+foo[2] = 6
 
 # Block
 foo = { 1 + 1 }

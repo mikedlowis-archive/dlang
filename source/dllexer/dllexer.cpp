@@ -165,15 +165,28 @@ void DLLexer::Number(Token& tok, bool isNegative)
         oss << current;
         consume();
 
-        // Capture the sign if we have one
         if(current == '-')
         {
+            // Capture the sign
+            oss << current;
             consume();
-            oss << FloatingPoint(true);
+        }
+
+        if( isDigit() )
+        {
+            // Capture the integer part
+            do
+            {
+                oss << current;
+                consume();
+            }
+            while(isDigit());
         }
         else
         {
-            oss << FloatingPoint(false);
+            Exception ex(line,column);
+            ex << "Integer for floating point exponent";
+            throw ex;
         }
     }
 

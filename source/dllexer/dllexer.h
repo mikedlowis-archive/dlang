@@ -48,13 +48,14 @@ typedef enum TokenTypes
     ARRY_IDX = 37,
     MACRO    = 38,
     IMPORT   = 39,
+    MUTATE   = 40,
 
     // AST "Virtual" Node Types
-    PROGRAM  = 40,
-    BLOCK    = 41,
-    FN_CALL  = 42,
-    PARAMS   = 43,
-    PATT     = 44,
+    PROGRAM  = 50,
+    BLOCK    = 51,
+    FN_CALL  = 52,
+    PARAMS   = 53,
+    PATT     = 54,
 } eTokenTypes;
 
 typedef struct {

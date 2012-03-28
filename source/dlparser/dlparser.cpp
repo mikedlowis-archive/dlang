@@ -224,6 +224,7 @@ AST* DLParser::Expression(void)
 AST* DLParser::AssignExpr(void)
 {
     AST* ret = LogicalExpr();
+    AST* child = NULL;
     if(lookaheadType(1) == DEFN)
     {
         match(DEFN);
@@ -232,7 +233,28 @@ AST* DLParser::AssignExpr(void)
     else if(lookaheadType(1) == ASSIGN)
     {
         match(ASSIGN);
-        ret = new AST(ASSIGN, 2, ret, LogicalExpr());
+        child = LogicalExpr();
+        if( (ret->type() != ID) && (ret->type() != ARRY_IDX) && (ret->type() != MEMB))
+        {
+            Exception ex;
+            ex << "Expected ID or object reference on left hand side of assignment.";
+            throw ex;
+        }
+        else if( (ret->type() == ARRY_IDX) || (ret->type() == MEMB) )
+        {
+            AST* obj = NULL;
+            AST* idx = NULL;
+            list<AST*>::iterator it = ret->children()->begin();
+            obj = *it;
+            it++;
+            idx = *it;
+            idx->type( (ret->type() == MEMB) ? SYMBOL : idx->type() );
+            ret = new AST(MUTATE, 3, obj, idx, child );
+        }
+        else
+        {
+            ret = new AST(ASSIGN, 2, ret, child);
+        }
     }
     return ret;
 }

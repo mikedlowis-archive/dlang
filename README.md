@@ -1,7 +1,7 @@
 DLang
 ==============================================
 
-    Version:    0.2
+    Version:    0.3
     Created By: Michael D. Lowis
     Email:      mike@mdlowis.com
 
@@ -18,16 +18,17 @@ License
 ----------------------------------------------
 
 Unless explicitly stated otherwise, all code and documentation in this project
-is released under the FreeBSD License. You can find a copy of the license text
-in the LICENSE.md file.
+is released under the BSD 2-Clause License. You can find a copy of the license
+text in the LICENSE.md file.
 
 Requirements For Building
 ----------------------------------------------
 
-* Ruby and Rake
+* Ruby
+* Rake (>= 0.9.2)
 * Chicken Scheme Compiler
-* A C++ compiler
-* Python (For unit test generation)
+* Chicken Scheme vector-lib Egg
+* A C++ compiler (Tested with gcc)
 
 Build Instructions
 ----------------------------------------------
@@ -45,8 +46,8 @@ following commands:
 Installation
 ----------------------------------------------
 
-There are no installation instructions at the moment. This is a work in
-progress.
+There are no installation instructions at the moment. The binary is self
+contained and can be placed anywhere you want it.
 
 Project Files and Directories
 ----------------------------------------------
@@ -64,17 +65,19 @@ Project Files and Directories
     rakefile.rb    Script containing the build configuration and tasks.
     README.md      You're reading this file right now!
 
-Know Issues or Bugs
+Known Issues or Bugs
 ----------------------------------------------
 
 This is a non-comprehensive list of known issues and bugs that I intend to fix.
 
-* The parser segfaults on \*nix systems due to freeing invalid pointers and other memory management issues
+* The debug build segfaults on \*nix systems due to freeing invalid pointers and other memory management issues
 * Error messages are obtuse and unfriendly.
 * Parser and Lexer have 0 error recovery.
 
 Version History
 ----------------------------------------------
+
+### Version 0.3
 
 ### Version 0.2
 
@@ -87,7 +90,6 @@ syntax for list literals. See example.dl for an example of the updated syntax.
 Very first version ever. Its buggy, has obtuse error messages, and supports
 about 1/20 of what I would like to see. Lets call it a proof of concept.
 
-
 Feature Wish List
 ----------------------------------------------
 
@@ -96,6 +98,7 @@ the future.
 
 * Command line options
 * Multi-file support
+* UTF-8 Support
 
 More Info
 ----------------------------------------------

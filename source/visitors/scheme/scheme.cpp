@@ -55,6 +55,8 @@ string Scheme::typeToString(ASTNodeType type)
             ret << "define "; break;
         case ASSIGN:
             ret << "set! "; break;
+        case MUTATE:
+            ret << "obj-set! "; break;
         case PROGRAM:
             ret << "begin "; break;
         case VECTOR:
@@ -285,12 +287,15 @@ void Scheme::defineSymbol(AST* cur)
 
 void Scheme::assignSymbol(AST* cur)
 {
-    string text = cur->children()->front()->text();
-    if( scope_stack.lookup( text ) == NULL )
+    if( cur->type() == ID )
     {
-        Exception ex;
-        ex << "Symbol '" << text << "' has not been defined in this scope.";
-        throw ex;
+        string text = cur->children()->front()->text();
+        if( scope_stack.lookup( text ) == NULL )
+        {
+            Exception ex;
+            ex << "Symbol '" << text << "' has not been defined in this scope.";
+            throw ex;
+        }
     }
 }
 
