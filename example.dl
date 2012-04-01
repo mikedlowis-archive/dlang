@@ -137,31 +137,28 @@ foo = force foo
 #------------------------------------------------------------------------------
 
 # Define a macro for creating new classes
-#% new [
-#    (I B) : ({
-#        this := @{ $proto : $1 }
-#        $2()
-#        this
-#    })(),
-#
-#    (B) : ({
-#        this := @{}
-#        $2()
-#        this
-#    })()
-#]
+% class [
+    (B)   : {
+        this := @{}
+        $1()
+        this
+    },
+]
 
-#Duck := new foo {
-#    sound := "Quack"
-#    this.mating_call = { sound }
-#}
-#
-#Cow := new foo {
-#    sound := "Moo"
-#    this.mating_call = { sound }
-#}
+# Simple class definition (No inheritance supported)
+Animal := class {
+    # The sound of the mating call is kept private
+    priv_call := "Moo!"
 
-#print( Duck )
-#print( Duck[$mating_call] )
-#print( (Duck[$mating_call])() )
+    # Define a method to print the mating call sound
+    this.mating_call = {
+        print( priv_call )
+    }
+}
+
+# Animal is a constructor so call it to create a new cow
+Cow := Animal()
+
+# And call the method to print the sound
+(Cow.mating_call)()
 
