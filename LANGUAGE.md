@@ -63,14 +63,15 @@ Here are some examples for defining numbers:
 #### Lists
 
     ()          # An empty list
-    (1)         # This is NOT a list. This evaluates to 1
-    (1, 2)      # A list with two numbers
+    (1,)        # A list with one element (Note: the trailing comma
+                # distinguishes this from a grouping expression)
+    (1, 2)      # A list with two elements
     ('a', 1)    # A list with two elements of different types
 
 #### Vectors
 
     []          # An empty vector
-    [1]         # A vector with on element
+    [1]         # A vector with oni element
     [1, 2]      # A vector with two number elements
     ['a', 1]    # A vector with two elements of different types
 
@@ -119,7 +120,7 @@ Anonymous functions and immediate execution
 
 A Work In Progress
 
-### Streams
+### Ports
 
 A Work In Progress
 

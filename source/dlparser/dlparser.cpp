@@ -378,64 +378,61 @@ AST* DLParser::MemberExpr(void)
 AST* DLParser::Literal(void)
 {
     AST* node = NULL;
-    if(speculate_MapLiteral())
+    switch(lookaheadType(1))
     {
-        node = MapLiteral();
-    }
-    else
-    {
-        switch(lookaheadType(1))
-        {
-            // Literal = VectorLiteral
-            case LBRACK:
-                node = VectorLiteral();
-                break;
+        // Literal = VectorLiteral
+        case LBRACK:
+            node = VectorLiteral();
+            break;
 
-            // Literal = ListLiteral
-            case LPAR:
-                node = ListLiteral();
-                break;
+        // Literal = ListLiteral
+        case LPAR:
+            node = ListLiteral();
+            break;
 
-            // Literal = FuncLiteral
-            case LBRACE:
-                node = FuncLiteral();
-                break;
+        // Literal = FuncLiteral
+        case LBRACE:
+            node = FuncLiteral();
+            break;
 
-            // Literal = ID
-            case ID:
-                node = _new AST( ID, lookaheadToken(1).text() );
-                consume();
-                break;
+        case MAP:
+            node = MapLiteral();
+            break;
 
-            // Literal = NUM
-            case NUM:
-                node = _new AST( NUM, lookaheadToken(1).text() );
-                consume();
-                break;
+        // Literal = ID
+        case ID:
+            node = _new AST( ID, lookaheadToken(1).text() );
+            consume();
+            break;
 
-            // Literal = CHAR
-            case CHAR:
-                node = _new AST( CHAR, lookaheadToken(1).text() );
-                consume();
-                break;
+        // Literal = NUM
+        case NUM:
+            node = _new AST( NUM, lookaheadToken(1).text() );
+            consume();
+            break;
 
-            // Literal = STRING
-            case STRING:
-                node = _new AST( STRING, lookaheadToken(1).text() );
-                consume();
-                break;
+        // Literal = CHAR
+        case CHAR:
+            node = _new AST( CHAR, lookaheadToken(1).text() );
+            consume();
+            break;
 
-            // Literal = SYMBOL
-            case SYMBOL:
-                node = _new AST( SYMBOL, lookaheadToken(1).text() );
-                consume();
-                break;
+        // Literal = STRING
+        case STRING:
+            node = _new AST( STRING, lookaheadToken(1).text() );
+            consume();
+            break;
 
-            default:
-                Exception ex( lookaheadToken(1) );
-                ex << "Expected literal type, recieved type " << lookaheadToken(1).type() << ".";
-                throw ex;
-        }
+        // Literal = SYMBOL
+        case SYMBOL:
+            node = _new AST( SYMBOL, lookaheadToken(1).text() );
+            consume();
+            break;
+
+        default:
+            Exception ex( lookaheadToken(1) );
+            ex << "Expected literal type, recieved type " << lookaheadToken(1).type() << ".";
+            throw ex;
     }
     return node;
 }
@@ -445,30 +442,18 @@ AST* DLParser::MapLiteral(void)
 {
     AST* ret = _new AST(MAP);
     AST* child = NULL;
-    try
+    match(MAP);
+    match(LBRACE);
+    while( lookaheadType(1) != RBRACE )
     {
-        match(LBRACE);
-        do
-        {
-            child = Literal();
-            match(SEP);
-            child = _new AST(SEP, 2, child, LogicalExpr());
-            ret->addChild(child);
+        child = Literal();
+        match(SEP);
+        child = _new AST(SEP, 2, child, LogicalExpr());
+        ret->addChild(child);
 
-            if( lookaheadType(1) == COMMA ) consume();
-        }
-        while( lookaheadType(1) != RBRACE );
-        match(RBRACE);
+        if( lookaheadType(1) == COMMA ) consume();
     }
-    catch(Exception e)
-    {
-        // Cleanup our mess so we dont leak memory
-        delete ret;
-        if(child != NULL) delete child;
-
-        // Re throw the exception so higher-ups can handle it
-        throw e;
-    }
+    match(RBRACE);
     return ret;
 }
 

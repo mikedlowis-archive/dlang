@@ -1,7 +1,6 @@
 #------------------------------------------------------------------------------
 # Literal Definition and Usage
 #------------------------------------------------------------------------------
-foo := Nil
 
 # Nums
 assert( 1 == 1,           "Positive integer parses correctly")
@@ -19,10 +18,9 @@ assert('\n', "Parse escape sequence for newline")
 assert('\r', "Parse escape sequence for return")
 assert('\t', "Parse escape sequence for tab")
 assert('\v', "Parse escape sequence for vertical tab")
-#foo = '\xFF'  # Hex Value
 
 # String
-foo = "some string"
+foo := "some string"
 foo = "foo \a \b \f \n \r \t \v \' \" \\ \xFF bar"
 foo = "12345"[2]
 
@@ -30,7 +28,9 @@ foo = "12345"[2]
 foo = $some_symbol
 
 # Map
-foo = {
+foo = @{}
+foo.stuff = "bar"
+foo = @{
     $foo : 1 + 1,
     "stuff" : 2 + 2,
     $stuff : 2 + 2,
@@ -40,11 +40,6 @@ foo = {
 # Setting map elements
 foo["stuff"] = 3
 foo.stuff = 5
-
-# Accessing map elements
-#print( foo[$bar] )
-#print( foo["stuff"] )
-#print( foo.stuff )
 
 # Vector
 foo = []
@@ -83,7 +78,7 @@ foo = ({|a,b| a + b })(1,2)
 #------------------------------------------------------------------------------
 
 # Define a macro that represents a traditional if statement
-@ if [
+% if [
     (E B B) : exec_if($1, $2, $3),
     (E B)   : exec_if($1, $2),
 ]
@@ -125,15 +120,48 @@ assert( test_result, "Branch should not be taken when test condition is false" )
 #------------------------------------------------------------------------------
 
 # Define a macro that will delay the evaluation of the following expression
-@ delay [
+% delay [
     (E) : make_promise({ $1 })
 ]
 
 # Define a macro that will force the evaluation of the following delayed statement
-@ force [
+% force [
     (E) : $1()
 ]
 
 foo = delay 1 + 1
 foo = force foo
+
+#------------------------------------------------------------------------------
+# Prototype Classes
+#------------------------------------------------------------------------------
+
+# Define a macro for creating new classes
+#% new [
+#    (I B) : ({
+#        this := @{ $proto : $1 }
+#        $2()
+#        this
+#    })(),
+#
+#    (B) : ({
+#        this := @{}
+#        $2()
+#        this
+#    })()
+#]
+
+#Duck := new foo {
+#    sound := "Quack"
+#    this.mating_call = { sound }
+#}
+#
+#Cow := new foo {
+#    sound := "Moo"
+#    this.mating_call = { sound }
+#}
+
+#print( Duck )
+#print( Duck[$mating_call] )
+#print( (Duck[$mating_call])() )
 

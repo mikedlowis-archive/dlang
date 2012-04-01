@@ -6,6 +6,7 @@
 #include "scheme.h"
 #include "common.h"
 #include "macro.h"
+#include "options.h"
 
 using namespace std;
 
@@ -15,6 +16,8 @@ static string createTempFileName(string fname);
 int main(int argc, char** argv)
 {
     int ret = 0;
+
+    //opts_parse(argc,argv);
 
     if( (argc == 2) && fileExists( argv[1] ) )
     {

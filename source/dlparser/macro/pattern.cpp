@@ -1,5 +1,6 @@
 #include "pattern.h"
 #include "dllexer.h"
+#include "exception.h"
 
 using namespace std;
 
@@ -51,7 +52,9 @@ void Pattern::apply(AST* cur,std::vector<AST*>& params)
                 }
                 else
                 {
-                    throw "Invalid parameter number";
+                    Exception ex;
+                    ex << "Invalid parameter number";
+                    throw ex;
                 }
             }
             else

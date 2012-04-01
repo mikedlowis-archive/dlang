@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define NUM_SINGLE_CHAR_MATCHES 11
+#define NUM_SINGLE_CHAR_MATCHES 12
 SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '[', LBRACK },
     { ']', RBRACK },
@@ -17,6 +17,7 @@ SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '*', MUL },
     { '/', DIV },
     { '.', MEMB },
+    { '%', MACRO },
 };
 
 DLLexer::DLLexer(std::istream& in) : ILexer(in)
@@ -402,7 +403,7 @@ void DLLexer::MultiCharOp(Token& tok)
         }
         else
         {
-            tok = Token(MACRO, line, column);
+            tok = Token(MAP, line, column);
         }
     }
     else
