@@ -41,7 +41,8 @@ bool DLParser::isMacro( Token& token )
 AST* DLParser::MacroExpansion()
 {
     AST* ret = NULL;
-    Macro macro = macros[ lookaheadToken(1).text() ];
+    string macro_name = lookaheadToken(1).text();
+    Macro macro = macros[ macro_name ];
     std::list<Pattern>::iterator patt_it;
 
     match(ID);
@@ -56,7 +57,9 @@ AST* DLParser::MacroExpansion()
 
     if (ret == NULL)
     {
-        throw "Did not find a matching pattern for keyword <macro-name>";
+        Exception ex;
+        ex << "Did not find a matching pattern for keyword " << macro_name << ".";
+        throw ex;
     }
 
     return ret;

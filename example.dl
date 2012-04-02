@@ -133,7 +133,7 @@ foo = delay 1 + 1
 foo = force foo
 
 #------------------------------------------------------------------------------
-# Prototype Classes
+# Classes
 #------------------------------------------------------------------------------
 
 # Define a macro for creating new classes
@@ -159,6 +159,6 @@ Animal := class {
 # Animal is a constructor so call it to create a new cow
 Cow := Animal()
 
-# And call the method to print the sound
+# And call the method to print the sound (This syntax needs to be cleaned up a bit)
 (Cow.mating_call)()
 

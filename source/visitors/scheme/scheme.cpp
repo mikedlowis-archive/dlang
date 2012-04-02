@@ -232,7 +232,7 @@ void Scheme::nodeTypeBeginAction(AST* cur)
     switch( cur->type() )
     {
         case MEMB:
-            cur->children()->back()->type( STRING );
+            cur->children()->back()->type( SYMBOL );
             break;
 
         case BLOCK:
