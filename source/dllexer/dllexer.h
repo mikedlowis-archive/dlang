@@ -1,7 +1,7 @@
 #ifndef DLLEXER_H
 #define DLLEXER_H
 
-#include "ilexer.h"
+#include "llnlexer.h"
 #include <sstream>
 
 typedef enum TokenTypes
@@ -63,7 +63,7 @@ typedef struct {
     eTokenTypes type;
 } SingleCharMatch_T;
 
-class DLLexer : public ILexer {
+class DLLexer : public LLNLexer {
     public:
         DLLexer(std::istream& in);
         bool isWhiteSpace(void);

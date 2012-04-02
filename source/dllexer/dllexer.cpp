@@ -20,46 +20,46 @@ SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
     { '%', MACRO },
 };
 
-DLLexer::DLLexer(std::istream& in) : ILexer(in)
+DLLexer::DLLexer(std::istream& in) : LLNLexer(in)
 {
 }
 
 bool DLLexer::isWhiteSpace(void)
 {
-    return (current == ' ') ||
-           (current == '\t') ||
-           (current == '\r') ||
-           (current == '\n');
+    return (lookahead(1) == ' ') ||
+           (lookahead(1) == '\t') ||
+           (lookahead(1) == '\r') ||
+           (lookahead(1) == '\n');
 }
 
 bool DLLexer::isLetter(void)
 {
-    return  ((current >= 'a') && (current <= 'z')) ||
-            ((current >= 'A') && (current <= 'Z'));
+    return  ((lookahead(1) >= 'a') && (lookahead(1) <= 'z')) ||
+            ((lookahead(1) >= 'A') && (lookahead(1) <= 'Z'));
 }
 
 bool DLLexer::isDigit(void)
 {
-    return ((current >= '0') && (current <= '9'));
+    return ((lookahead(1) >= '0') && (lookahead(1) <= '9'));
 }
 
 bool DLLexer::isOperator(void)
 {
-    return (   (current == '=')
-            || (current == '!')
-            || (current == '<')
-            || (current == '>')
-            || (current == '|')
-            || (current == '&')
-            || (current == ':')
-            || (current == '@'));
+    return (   (lookahead(1) == '=')
+            || (lookahead(1) == '!')
+            || (lookahead(1) == '<')
+            || (lookahead(1) == '>')
+            || (lookahead(1) == '|')
+            || (lookahead(1) == '&')
+            || (lookahead(1) == ':')
+            || (lookahead(1) == '@'));
 }
 
 bool DLLexer::isStringChar(void)
 {
-    return (    (current != '"')
-             && (current != '\r')
-             && (current != '\n'));
+    return (    (lookahead(1) != '"')
+             && (lookahead(1) != '\r')
+             && (lookahead(1) != '\n'));
 }
 
 Token DLLexer::next(void)
@@ -71,7 +71,7 @@ Token DLLexer::next(void)
         {
             WS();
         }
-        else if(current == '#')
+        else if(lookahead(1) == '#')
         {
             COMMENT();
         }
@@ -87,19 +87,19 @@ Token DLLexer::next(void)
         {
             Number(ret,false);
         }
-        else if(current == '\'')
+        else if(lookahead(1) == '\'')
         {
             Char(ret);
         }
-        else if(current == '"')
+        else if(lookahead(1) == '"')
         {
             String(ret);
         }
-        else if(current == '$')
+        else if(lookahead(1) == '$')
         {
             Symbol(ret);
         }
-        else if(current == '-')
+        else if(lookahead(1) == '-')
         {
             consume();
             if(isDigit())
@@ -135,8 +135,8 @@ void DLLexer::COMMENT(void)
     {
         consume();
     }
-    while(   (current != '\n')
-          && (current != EOF));
+    while(   (lookahead(1) != '\n')
+          && (lookahead(1) != EOF));
 
 }
 
@@ -145,10 +145,10 @@ void DLLexer::Id(Token& tok)
     ostringstream oss;
     do
     {
-        oss << current;
+        oss << lookahead(1);
         consume();
     }
-    while(isLetter() || isDigit() || current == '_');
+    while(isLetter() || isDigit() || lookahead(1) == '_');
     tok = Token(ID, oss.str(), line, column);
 }
 
@@ -160,16 +160,16 @@ void DLLexer::Number(Token& tok, bool isNegative)
     oss << FloatingPoint(isNegative);
 
     // Get teh exponent if we have one
-    if ( current == 'e')
+    if ( lookahead(1) == 'e')
     {
         // consume the 'e'
-        oss << current;
+        oss << lookahead(1);
         consume();
 
-        if(current == '-')
+        if(lookahead(1) == '-')
         {
             // Capture the sign
-            oss << current;
+            oss << lookahead(1);
             consume();
         }
 
@@ -178,7 +178,7 @@ void DLLexer::Number(Token& tok, bool isNegative)
             // Capture the integer part
             do
             {
-                oss << current;
+                oss << lookahead(1);
                 consume();
             }
             while(isDigit());
@@ -204,13 +204,13 @@ std::string DLLexer::FloatingPoint(bool isNegative)
     // Capture the integer part
     do
     {
-        oss << current;
+        oss << lookahead(1);
         consume();
     }
     while(isDigit());
 
     // Capture the decimal point if we have one
-    if(current == '.')
+    if(lookahead(1) == '.')
     {
         Decimal(oss);
     }
@@ -220,7 +220,7 @@ std::string DLLexer::FloatingPoint(bool isNegative)
 
 void DLLexer::Decimal(std::ostringstream& oss)
 {
-    oss << current;
+    oss << lookahead(1);
     consume();
 
     if(!isDigit())
@@ -232,7 +232,7 @@ void DLLexer::Decimal(std::ostringstream& oss)
 
     do
     {
-        oss << current;
+        oss << lookahead(1);
         consume();
     }
     while ( isDigit() );
@@ -243,13 +243,13 @@ void DLLexer::Char(Token& tok)
     ostringstream oss;
 
     match('\'');
-    if(current == '\\')
+    if(lookahead(1) == '\\')
     {
         oss << EscapeSequence();
     }
     else
     {
-        oss << current;
+        oss << lookahead(1);
         consume();
     }
     match('\'');
@@ -263,13 +263,13 @@ void DLLexer::String(Token& tok)
     match('"');
     while( isStringChar() )
     {
-        if(current == '\\')
+        if(lookahead(1) == '\\')
         {
             oss << EscapeSequence();
         }
         else
         {
-            oss << current;
+            oss << lookahead(1);
             consume();
         }
     }
@@ -283,10 +283,10 @@ void DLLexer::Symbol(Token& tok)
     match('$');
     do
     {
-        oss << current;
+        oss << lookahead(1);
         consume();
     }
-    while(isLetter() || isDigit() || current == '_');
+    while(isLetter() || isDigit() || lookahead(1) == '_');
     tok = Token( SYMBOL, oss.str(), line, column );
 }
 
@@ -294,7 +294,7 @@ void DLLexer::SingleCharOp(Token& tok)
 {
     for(int i = 0; i < NUM_SINGLE_CHAR_MATCHES; i++)
     {
-        if(current == Single_Character_Matches[i].match)
+        if(lookahead(1) == Single_Character_Matches[i].match)
         {
             consume();
             tok = Token( Single_Character_Matches[i].type, line, column );
@@ -313,13 +313,13 @@ void DLLexer::SingleCharOp(Token& tok)
 void DLLexer::MultiCharOp(Token& tok)
 {
     // save the current token so we can refer back to it
-    char last = current;
+    char last = lookahead(1);
     // remove the current token from the buffer so we cna see the next
     consume();
 
     if(last == '=')
     {
-        if(current == '=')
+        if(lookahead(1) == '=')
         {
             consume();
             tok = Token(EQ, line, column);
@@ -331,7 +331,7 @@ void DLLexer::MultiCharOp(Token& tok)
     }
     else if(last == '!')
     {
-        if(current == '=')
+        if(lookahead(1) == '=')
         {
             consume();
             tok = Token(NE, line, column);
@@ -343,7 +343,7 @@ void DLLexer::MultiCharOp(Token& tok)
     }
     else if(last == '<')
     {
-        if(current == '=')
+        if(lookahead(1) == '=')
         {
             consume();
             tok = Token(LTE, line, column);
@@ -355,7 +355,7 @@ void DLLexer::MultiCharOp(Token& tok)
     }
     else if(last == '>')
     {
-        if(current == '=')
+        if(lookahead(1) == '=')
         {
             consume();
             tok = Token(GTE, line, column);
@@ -367,7 +367,7 @@ void DLLexer::MultiCharOp(Token& tok)
     }
     else if(last == '|')
     {
-        if(current == '|')
+        if(lookahead(1) == '|')
         {
             consume();
             tok = Token(OR, line, column);
@@ -377,14 +377,14 @@ void DLLexer::MultiCharOp(Token& tok)
             tok = Token(PIPE, line, column);
         }
     }
-    else if((last == '&') && (current == '&'))
+    else if((last == '&') && (lookahead(1) == '&'))
     {
         consume();
         tok = Token(AND, line, column);
     }
     else if(last == ':')
     {
-        if(current == '=')
+        if(lookahead(1) == '=')
         {
             consume();
             tok = Token(DEFN, line, column);
@@ -396,7 +396,7 @@ void DLLexer::MultiCharOp(Token& tok)
     }
     else if(last == '@')
     {
-        if(current == '=')
+        if(lookahead(1) == '=')
         {
             consume();
             tok = Token(IMPORT, line, column);
@@ -418,20 +418,20 @@ std::string DLLexer::EscapeSequence()
 {
     ostringstream oss;
 
-    oss << current;
+    oss << lookahead(1);
     consume();
 
-    if ( current == 'x' )
+    if ( lookahead(1) == 'x' )
     {
-        oss << current;
+        oss << lookahead(1);
         consume();
         for(int i = 0; i < 2; i++)
         {
-            if ( ((current >= '0') || (current <= '9')) ||
-                 ((current >= 'a') || (current <= 'f')) ||
-                 ((current >= 'A') || (current <= 'F')))
+            if ( ((lookahead(1) >= '0') || (lookahead(1) <= '9')) ||
+                 ((lookahead(1) >= 'a') || (lookahead(1) <= 'f')) ||
+                 ((lookahead(1) >= 'A') || (lookahead(1) <= 'F')))
             {
-                oss << current;
+                oss << lookahead(1);
                 consume();
             }
             else
@@ -444,7 +444,7 @@ std::string DLLexer::EscapeSequence()
     }
     else
     {
-        oss << current;
+        oss << lookahead(1);
         consume();
     }
     return oss.str();
