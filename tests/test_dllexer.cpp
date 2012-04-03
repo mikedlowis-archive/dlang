@@ -101,15 +101,21 @@ namespace {
             // Recognize combinations of digits
             "10 11 12 13 14 15 16 17 18 19\n"
             // Recognize floating point numbers (with and without exponents)
-            "1.0 -1.0 0.1e1 10.0e-1"
+            "1.0 -1.0 0.1e1 10.0e-1 1e0 10e-1"
         );
         eTokenTypes expected[] = {
             NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM,
             NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM,
-            NUM, NUM, NUM, NUM,
+            NUM, NUM, NUM, NUM, NUM, NUM,
             (eTokenTypes)EOF
         };
         TestLexerWithInput( input, expected );
+    }
+
+    TEST(Recognize_Invalid_Numbers)
+    {
+        std::string missing_exp("1.0e-");
+        TestLexerThrowsException( missing_exp );
     }
 
     TEST(Recognize_Valid_Characters)
@@ -124,12 +130,36 @@ namespace {
 
     TEST(Recognize_Valid_Symbols)
     {
-        CHECK(false);
+        std::string input(
+            // Make Sure we recognize all valid characters for an ID
+            "$abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_\n"
+            "$ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_\n"
+            "$a_123\n"
+            "$a123\n"
+            "$a_\n"
+            "$a_a\n"
+        );
+        eTokenTypes expected[] = {
+            SYMBOL, SYMBOL, SYMBOL, SYMBOL, SYMBOL, SYMBOL, (eTokenTypes)EOF
+        };
+        TestLexerWithInput( input, expected );
     }
 
     TEST(Recognize_Valid_Operators)
     {
-        CHECK(false);
+        std::string input(
+            // Recognize single character operators
+            "[ ] ( ) { } , + * / . %"
+            // Recognize multi character operators and similar single char ones
+            "= == ! != < <= > >= | || && : := @ @="
+        );
+        eTokenTypes expected[] = {
+            LBRACK, RBRACK, LPAR, RPAR, LBRACE, RBRACE, COMMA, ADD, MUL, DIV,
+            MEMB, MACRO, ASSIGN, EQ, NOT, NE, LT, LTE, GT, GTE, PIPE, OR, AND,
+            SEP, DEFN, MAP, IMPORT,
+            (eTokenTypes)EOF
+        };
+        TestLexerWithInput( input, expected );
     }
 
 }
