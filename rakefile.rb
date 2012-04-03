@@ -11,6 +11,8 @@ CLOBBER.include('./deps/cork/build/static')
 CLOBBER.include('./deps/cork/build/shared')
 CLOBBER.include('./deps/parse-utils/build/static')
 CLOBBER.include('./deps/parse-utils/build/shared')
+CLOBBER.include('./tools/UnitTest++/*UnitTest++*')
+CLOBBER.include('./tools/UnitTest++/src/**/*.o')
 
 #------------------------------------------------------------------------------
 # Configuration Objects
@@ -52,18 +54,45 @@ DLangDebug = Binary.new({
 })
 DLangDebug.setup_default_rake_tasks()
 
-# Configuration for the unit tests
-UnitTest = Tests.new({
-    :test_files => [ 'tests/source/**.h' ],
+# Configuration for the unit test runner
+DLangTests = Binary.new({
+    :name => 'test_runner',
+    :output_dir => 'build/test',
+    :compiler_options => [ '-c', '-Wall', '-Werror', '-o' ],
+    :static_libs => [
+        'tools/UnitTest++/libUnitTest++.a',
+        './deps/parse-utils/build/static/bin/libparse-utils.a'
+    ],
+    :resource_files => [ 'res/*' ],
+    :source_files => [
+        'tests/**/*.c*',
+        'source/*/**/*.c*'
+    ],
+    :include_dirs => [
+        'tests/**/',
+        'source/**/',
+        'tools/UnitTest++/src/**/',
+        'deps/parse-utils/source/**/'
+    ],
 })
-UnitTest.setup_default_rake_tasks()
+DLangTests.setup_default_rake_tasks()
 
 #------------------------------------------------------------------------------
 # Main Tasks
 #------------------------------------------------------------------------------
+desc 'Build all binary artifacts and run all tests'
+task :default => [ :test, :debug, :release ]
+
 desc 'Build and link all artifacts'
 task :release => [ :parse_utils, DLangParser.name() ]
+
+desc 'Build and link all artifacts with the debug build option'
 task :debug => [ :cork, :parse_utils, DLangDebug.name() ]
+
+desc 'Build and run all unit tests'
+task :test => [ :parse_utils, :unit_test_pp, DLangTests.name() ] do
+    sh 'build/test/bin/test_runner'
+end
 
 desc 'Build the cork memory leak detector'
 task :cork do
@@ -76,5 +105,12 @@ desc 'Build the parse-utils library'
 task :parse_utils do
     Dir.chdir('./deps/parse-utils')
     sh 'rake release'
+    Dir.chdir(PROJECT_ROOT)
+end
+
+desc 'Build the UnitTest++ library'
+task :unit_test_pp do
+    Dir.chdir('./tools/UnitTest++')
+    sh 'make all'
     Dir.chdir(PROJECT_ROOT)
 end
