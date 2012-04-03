@@ -131,13 +131,11 @@ void DLLexer::WS(void)
 void DLLexer::COMMENT(void)
 {
     match('#');
-    do
+    while(   (lookahead(1) != '\n')
+          && (lookahead(1) != EOF))
     {
         consume();
     }
-    while(   (lookahead(1) != '\n')
-          && (lookahead(1) != EOF));
-
 }
 
 void DLLexer::Id(Token& tok)
