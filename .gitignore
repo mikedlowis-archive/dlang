@@ -2,5 +2,7 @@ build/*
 tags
 cscope.out
 project.vim
-tools/UnitTest++/**/*.o
+tools/UnitTest++/src/*.o
+tools/UnitTest++/src/tests/*.o
+tools/UnitTest++/src/Win32/*.o
 tools/UnitTest++/*UnitTest++*
