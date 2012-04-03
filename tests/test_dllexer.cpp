@@ -95,7 +95,21 @@ namespace {
 
     TEST(Recognize_Valid_Numbers)
     {
-        CHECK(false);
+        std::string input(
+            // Recognize all of the digits
+            "0 1 2 3 4 5 6 7 8 9\n"
+            // Recognize combinations of digits
+            "10 11 12 13 14 15 16 17 18 19\n"
+            // Recognize floating point numbers (with and without exponents)
+            "1.0 -1.0 0.1e1 10.0e-1"
+        );
+        eTokenTypes expected[] = {
+            NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM,
+            NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM, NUM,
+            NUM, NUM, NUM, NUM,
+            (eTokenTypes)EOF
+        };
+        TestLexerWithInput( input, expected );
     }
 
     TEST(Recognize_Valid_Characters)
