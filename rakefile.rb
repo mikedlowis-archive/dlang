@@ -132,6 +132,7 @@ task :coverage do #=> [ :test ] do
     end
 
     # For each test file
+    puts ""
     tests.each { |test|
         # Find the source file basename, object file location, and gcov output
         source = File.basename( test ).gsub( 'test_', '' )
@@ -140,7 +141,8 @@ task :coverage do #=> [ :test ] do
 
         # Generate the coverage info and display only the summary for our
         # source file
-        sh "gcov -o build/test/obj #{obj} | grep -A1 #{source}"
+        puts "----"
+        sh "gcov -b -o build/test/obj #{obj} | grep -A 4 \"#{source}'\""
 
         # Move the coverage to our output folder
         FileUtils.mv( gcov, out_dir )
@@ -148,4 +150,5 @@ task :coverage do #=> [ :test ] do
         # Delete the unwanted coverage files
         FileList['*.gcov'].each { |f| File.delete(f) }
     }
+    puts ""
 end

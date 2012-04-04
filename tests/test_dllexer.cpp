@@ -120,12 +120,28 @@ namespace {
 
     TEST(Recognize_Valid_Characters)
     {
-        CHECK(false);
+        std::string input(
+            // Make Sure we recognize characters and escaped characters
+            "'a' '\\a'"
+        );
+        eTokenTypes expected[] = {
+            CHAR, CHAR, (eTokenTypes)EOF
+        };
+        TestLexerWithInput( input, expected );
     }
 
     TEST(Recognize_Valid_Strings)
     {
-        CHECK(false);
+        std::string input(
+            // Make Sure we recognize all valid characters for a symbol
+            "\"\" \n"
+            "\"a\" \n"
+            "\"\\a\" \n"
+        );
+        eTokenTypes expected[] = {
+            STRING, STRING, STRING, (eTokenTypes)EOF
+        };
+        TestLexerWithInput( input, expected );
     }
 
     TEST(Recognize_Valid_Symbols)
@@ -149,17 +165,40 @@ namespace {
     {
         std::string input(
             // Recognize single character operators
-            "[ ] ( ) { } , + * / . %"
+            "[ ] ( ) { } , + * / . % - "
             // Recognize multi character operators and similar single char ones
             "= == ! != < <= > >= | || && : := @ @="
         );
         eTokenTypes expected[] = {
             LBRACK, RBRACK, LPAR, RPAR, LBRACE, RBRACE, COMMA, ADD, MUL, DIV,
-            MEMB, MACRO, ASSIGN, EQ, NOT, NE, LT, LTE, GT, GTE, PIPE, OR, AND,
-            SEP, DEFN, MAP, IMPORT,
+            MEMB, MACRO, SUB, ASSIGN, EQ, NOT, NE, LT, LTE, GT, GTE, PIPE, OR,
+            AND, SEP, DEFN, MAP, IMPORT,
             (eTokenTypes)EOF
         };
         TestLexerWithInput( input, expected );
     }
 
+    TEST(Throw_Exceptions_For_Exceptional_Cases)
+    {
+        // Make sure invalud number literals throw exceptions where appropriate
+        std::string num_exception1("1.0e-");
+        TestLexerThrowsException( num_exception1 );
+
+        std::string num_exception2("1.0e-a");
+        TestLexerThrowsException( num_exception2 );
+
+        std::string num_exception3("1.0e-");
+        TestLexerThrowsException( num_exception3 );
+
+        std::string num_exception4("1.a");
+        TestLexerThrowsException( num_exception4 );
+
+        // Make sure we throw an exception for an invalid operator
+        std::string op_exception1("^");
+        TestLexerThrowsException( op_exception1 );
+
+        // Make sure we throw an exception for an invalid operator
+        std::string multi_op_exception1("&");
+        TestLexerThrowsException( multi_op_exception1 );
+    }
 }

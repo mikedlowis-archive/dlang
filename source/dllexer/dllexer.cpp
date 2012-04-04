@@ -184,7 +184,7 @@ void DLLexer::Number(Token& tok, bool isNegative)
         else
         {
             Exception ex(line,column);
-            ex << "Integer for floating point exponent";
+            ex << "Missing integer for floating point exponent";
             throw ex;
         }
     }
@@ -404,7 +404,8 @@ void DLLexer::MultiCharOp(Token& tok)
             tok = Token(MAP, line, column);
         }
     }
-    else
+
+    if (tok.type() == EOF)
     {
         Exception ex(line,column);
         ex << "Unexpected token";
@@ -415,36 +416,12 @@ void DLLexer::MultiCharOp(Token& tok)
 std::string DLLexer::EscapeSequence()
 {
     ostringstream oss;
-
+    // consume backslash
     oss << lookahead(1);
     consume();
-
-    if ( lookahead(1) == 'x' )
-    {
-        oss << lookahead(1);
-        consume();
-        for(int i = 0; i < 2; i++)
-        {
-            if ( ((lookahead(1) >= '0') || (lookahead(1) <= '9')) ||
-                 ((lookahead(1) >= 'a') || (lookahead(1) <= 'f')) ||
-                 ((lookahead(1) >= 'A') || (lookahead(1) <= 'F')))
-            {
-                oss << lookahead(1);
-                consume();
-            }
-            else
-            {
-                Exception ex(line,column);
-                ex << "Invalid hexadecimal escape sequence.";
-                throw ex;
-            }
-        }
-    }
-    else
-    {
-        oss << lookahead(1);
-        consume();
-    }
+    // consume escaped char
+    oss << lookahead(1);
+    consume();
     return oss.str();
 }
 
