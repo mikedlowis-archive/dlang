@@ -131,7 +131,7 @@ namespace {
     TEST(Recognize_Valid_Symbols)
     {
         std::string input(
-            // Make Sure we recognize all valid characters for an ID
+            // Make Sure we recognize all valid characters for a symbol
             "$abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_\n"
             "$ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_\n"
             "$a_123\n"

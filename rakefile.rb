@@ -13,6 +13,7 @@ CLOBBER.include('./deps/parse-utils/build/static')
 CLOBBER.include('./deps/parse-utils/build/shared')
 CLOBBER.include('./tools/UnitTest++/*UnitTest++*')
 CLOBBER.include('./tools/UnitTest++/src/**/*.o')
+CLOBBER.include('./tests/gcov')
 
 #------------------------------------------------------------------------------
 # Configuration Objects
@@ -58,7 +59,12 @@ DLangDebug.setup_default_rake_tasks()
 DLangTests = Binary.new({
     :name => 'test_runner',
     :output_dir => 'build/test',
-    :compiler_options => [ '-c', '-Wall', '-Werror', '-o' ],
+    :linker_options => [ '-fprofile-arcs', '-o' ],
+    :compiler_options => [
+        '-c', '-Wall', '-Werror',
+        '-fprofile-arcs', '-ftest-coverage',
+        '-O0', '-o'
+    ],
     :static_libs => [
         'tools/UnitTest++/libUnitTest++.a',
         './deps/parse-utils/build/static/bin/libparse-utils.a'
@@ -113,4 +119,33 @@ task :unit_test_pp do
     Dir.chdir('./tools/UnitTest++')
     sh 'make all'
     Dir.chdir(PROJECT_ROOT)
+end
+
+desc 'Generate and display the test coverage statistics for each test file'
+task :coverage do #=> [ :test ] do
+    out_dir = 'build/test/gcov'
+    tests = FileList['tests/**/test_*.cpp']
+
+    # Create the output directory if it doesnt already exist
+    if not File.exist?( out_dir ) then
+        Dir.mkdir( out_dir )
+    end
+
+    # For each test file
+    tests.each { |test|
+        # Find the source file basename, object file location, and gcov output
+        source = File.basename( test ).gsub( 'test_', '' )
+        obj = 'build/obj/' + source.ext('o')
+        gcov = source + '.gcov'
+
+        # Generate the coverage info and display only the summary for our
+        # source file
+        sh "gcov -o build/test/obj #{obj} | grep -A1 #{source}"
+
+        # Move the coverage to our output folder
+        FileUtils.mv( gcov, out_dir )
+
+        # Delete the unwanted coverage files
+        FileList['*.gcov'].each { |f| File.delete(f) }
+    }
 end
