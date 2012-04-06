@@ -65,6 +65,12 @@ bool DLLexer::isStringChar(void)
 Token DLLexer::next(void)
 {
     Token ret;
+
+    // Prime the buffer. For empty input strings this results in us finding
+    // the EOF and skipping the loop
+    (void)lookahead(1);
+
+    // If we have non-EOF chars tehn process them
     while ( !eof() && (ret.type() == EOF) )
     {
         if (isWhiteSpace())
@@ -116,6 +122,7 @@ Token DLLexer::next(void)
             SingleCharOp(ret);
         }
     }
+
     return ret;
 }
 
@@ -157,7 +164,7 @@ void DLLexer::Number(Token& tok, bool isNegative)
     // Get the first part of the number
     oss << FloatingPoint(isNegative);
 
-    // Get teh exponent if we have one
+    // Get the exponent if we have one
     if ( lookahead(1) == 'e')
     {
         // consume the 'e'
