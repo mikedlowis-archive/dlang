@@ -87,7 +87,7 @@ DLangTests.setup_default_rake_tasks()
 # Main Tasks
 #------------------------------------------------------------------------------
 desc 'Build all binary artifacts and run all tests'
-task :default => [ :test, :debug, :release ]
+task :default => [ :test, :debug, :release, :coverage ]
 
 desc 'Build and link all artifacts'
 task :release => [ :parse_utils, DLangParser.name() ]
@@ -122,7 +122,7 @@ task :unit_test_pp do
 end
 
 desc 'Generate and display the test coverage statistics for each test file'
-task :coverage do #=> [ :test ] do
+task :coverage => [ :test ] do
     out_dir = 'build/test/gcov'
     tests = FileList['tests/**/test_*.cpp']
 
