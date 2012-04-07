@@ -382,9 +382,288 @@ namespace {
 
     // Function Application
     //---------------------
+    TEST(Parse_A_Simple_Function_Application)
+    {
+        std::string input("foo()");
+        eTokenTypes expected[] = {
+            ID, LIST, FN_CALL,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
 
     // Collection Access
     //------------------
+    TEST(Parse_An_Array_Indexing_Expression)
+    {
+        std::string input("foo[1]");
+        eTokenTypes expected[] = {
+            ID, NUM, ARRY_IDX,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Logical Operators
+    //------------------
+    TEST(Parse_A_Logical_And_Operation)
+    {
+        std::string input("foo && bar");
+        eTokenTypes expected[] = {
+            ID, ID, AND,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Logical_Or_Operation)
+    {
+        std::string input("foo || bar");
+        eTokenTypes expected[] = {
+            ID, ID, OR,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Logical_Not_Operation)
+    {
+        std::string input("! foo");
+        eTokenTypes expected[] = {
+            ID, NOT,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Arithmetic Operators
+    //---------------------
+    TEST(Parse_An_Addition_Operation)
+    {
+        std::string input("foo + bar");
+        eTokenTypes expected[] = {
+            ID, ID, ADD,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Subtraction_Operation)
+    {
+        std::string input("foo - bar");
+        eTokenTypes expected[] = {
+            ID, ID, SUB,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Multiplication_Operation)
+    {
+        std::string input("foo * bar");
+        eTokenTypes expected[] = {
+            ID, ID, MUL,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Division_Operation)
+    {
+        std::string input("foo / bar");
+        eTokenTypes expected[] = {
+            ID, ID, DIV,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Comparison Operators
+    //---------------------
+    TEST(Parse_An_Equal_Operation)
+    {
+        std::string input("foo == bar");
+        eTokenTypes expected[] = {
+            ID, ID, EQ,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Not_Equal_Operation)
+    {
+        std::string input("foo != bar");
+        eTokenTypes expected[] = {
+            ID, ID, NE,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Less_Than_Operation)
+    {
+        std::string input("foo < bar");
+        eTokenTypes expected[] = {
+            ID, ID, LT,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Greater_Than_Operation)
+    {
+        std::string input("foo > bar");
+        eTokenTypes expected[] = {
+            ID, ID, GT,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Less_Than_Or_Equal_Operation)
+    {
+        std::string input("foo <= bar");
+        eTokenTypes expected[] = {
+            ID, ID, LTE,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Greater_Than_Or_Equal_Operation)
+    {
+        std::string input("foo >= bar");
+        eTokenTypes expected[] = {
+            ID, ID, GTE,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Definition and Assignment
+    //--------------------------
+    TEST(Parse_A_Definition_Operation)
+    {
+        std::string input("foo := 1");
+        eTokenTypes expected[] = {
+            ID, NUM, DEFN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_An_Assignment_Operation)
+    {
+        std::string input("foo = bar");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    //-------------------------------------------------------------------------
+    // Test Macro Definition and Expansion
+    //-------------------------------------------------------------------------
+    TEST(Parse_A_Macro_Taking_One_Map)
+    {
+        std::string input("\% foo [ (M) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_Taking_One_Vector)
+    {
+        std::string input("\% foo [ (V) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_Taking_One_List)
+    {
+        std::string input("\% foo [ (L) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_Taking_One_Block)
+    {
+        std::string input("\% foo [ (B) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_taking_One_Id)
+    {
+        std::string input("\% foo [ (I) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_Taking_One_Number)
+    {
+        std::string input("\% foo [ (N) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_Taking_One_Character)
+    {
+        std::string input("\% foo [ (C) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_Taking_One_String)
+    {
+        std::string input("\% foo [ (St) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_Taking_One_Symbol)
+    {
+        std::string input("\% foo [ (Sy) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_Taking_One_Expression)
+    {
+        std::string input("\% foo [ (E) : $1 ]");
+        eTokenTypes expected[] = {
+            ID, ID, ASSIGN,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
 
     //-------------------------------------------------------------------------
     // Test General Corner Cases
