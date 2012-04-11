@@ -41,21 +41,9 @@ void Pattern::apply(AST* cur,std::vector<AST*>& params)
         {
             if ((*it)->type() == SYMBOL)
             {
-                unsigned int arg;
-                istringstream((*it)->text()) >> arg;
-
-                if (arg <= params.size())
-                {
-                    AST* temp = *it;
-                    *it = params[ arg - 1 ];
-                    delete temp;
-                }
-                else
-                {
-                    Exception ex;
-                    ex << "Invalid parameter number";
-                    throw ex;
-                }
+                AST* temp = *it;
+                *it = expand( *it, params );
+                delete temp;
             }
             else
             {
@@ -65,10 +53,40 @@ void Pattern::apply(AST* cur,std::vector<AST*>& params)
     }
 }
 
+AST* Pattern::expand(const AST* cur,std::vector<AST*>& params)
+{
+    AST* ret = NULL;
+    unsigned int arg;
+    istringstream(cur->text()) >> arg;
+
+    if (arg <= params.size())
+    {
+        ret = params[ arg - 1 ];
+    }
+    else
+    {
+        Exception ex;
+        ex << "Invalid parameter number";
+        throw ex;
+    }
+
+    return ret;
+}
+
 AST* Pattern::accept(std::vector<AST*>& params)
 {
-    AST* ret = expr_ast->clone();
-    apply( ret, params );
+    AST* ret = NULL;
+
+    if( expr_ast->type() == SYMBOL )
+    {
+        ret = expand( expr_ast, params );
+    }
+    else
+    {
+        ret = expr_ast->clone();
+        apply( ret, params );
+    }
+
     return ret;
 }
 

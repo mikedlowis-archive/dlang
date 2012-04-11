@@ -53,23 +53,21 @@ void TestParserWithInput(std::string& input, eTokenTypes expected_types[])
     parser.process( tester );
 }
 
-//void TestParserThrowsException(std::string& input)
-//{
-//    // Setup
-//    //std::istringstream input_stream(input);
-//    //DLLexer* lexer = new DLLexer(input_stream);
-//
-//    //CHECK_THROW( lexer->next(), Exception );
-//
-//    // Cleanup
-//    //delete lexer;
-//}
+void TestParserThrowsException(std::string& input)
+{
+    // Setup
+    std::istringstream input_stream(input);
+    DLParser parser;
+
+    // Parse the test input
+    parser.input( new DLLexer( input_stream ) );
+    CHECK_THROW( parser.parse(), Exception );
+}
 
 //-----------------------------------------------------------------------------
 // Begin Unit Tests
 //-----------------------------------------------------------------------------
 namespace {
-
     //-------------------------------------------------------------------------
     // Test Parsing of Data Type Literals
     //-------------------------------------------------------------------------
@@ -360,25 +358,35 @@ namespace {
 
     // Grouping Expression
     //--------------------
-    //TEST(Parse_A_Grouping_Expression_With_A_Lower_Priority_Statement)
-    //{
-    //    std::string input("(foo.bar).somethin");
-    //    eTokenTypes expected[] = {
-    //        ID, ID, MEMB, ID, MEMB,
-    //        PROGRAM
-    //    };
-    //    TestParserWithInput( input, expected );
-    //}
+    TEST(Parse_A_Grouping_Expression)
+    {
+        std::string input("( 1 + 1 )");
+        eTokenTypes expected[] = {
+            NUM, NUM, ADD,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
 
-    //TEST(Parse_A_Grouping_Expression_With_A_Higher_Priority_Statement)
-    //{
-    //    std::string input("(1+1).somethin");
-    //    eTokenTypes expected[] = {
-    //        NUM, NUM, ADD, ID, MEMB,
-    //        PROGRAM
-    //    };
-    //    TestParserWithInput( input, expected );
-    //}
+    TEST(Parse_A_Grouping_Expression_With_A_Lower_Priority_Statement)
+    {
+        std::string input("(1 + 2) * 3");
+        eTokenTypes expected[] = {
+            NUM, NUM, ADD, NUM, MUL,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Grouping_Expression_With_A_Higher_Priority_Statement)
+    {
+        std::string input("1 + (2 * 3)");
+        eTokenTypes expected[] = {
+            NUM, NUM, NUM, MUL, ADD,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
 
     // Function Application
     //---------------------
@@ -562,104 +570,362 @@ namespace {
         TestParserWithInput( input, expected );
     }
 
+    TEST(Parse_An_Assignment_To_An_Array_Member)
+    {
+        std::string input("foo[1] = bar");
+        eTokenTypes expected[] = {
+            ID, NUM, ID, MUTATE,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_An_Assignment_To_A_Map_Member)
+    {
+        std::string input("foo[\"bar\"] = bar");
+        eTokenTypes expected[] = {
+            ID, STRING, ID, MUTATE,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
     //-------------------------------------------------------------------------
     // Test Macro Definition and Expansion
     //-------------------------------------------------------------------------
+
+    // Map
+    //----
     TEST(Parse_A_Macro_Taking_One_Map)
     {
         std::string input("\% foo [ (M) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_Map_Parameter)
+    {
+        std::string input(
+            "\% foo [ (M) : $1 ]\n"
+            "foo @{}"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            MAP,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Vector
+    //-------
     TEST(Parse_A_Macro_Taking_One_Vector)
     {
         std::string input("\% foo [ (V) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_Vector_Parameter)
+    {
+        std::string input(
+            "\% foo [ (V) : $1 ]\n"
+            "foo []"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            VECTOR,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // List
+    //-----
     TEST(Parse_A_Macro_Taking_One_List)
     {
         std::string input("\% foo [ (L) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_List_Parameter)
+    {
+        std::string input(
+            "\% foo [ (L) : $1 ]\n"
+            "foo ()"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            LIST,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Block
+    //------
     TEST(Parse_A_Macro_Taking_One_Block)
     {
         std::string input("\% foo [ (B) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_Block_Parameter)
+    {
+        std::string input(
+            "\% foo [ (B) : $1 ]\n"
+            "foo {}"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            PARAMS, BLOCK, FUNC,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Id
+    //---
     TEST(Parse_A_Macro_taking_One_Id)
     {
         std::string input("\% foo [ (I) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_Id_Parameter)
+    {
+        std::string input(
+            "\% foo [ (I) : $1 ]\n"
+            "foo bar"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            ID,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Number
+    //-------
     TEST(Parse_A_Macro_Taking_One_Number)
     {
         std::string input("\% foo [ (N) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_Number_Parameter)
+    {
+        std::string input(
+            "\% foo [ (N) : $1 ]\n"
+            "foo 1.0"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            NUM,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Character
+    //----------
     TEST(Parse_A_Macro_Taking_One_Character)
     {
         std::string input("\% foo [ (C) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_Character_Parameter)
+    {
+        std::string input(
+            "\% foo [ (C) : $1 ]\n"
+            "foo 'a'"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            CHAR,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // String
+    //-------
     TEST(Parse_A_Macro_Taking_One_String)
     {
         std::string input("\% foo [ (St) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_String_Parameter)
+    {
+        std::string input(
+            "\% foo [ (St) : $1 ]\n"
+            "foo \"\""
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            STRING,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Symbol
+    //-------
     TEST(Parse_A_Macro_Taking_One_Symbol)
     {
         std::string input("\% foo [ (Sy) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
             PROGRAM
         };
         TestParserWithInput( input, expected );
     }
 
+    TEST(Use_A_Macro_With_A_Symbol_Parameter)
+    {
+        std::string input(
+            "\% foo [ (Sy) : $1 ]\n"
+            "foo $bar"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            SYMBOL,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Expression
+    //-----------
     TEST(Parse_A_Macro_Taking_One_Expression)
     {
         std::string input("\% foo [ (E) : $1 ]");
         eTokenTypes expected[] = {
-            ID, ID, ASSIGN,
+            MACRO,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Use_A_Macro_With_A_Expression_Parameter)
+    {
+        std::string input(
+            "\% foo [ (E) : $1 ]\n"
+            "foo 1 + 1"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            NUM, NUM, ADD,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    // Corner Cases
+    //-------------
+    TEST(Throw_Exception_When_Invalid_Macro_Param_Type_Used)
+    {
+        std::string input("\% foo [ (Z) : $1 ]");
+        TestParserThrowsException(input);
+    }
+
+    TEST(Throw_Exception_When_No_Macro_Pattern_Matches)
+    {
+        std::string input(
+            "\% foo [ (I) : $1 ]\n"
+            "foo 1.0" //Expecting and ID but a number is given
+        );
+        TestParserThrowsException(input);
+    }
+
+    TEST(Parse_A_Macro_With_Multiple_Parameter_Types)
+    {
+        std::string input("\% tuple [ (E E) : ($1,$2) ]");
+        eTokenTypes expected[] = {
+            MACRO,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Use_A_Macro_With_Multiple_Parameter_Types)
+    {
+        std::string input(
+            "\% tuple [ (E E) : ($1,$2) ]\n"
+            "tuple 1.0 'a'"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            NUM, CHAR, LIST,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Parse_A_Macro_With_Multiple_Patterns)
+    {
+        std::string input(
+            // Emulate an If statement
+            "\% if [\n"
+            "        (E B B) : exec_if($1,$2,$3),\n"
+            "        (E B)   : exec_if($1,$2)\n"
+            "]"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            PROGRAM
+        };
+        TestParserWithInput( input, expected );
+    }
+
+    TEST(Use_A_Macro_With_Multiple_Patterns)
+    {
+        std::string input(
+            // Emulate an If statement
+            "\% if [\n"
+            "        (E B B) : exec_if($1,$2,$3),\n"
+            "        (E B)   : exec_if($1,$2)\n"
+            "]\n"
+            "if (1 == 1) {}\n"
+            "if (1 == 1) {} {}\n"
+        );
+        eTokenTypes expected[] = {
+            MACRO,
+            ID, NUM, NUM, EQ, PARAMS, BLOCK, FUNC, LIST, FN_CALL,
+            ID, NUM, NUM, EQ, PARAMS, BLOCK, FUNC, PARAMS, BLOCK, FUNC, LIST, FN_CALL,
             PROGRAM
         };
         TestParserWithInput( input, expected );
@@ -673,5 +939,11 @@ namespace {
         std::string input("");
         eTokenTypes expected[] = { PROGRAM };
         TestParserWithInput( input, expected );
+    }
+
+    TEST(Throw_Exception_When_Literal_On_Left_Side_Of_Assignment)
+    {
+        std::string input("[] = 5");
+        TestParserThrowsException(input);
     }
 }

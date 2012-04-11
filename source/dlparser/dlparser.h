@@ -17,7 +17,6 @@ class DLParser : public BTParser
         void parse(void);
         bool isMacro(Token& token);
         bool speculate_GroupExpr(void);
-        bool speculate_MapLiteral(void);
         bool speculate_MacroPatternMatch(Pattern patt);
 
         /**********************************************************************

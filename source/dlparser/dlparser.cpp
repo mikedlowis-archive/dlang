@@ -140,10 +140,6 @@ AST* DLParser::MacroPatternMatch(Pattern patt)
             case EXPR_TYP:
                 param = LogicalExpr();
                 break;
-
-            default:
-                throw Exception( lookaheadToken(1) );
-                break;
         }
 
         if( !isSpeculating() )
@@ -171,24 +167,6 @@ bool DLParser::speculate_GroupExpr(void)
         match(LPAR);
         delete LogicalExpr();
         match(RPAR);
-    }
-    catch (Exception e)
-    {
-        success = false;
-    }
-    release();
-
-    return success;
-}
-
-bool DLParser::speculate_MapLiteral(void)
-{
-    bool success = true;
-
-    mark();
-    try
-    {
-        delete MapLiteral();
     }
     catch (Exception e)
     {
@@ -560,7 +538,9 @@ Pattern DLParser::MacroPattern(void)
         }
         else
         {
-            throw Exception( lookaheadToken(1) );
+            Exception ex( lookaheadToken(1) );
+            ex << "Unrecognized macro parameter type: " << lookaheadToken(1).text();
+            throw ex;
         }
     }
     while( lookaheadType(1) == ID );

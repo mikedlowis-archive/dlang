@@ -31,6 +31,7 @@ class Pattern {
         std::list<PatternType_T>::iterator begin();
         std::list<PatternType_T>::iterator end();
         AST* accept(std::vector<AST*>& params);
+        AST* expand(const AST* cur, std::vector<AST*>& params);
 };
 
 #endif
