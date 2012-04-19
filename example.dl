@@ -1,123 +1,140 @@
-#------------------------------------------------------------------------------
-# Literal Definition and Usage
-#------------------------------------------------------------------------------
-
-# Nums
-assert( 1 == 1,           "Positive integer parses correctly")
-assert( -1 == -1,         "Negative integer parses correctly")
-assert( 1.0 == 1.0,       "Parse postive floating point value without exponent")
-assert( -1.0 == -1.0,     "Parse negative floating point value without exponent")
-assert( 10.0e-1 == 1.0,   "Parse positive floating point value with exponent")
-assert( -10.0e-1 == -1.0, "Parse negative floating point value with exponent")
-
-# Char
-assert('a',  "Parse a character")
-assert('\a', "Parse escape sequence for alarm")
-assert('\b', "Parse escape sequence for backspace")
-assert('\n', "Parse escape sequence for newline")
-assert('\r', "Parse escape sequence for return")
-assert('\t', "Parse escape sequence for tab")
-assert('\v', "Parse escape sequence for vertical tab")
-
-# String
-foo := "some string"
-foo = "foo \a \b \f \n \r \t \v \' \" \\ \xFF bar"
-foo = "12345"[2]
-
-# Symbol
-foo = $some_symbol
-
-# Map
-foo = @{}
-foo.stuff = "bar"
-foo = @{
-    $foo : 1 + 1,
-    "stuff" : 2 + 2,
-    $stuff : 2 + 2,
-    $bar : 3 + 3,
-}
-
-# Setting map elements
-foo["stuff"] = 3
-foo.stuff = 5
-
-# Vector
-foo = []
-foo = [1]
-foo = [1,2,3]
-foo = foo[1]
-foo = [1,2,3,4,5][2]
-
-# Setting Vector Elements
-foo[2] = 6
-
-# List
-foo = ()
-foo = (1,)
-foo = (1,2,3)
-foo = foo[1]
-foo = (1,2,3,4,5)[2]
-
-# Setting List Elements
-foo[2] = 6
-
-# Block
-foo = { 1 + 1 }
-foo = {|a| a + 1}
-foo = {|a,b| a + b }
-foo = foo(1,2)
-foo = ({|a,b| a + b })(1,2)
-
-#------------------------------------------------------------------------------
-# Operators and Precedence Tests
-#------------------------------------------------------------------------------
-
-
-#------------------------------------------------------------------------------
-# Macro Definition and Usage
-#------------------------------------------------------------------------------
-
-# Define a macro that represents a traditional if statement
+##------------------------------------------------------------------------------
+## Literal Definition and Usage
+##------------------------------------------------------------------------------
+#
+## Nums
+#assert( 1 == 1,           "Positive integer parses correctly")
+#assert( -1 == -1,         "Negative integer parses correctly")
+#assert( 1.0 == 1.0,       "Parse postive floating point value without exponent")
+#assert( -1.0 == -1.0,     "Parse negative floating point value without exponent")
+#assert( 10.0e-1 == 1.0,   "Parse positive floating point value with exponent")
+#assert( -10.0e-1 == -1.0, "Parse negative floating point value with exponent")
+#
+## Char
+#assert('a',  "Parse a character")
+#assert('\a', "Parse escape sequence for alarm")
+#assert('\b', "Parse escape sequence for backspace")
+#assert('\n', "Parse escape sequence for newline")
+#assert('\r', "Parse escape sequence for return")
+#assert('\t', "Parse escape sequence for tab")
+#assert('\v', "Parse escape sequence for vertical tab")
+#
+## String
+#foo := "some string"
+#foo = "foo \a \b \f \n \r \t \v \' \" \\ \xFF bar"
+#foo = "12345"[2]
+#
+## Symbol
+#foo = $some_symbol
+#
+## Map
+#foo = @{}
+#foo.stuff = "bar"
+#foo = @{
+#    $foo : 1 + 1,
+#    "stuff" : 2 + 2,
+#    $stuff : 2 + 2,
+#    $bar : 3 + 3,
+#}
+#
+## Setting map elements
+#foo["stuff"] = 3
+#foo.stuff = 5
+#
+## Vector
+#foo = []
+#foo = [1]
+#foo = [1,2,3]
+#foo = foo[1]
+#foo = [1,2,3,4,5][2]
+#
+## Setting Vector Elements
+#foo[2] = 6
+#
+## List
+#foo = ()
+#foo = (1,)
+#foo = (1,2,3)
+#foo = foo[1]
+#foo = (1,2,3,4,5)[2]
+#
+## Setting List Elements
+#foo[2] = 6
+#
+## Block
+#foo = { 1 + 1 }
+#foo = {|a| a + 1}
+#foo = {|a,b| a + b }
+#foo = foo(1,2)
+#foo = ({|a,b| a + b })(1,2)
+#
+##------------------------------------------------------------------------------
+## Operators and Precedence Tests
+##------------------------------------------------------------------------------
+#
+#
+##------------------------------------------------------------------------------
+## Macro Definition and Usage
+##------------------------------------------------------------------------------
+#
+## Define a macro that represents a traditional if statement
 % if [
     (E B B) : exec_if($1, $2, $3),
     (E B)   : exec_if($1, $2),
 ]
-
-test_result = false
-if (1 < 2)
-{
-    test_result = true
-}{
-    test_result = false
-}
-assert( test_result, "First branch should be taken when test condition is true" )
-
-test_result = false
-if (1 > 2)
-{
-    test_result = false
-}{
-    test_result = true
-}
-assert( test_result, "Second branch should be taken when test condition is false" )
-
-test_result = false
-if (1 < 2)
-{
-    test_result = true
-}
-assert( test_result, "Branch should be taken when test condition is true" )
-
-test_result = true
-if (1 > 2)
-{
-    test_result = false
-}
-assert( test_result, "Branch should not be taken when test condition is false" )
+#
+#test_result = false
+#if (1 < 2)
+#{
+#    test_result = true
+#}{
+#    test_result = false
+#}
+#assert( test_result, "First branch should be taken when test condition is true" )
+#
+#test_result = false
+#if (1 > 2)
+#{
+#    test_result = false
+#}{
+#    test_result = true
+#}
+#assert( test_result, "Second branch should be taken when test condition is false" )
+#
+#test_result = false
+#if (1 < 2)
+#{
+#    test_result = true
+#}
+#assert( test_result, "Branch should be taken when test condition is true" )
+#
+#test_result = true
+#if (1 > 2)
+#{
+#    test_result = false
+#}
+#assert( test_result, "Branch should not be taken when test condition is false" )
 
 #------------------------------------------------------------------------------
 # Delayed Evaluation
 #------------------------------------------------------------------------------
+
+# Define a function that makes a promise
+make_promise := {|expr|
+    result := expr
+    {
+        print( "expr: ", expr )
+        print( "result: ", result )
+        result
+        #if result_ready == true {
+        #    print("Returning cached results")
+        #    result
+        #}{
+        #    print("Caching results")
+        #    result
+        #}
+    }
+}
 
 # Define a macro that will delay the evaluation of the following expression
 % delay [
@@ -130,35 +147,40 @@ assert( test_result, "Branch should not be taken when test condition is false" )
 ]
 
 foo = delay 1 + 1
+print("foo: ", foo)
 foo = force foo
+print("foo: ", foo)
+print( force foo )
+#print( force foo )
+#print( force foo )
 
 #------------------------------------------------------------------------------
 # Classes
 #------------------------------------------------------------------------------
 
-# Define a macro for creating new classes
-% class [
-    (B)   : {
-        this := @{}
-        $1()
-        this
-    },
-]
-
-# Simple class definition (No inheritance supported)
-Animal := class {
-    # The sound of the mating call is kept private
-    priv_call := "Moo!"
-
-    # Define a method to print the mating call sound
-    this.mating_call = {
-        print( priv_call )
-    }
-}
-
-# Animal is a constructor so call it to create a new cow
-Cow := Animal()
-
-# And call the method to print the sound (This syntax needs to be cleaned up a bit)
-(Cow.mating_call)()
+## Define a macro for creating new classes
+#% class [
+#    (B)   : {
+#        this := @{}
+#        $1()
+#        this
+#    },
+#]
+#
+## Simple class definition (No inheritance supported)
+#Animal := class {
+#    # The sound of the mating call is kept private
+#    priv_call := "Moo!"
+#
+#    # Define a method to print the mating call sound
+#    this.mating_call = {
+#        print( priv_call )
+#    }
+#}
+#
+## Animal is a constructor so call it to create a new cow
+#Cow := Animal()
+#
+## And call the method to print the sound (This syntax needs to be cleaned up a bit)
+#(Cow.mating_call)()
 
