@@ -5,5 +5,5 @@
     path = deps/cork
     url = git://github.com/mikedlowis/cork.git
 [submodule "deps/parse-utils"]
-	path = deps/parse-utils
-	url = git://github.com/mikedlowis/parse-utils.git
+    path = deps/parse-utils
+    url = git://github.com/mikedlowis/parse-utils.git
