@@ -27,12 +27,10 @@ TEST_RUNNER = test_runner
 #----------------------------
 # Root Directories
 SRC_ROOT   = source/
-RES_ROOT   = res/
 TESTS_ROOT = tests/
 
 # File Extensions
 SRC_EXT    = cpp
-RES_EXT    = scm
 TEST_EXT   = cpp
 
 # Libraries to Link Against
@@ -42,12 +40,10 @@ TEST_LIBS = $(LIBS) \
 
 # Source File Lists
 SRC_FILES  = $(call flist, $(SRC_ROOT), $(SRC_EXT))
-RES_FILES  = $(call flist, $(RES_ROOT), $(RES_EXT))
 TEST_FILES = $(call flist, $(TESTS_ROOT), $(TEST_EXT))
 
 # Object File Lists
 SRC_OBJS  = $(SRC_FILES:%.$(SRC_EXT)=%.o)
-RES_OBJS  = $(RES_FILES:%.$(RES_EXT)=%.o)
 TEST_OBJS = $(TEST_FILES:%.$(TEST_EXT)=%.o)
 
 # Include Directories
@@ -69,11 +65,11 @@ test: $(TEST_RUNNER)
 	$(TEST_RUNNER)
 
 # Binaries
-$(PROJ_NAME): parseutils $(SRC_OBJS) res/environment.o
-	$(CXX) $(CXX_FLAGS) -o $@ $(SRC_OBJS) $(RES_OBJS) $(LIBS)
+$(PROJ_NAME): parseutils $(SRC_OBJS)
+	$(CXX) $(CXX_FLAGS) -o $@ $(SRC_OBJS) $(LIBS)
 
-$(TEST_RUNNER): parseutils unit_test_pp $(SRC_OBJS) $(RES_OBJS) $(TEST_OBJS)
-	$(CXX) $(CXX_FLAGS) -o $@ $(filter-out source/main.o,$(SRC_OBJS)) $(RES_OBJS) $(TEST_OBJS) $(TEST_LIBS)
+$(TEST_RUNNER): parseutils unit_test_pp $(SRC_OBJS) $(TEST_OBJS)
+	$(CXX) $(CXX_FLAGS) -o $@ $(filter-out source/main.o,$(SRC_OBJS)) $(TEST_OBJS) $(TEST_LIBS)
 
 # Libraries
 parseutils:
@@ -87,15 +83,11 @@ $(SRC_OBJS): %.o : %.$(SRC_EXT)
 
 $(TEST_OBJS): %.o : %.$(TEST_EXT)
 
-$(RES_OBJS): %.o : %.$(RES_EXT)
-	objcopy -I binary -O elf32-i386 -B i386 $< $@
-
 # Cleanup
 clean:
 	$(MAKE) -C deps/parse-utils clean
 	$(MAKE) -C tools/UnitTest++ clean
 	$(RM) $(SRC_OBJS)
-	$(RM) $(RES_OBJS)
 	$(RM) $(TEST_OBJS)
 	$(RM) $(TEST_RUNNER)*
 	$(RM) $(PROJ_NAME)*
