@@ -53,7 +53,8 @@ INC_DIRS = $(call incdirs, $(SRC_ROOT)) \
 
 # Compiler and Linker Options
 #----------------------------
-CXXFLAGS = $(INC_DIRS) -Wall -Werror
+CXXFLAGS      = -c $(INC_DIRS) -Wall -Werror
+TEST_CXXFLAGS = -c $(INC_DIRS) -Wall
 
 # Build Rules
 #------------
@@ -66,10 +67,10 @@ test: $(TEST_RUNNER)
 
 # Binaries
 $(PROJ_NAME): parseutils $(SRC_OBJS)
-	$(CXX) $(CXX_FLAGS) -o $@ $(SRC_OBJS) $(LIBS)
+	$(CXX) -o $@ $(SRC_OBJS) $(LIBS)
 
 $(TEST_RUNNER): parseutils unit_test_pp $(SRC_OBJS) $(TEST_OBJS)
-	$(CXX) $(CXX_FLAGS) -o $@ $(filter-out source/main.o,$(SRC_OBJS)) $(TEST_OBJS) $(TEST_LIBS)
+	$(CXX) -o $@ $(filter-out source/main.o,$(SRC_OBJS)) $(TEST_OBJS) $(TEST_LIBS)
 
 # Libraries
 parseutils:
@@ -80,8 +81,10 @@ unit_test_pp:
 
 # Object Files
 $(SRC_OBJS): %.o : %.$(SRC_EXT)
+	$(CXX) $(CXXFLAGS) -o $@ $<
 
 $(TEST_OBJS): %.o : %.$(TEST_EXT)
+	$(CXX) $(TEST_CXXFLAGS) -o $@ $<
 
 # Cleanup
 clean:
