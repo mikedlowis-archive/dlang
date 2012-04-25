@@ -6,3 +6,4 @@ project.vim
 *.exe
 *.a
 *.lib
+*~
