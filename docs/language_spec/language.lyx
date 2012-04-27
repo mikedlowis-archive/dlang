@@ -75,10 +75,6 @@ Michael D.
 
 \begin_layout Date
 04/25/12
-\begin_inset Newpage pagebreak
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -101,38 +97,149 @@ Overview
 \begin_layout Standard
 This report describes a programming language called DLang.
  DLang is a functional programming language which borrows and builds on
- concepts from the Scheme/Lisp family of programming languages.
+ concepts from existing programming languages such as Scheme, Lisp, Python,
+ and JavaScript.
  The language aims to provide the necessary tools for creating powerful
  domain specific languages.
  To this end, the core syntax of DLang aims to be as minimal as possible
- while providing the most powerful syntactic extension capabilites.
+ while providing the most powerful syntactic extension capabilities.
  Despite the powerful syntactic features, performance is also a major requiremen
 t for DLang.
- DLang aims to have execution speeds as close to C as possible.
+ DLang aims to have execution speeds as close to native C as possible.
 \end_layout
 
 \begin_layout Section
-Datatypes
+Data types
+\end_layout
+
+\begin_layout Standard
+Like any other programming language, DLang provides a variety of built-in
+ data types that the user can manipulate, combine, and build on to suit
+ their needs.
+ This chapter aims to describe each of the built-in data type’s implementation,
+ characteristics, and usage in detail.
 \end_layout
 
 \begin_layout Subsection
 Basic Types
 \end_layout
 
+\begin_layout Standard
+Basic data types in DLang consist of atomic, self contained, values that
+ may be passed around, used in expressions, and returned as the result of
+ expressions.
+ These data types represent the simplest building blocks of DLang.
+ The data types that fall into this category are: Numbers, Characters, Symbols,
+ and Booleans.
+\end_layout
+
 \begin_layout Subsubsection
 Numbers
+\end_layout
+
+\begin_layout Standard
+Numbers in DLang consist of several subtypes: Int, Float, BigInt, BigFloat,
+ and Complex.
+ The Int subtype represents a standard integer data type with at least 32
+ bits of precision.
+ The Float subtype represents a standard floating point number type and
+ is implemented with the systems double precision floating point type.
+ The subtypes BigInt and BigFloat represent the same values as their Int
+ and Float cousins except their precision is only limited by the available
+ program memory.
+ The Complex subtype represents numbers consisting of a real and imaginary
+ part.
+ Both the real and imaginary parts are represented internally as BigFloats.
+ 
+\end_layout
+
+\begin_layout Standard
+DLang fully supports mixed arithmetic.
+ When an arithmetic operator receives to numbers of differing types, the
+ smallest type is automatically expanded to the size of the larger type.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset listings
+lstparams "basicstyle={\small}"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Ints    Floats    BigInts    BigFloats    Complex
+\end_layout
+
+\begin_layout Plain Layout
+
+1       1.0       1L         1.0L         TBD
+\end_layout
+
+\begin_layout Plain Layout
+
+-1      -1.0      -1L        -1.0L
+\end_layout
+
+\begin_layout Plain Layout
+
+        1.0e1                1.0e1L
+\end_layout
+
+\begin_layout Plain Layout
+
+        1.0e-1               1.0e-1L
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
 Characters
 \end_layout
 
+\begin_layout Standard
+DLang characters are representations of unicode code points.
+ Internally they are implemented as 32 bits of data holding the value of
+ a unicode code point.
+\end_layout
+
 \begin_layout Subsubsection
 Symbols
 \end_layout
 
+\begin_layout Standard
+Symbols in DLang are named values that evaluate to themselves.
+\end_layout
+
 \begin_layout Subsubsection
 Boolean Values
+\end_layout
+
+\begin_layout Standard
+Booleans are a special subtype of Integers that can only have a value of
+ zero or one.
+ Booleans can 
 \end_layout
 
 \begin_layout Subsection
@@ -143,16 +250,34 @@ Collections
 Lists
 \end_layout
 
+\begin_layout Standard
+Lists are implemented internally as singly linked lists.
+ Each list object is a node containg a reference to the contents of that
+ node and a reference to the next node in the list.
+\end_layout
+
 \begin_layout Subsubsection
 Vectors
+\end_layout
+
+\begin_layout Standard
+Vectors are implemented as arrays of references to data.
 \end_layout
 
 \begin_layout Subsubsection
 Maps
 \end_layout
 
+\begin_layout Standard
+Maps are unordered sets of key and value pairs.
+\end_layout
+
 \begin_layout Subsubsection
 Strings
+\end_layout
+
+\begin_layout Standard
+Strings are implemented as vectors of Characters.
 \end_layout
 
 \begin_layout Subsection
@@ -160,7 +285,7 @@ Blocks
 \end_layout
 
 \begin_layout Standard
-Blocks in dlang represent functions or units of execution.
+Blocks in DLang represent functions or units of execution.
  They consist of a group of expressions that may be executed together.
  Blocks may be passed arguments, assigned to variables, and passed to, or
  returned from other blocks.
@@ -191,7 +316,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset listings
-lstparams "basicstyle={\small},numbers=left"
+lstparams "basicstyle={\small}"
 inline false
 status open
 
@@ -255,6 +380,10 @@ Performance and Behavior
 Ports
 \end_layout
 
+\begin_layout Standard
+Ports represent byte-oriented buffered input and output devices.
+\end_layout
+
 \begin_layout Section
 Operations and Operators
 \end_layout
@@ -268,11 +397,11 @@ Syntactic Extension
 \end_layout
 
 \begin_layout Section
-Builtin Functions
+Built-in Functions
 \end_layout
 
 \begin_layout Section
-Builtin Macros
+Built-in Macros
 \end_layout
 
 \begin_layout Section
