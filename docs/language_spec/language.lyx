@@ -125,9 +125,8 @@ Basic Types
 \end_layout
 
 \begin_layout Standard
-Basic data types in DLang consist of atomic, self contained, values that
- may be passed around, used in expressions, and returned as the result of
- expressions.
+Basic data types in DLang consist of atomic values that may be passed around,
+ used in expressions, and returned as the result of expressions.
  These data types represent the simplest building blocks of DLang.
  The data types that fall into this category are: Numbers, Characters, Symbols,
  and Booleans.
@@ -155,8 +154,9 @@ Numbers in DLang consist of several subtypes: Int, Float, BigInt, BigFloat,
 
 \begin_layout Standard
 DLang fully supports mixed arithmetic.
- When an arithmetic operator receives to numbers of differing types, the
- smallest type is automatically expanded to the size of the larger type.
+ When an arithmetic operator receives two numbers of differing subtypes,
+ the smallest subtype is automatically expanded to the size of the larger
+ subtype.
 \end_layout
 
 \begin_layout Standard
@@ -277,7 +277,7 @@ Strings
 \end_layout
 
 \begin_layout Standard
-Strings are implemented as vectors of Characters.
+Strings are implemented as ordered vectors of Characters.
 \end_layout
 
 \begin_layout Subsection
