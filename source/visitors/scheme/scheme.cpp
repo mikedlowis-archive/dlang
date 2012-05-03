@@ -23,69 +23,69 @@ string Scheme::typeToString(ASTNodeType type)
 
     switch (type)
     {
-        case ID:
-            ret << "ID "; break;
-        case NUM:
-            ret << "NUM "; break;
-        case MAP:
-            ret << "MAP "; break;
-        case CHAR:
-            ret << "CHAR "; break;
-        case ADD:
-            ret << "+ "; break;
-        case SUB:
-            ret << "- "; break;
-        case MUL:
-            ret << "* "; break;
-        case DIV:
-            ret << "/ "; break;
-        case AND:
-            ret << "and "; break;
-        case OR:
-            ret << "or "; break;
-        case NOT:
-            ret << "not "; break;
-        case EQ:
-            ret << "equal? "; break;
-        case NE:
-            ret << "NE "; break;
-        case LT:
-            ret << "< "; break;
-        case GT:
-            ret << "> "; break;
-        case LTE:
-            ret << "<= "; break;
-        case GTE:
-            ret << ">= "; break;
-        case DEFN:
-            ret << "define "; break;
-        case ASSIGN:
-            ret << "set! "; break;
-        case MUTATE:
-            ret << "obj-set! "; break;
-        case PROGRAM:
-            ret << "begin "; break;
-        case VECTOR:
-            ret << "vector "; break;
-        case LIST:
-            ret << "list "; break;
-        case BLOCK:
-            ret << "begin "; break;
-        case FUNC:
-            ret << "lambda "; break;
-        case FN_CALL:
-            ret << "apply "; break;
-        case ARRY_IDX:
-            ret << "ARRY_IDX "; break;
-        case SEP:
-            ret << "cons "; break;
-        case MEMB:
-            ret << "hash-table-ref "; break;
+        //case ID:
+        //    ret << "ID "; break;
+        //case NUM:
+        //    ret << "NUM "; break;
+        //case MAP:
+        //    ret << "MAP "; break;
+        //case CHAR:
+        //    ret << "CHAR "; break;
+        //case ADD:
+        //    ret << "+ "; break;
+        //case SUB:
+        //    ret << "- "; break;
+        //case MUL:
+        //    ret << "* "; break;
+        //case DIV:
+        //    ret << "/ "; break;
+        //case AND:
+        //    ret << "and "; break;
+        //case OR:
+        //    ret << "or "; break;
+        //case NOT:
+        //    ret << "not "; break;
+        //case EQ:
+        //    ret << "equal? "; break;
+        //case NE:
+        //    ret << "NE "; break;
+        //case LT:
+        //    ret << "< "; break;
+        //case GT:
+        //    ret << "> "; break;
+        //case LTE:
+        //    ret << "<= "; break;
+        //case GTE:
+        //    ret << ">= "; break;
+        //case DEFN:
+        //    ret << "define "; break;
+        //case ASSIGN:
+        //    ret << "set! "; break;
+        //case MUTATE:
+        //    ret << "obj-set! "; break;
+        //case PROGRAM:
+        //    ret << "begin "; break;
+        //case VECTOR:
+        //    ret << "vector "; break;
+        //case LIST:
+        //    ret << "list "; break;
+        //case BLOCK:
+        //    ret << "begin "; break;
+        //case FUNC:
+        //    ret << "lambda "; break;
+        //case FN_CALL:
+        //    ret << "apply "; break;
+        //case ARRY_IDX:
+        //    ret << "ARRY_IDX "; break;
+        //case SEP:
+        //    ret << "cons "; break;
+        //case MEMB:
+        //    ret << "hash-table-ref "; break;
 
-        // Print nothing for the following nodes
-        case MACRO:
-        case PARAMS:
-            break;
+        //// Print nothing for the following nodes
+        //case MACRO:
+        //case PARAMS:
+        //    break;
 
         // Print out the type id (this will probably cause an error but also
         // alert us to the fact that it is not properly handled)
@@ -108,7 +108,7 @@ void Scheme::afterVisit(AST* cur, int depth)
 void Scheme::beforeChildren(AST* cur, int depth)
 {
     nodeTypeBeginAction(cur);
-    if( cur->type() != MACRO )
+    //if( cur->type() != MACRO )
     {
         if( isDatatype( cur->type() ) )
         {
@@ -124,7 +124,7 @@ void Scheme::beforeChildren(AST* cur, int depth)
 void Scheme::afterChildren(AST* cur, int depth)
 {
     nodeTypeEndAction(cur);
-    if( !isDatatype( cur->type() ) && (cur->type() != MACRO))
+    if( !isDatatype( cur->type() ) )
     {
         stream << ")";
     }
@@ -237,21 +237,21 @@ void Scheme::nodeTypeBeginAction(AST* cur)
     std::string text = cur->text();
     switch( cur->type() )
     {
-        case MEMB:
-            cur->children()->back()->type( SYMBOL );
-            break;
+       // case MEMB:
+       //     cur->children()->back()->type( SYMBOL );
+       //     break;
 
-        case BLOCK:
-            scope_stack.startScope();
-            break;
+       // case BLOCK:
+       //     scope_stack.startScope();
+       //     break;
 
-        case DEFN:
-            defineSymbol(cur);
-            break;
+       // case DEFN:
+       //     defineSymbol(cur);
+       //     break;
 
-        case ASSIGN:
-            assignSymbol(cur);
-            break;
+       // case ASSIGN:
+       //     assignSymbol(cur);
+       //     break;
 
         //TODO: Define builtin symbols and enable adding function args to scope
         //case ID:
@@ -267,9 +267,9 @@ void Scheme::nodeTypeEndAction(AST* cur)
 {
     switch( cur->type() )
     {
-        case BLOCK:
-            scope_stack.stopScope();
-            break;
+       // case BLOCK:
+       //     scope_stack.stopScope();
+       //     break;
 
         default:
             break;

@@ -6,56 +6,25 @@
 
 typedef enum TokenTypes
 {
-    // Datatypes
-    ID       = 0,
-    NUM      = 1,
-    CHAR     = 2,
-    STRING   = 3,
-    SYMBOL   = 4,
-    LIST     = 5,
-    VECTOR   = 6,
-    FUNC     = 7,
-    MAP      = 8,
-
     // Symbols
-    LBRACK   = 10,
-    RBRACK   = 11,
-    LPAR     = 12,
-    RPAR     = 13,
-    LBRACE   = 14,
-    RBRACE   = 15,
-    COMMA    = 16,
-    PIPE     = 17,
+    PROGRAM  = 0,
+    DEFINE   = 1,
+    ASSIGN   = 2,
+    LAMBDA   = 3,
+    BEGIN    = 4,
+    IF       = 5,
+    APPLY    = 6,
+    ID_LIST  = 7,
+    EXP_LIST = 8,
+    LPAR     = 9,
+    RPAR     = 10,
 
-    // Operators
-    AND      = 20,
-    OR       = 21,
-    NOT      = 22,
-    EQ       = 23,
-    NE       = 24,
-    LT       = 25,
-    GT       = 26,
-    LTE      = 27,
-    GTE      = 28,
-    ADD      = 29,
-    SUB      = 30,
-    MUL      = 31,
-    DIV      = 32,
-    DEFN     = 33,
-    ASSIGN   = 34,
-    MEMB     = 35,
-    SEP      = 36,
-    ARRY_IDX = 37,
-    MACRO    = 38,
-    IMPORT   = 39,
-    MUTATE   = 40,
-
-    // AST "Virtual" Node Types
-    PROGRAM  = 50,
-    BLOCK    = 51,
-    FN_CALL  = 52,
-    PARAMS   = 53,
-    PATT     = 54,
+    // Datatypes
+    ID       = 11,
+    NUM      = 12,
+    CHAR     = 13,
+    STRING   = 14,
+    SYMBOL   = 15,
 } eTokenTypes;
 
 typedef struct {
@@ -69,7 +38,6 @@ class DLLexer : public LLNLexer {
         bool isWhiteSpace(void);
         bool isLetter(void);
         bool isDigit(void);
-        bool isOperator(void);
         bool isStringChar(void);
         void WS(void);
         void COMMENT(void);
@@ -82,8 +50,6 @@ class DLLexer : public LLNLexer {
         void Char(Token& tok);
         void String(Token& tok);
         void Symbol(Token& tok);
-        void SingleCharOp(Token& tok);
-        void MultiCharOp(Token& tok);
         std::string EscapeSequence();
 };
 

@@ -4,22 +4,6 @@
 
 using namespace std;
 
-#define NUM_SINGLE_CHAR_MATCHES 12
-SingleCharMatch_T Single_Character_Matches[ NUM_SINGLE_CHAR_MATCHES ] = {
-    { '[', LBRACK },
-    { ']', RBRACK },
-    { '(', LPAR },
-    { ')', RPAR },
-    { '{', LBRACE },
-    { '}', RBRACE },
-    { ',', COMMA },
-    { '+', ADD },
-    { '*', MUL },
-    { '/', DIV },
-    { '.', MEMB },
-    { '%', MACRO },
-};
-
 DLLexer::DLLexer(std::istream& in) : LLNLexer(in)
 {
 }
@@ -43,18 +27,6 @@ bool DLLexer::isDigit(void)
     return ((lookahead(1) >= '0') && (lookahead(1) <= '9'));
 }
 
-bool DLLexer::isOperator(void)
-{
-    return (   (lookahead(1) == '=')
-            || (lookahead(1) == '!')
-            || (lookahead(1) == '<')
-            || (lookahead(1) == '>')
-            || (lookahead(1) == '|')
-            || (lookahead(1) == '&')
-            || (lookahead(1) == ':')
-            || (lookahead(1) == '@'));
-}
-
 bool DLLexer::isStringChar(void)
 {
     return (    (lookahead(1) != '"')
@@ -70,7 +42,7 @@ Token DLLexer::next(void)
     // the EOF and skipping the loop
     (void)lookahead(1);
 
-    // If we have non-EOF chars tehn process them
+    // If we have non-EOF chars then process them
     while ( !eof() && (ret.type() == EOF) )
     {
         if (isWhiteSpace())
@@ -81,17 +53,21 @@ Token DLLexer::next(void)
         {
             COMMENT();
         }
-        else if (isLetter())
-        {
-            Id(ret);
-        }
-        else if( isOperator() )
-        {
-            MultiCharOp(ret);
-        }
         else if (isDigit())
         {
             Number(ret,false);
+        }
+        else if(lookahead(1) == '-')
+        {
+            consume();
+            if(isDigit())
+            {
+                Number(ret,true);
+            }
+            else
+            {
+                throw Exception(line,column);
+            }
         }
         else if(lookahead(1) == '\'')
         {
@@ -105,21 +81,21 @@ Token DLLexer::next(void)
         {
             Symbol(ret);
         }
-        else if(lookahead(1) == '-')
+        //*
+        else if (lookahead(1) == '(')
         {
             consume();
-            if(isDigit())
-            {
-                Number(ret,true);
-            }
-            else
-            {
-                ret = Token(SUB, line, column - 1);
-            }
+            ret = Token( LPAR, "(", line, column );
         }
+        else if (lookahead(1) == ')')
+        {
+            consume();
+            ret = Token( RPAR, ")", line, column );
+        }
+        // */
         else
         {
-            SingleCharOp(ret);
+            Id(ret);
         }
     }
 
@@ -293,131 +269,6 @@ void DLLexer::Symbol(Token& tok)
     }
     while(isLetter() || isDigit() || lookahead(1) == '_');
     tok = Token( SYMBOL, oss.str(), line, column );
-}
-
-void DLLexer::SingleCharOp(Token& tok)
-{
-    for(int i = 0; i < NUM_SINGLE_CHAR_MATCHES; i++)
-    {
-        if(lookahead(1) == Single_Character_Matches[i].match)
-        {
-            consume();
-            tok = Token( Single_Character_Matches[i].type, line, column );
-            break;
-        }
-    }
-
-    if( tok.type() == EOF)
-    {
-        Exception ex(line,column);
-        ex << "Unrecognized token";
-        throw ex;
-    }
-}
-
-void DLLexer::MultiCharOp(Token& tok)
-{
-    // save the current token so we can refer back to it
-    char last = lookahead(1);
-    // remove the current token from the buffer so we cna see the next
-    consume();
-
-    if(last == '=')
-    {
-        if(lookahead(1) == '=')
-        {
-            consume();
-            tok = Token(EQ, line, column);
-        }
-        else
-        {
-            tok = Token(ASSIGN, line, column);
-        }
-    }
-    else if(last == '!')
-    {
-        if(lookahead(1) == '=')
-        {
-            consume();
-            tok = Token(NE, line, column);
-        }
-        else
-        {
-            tok = Token(NOT, line, column);
-        }
-    }
-    else if(last == '<')
-    {
-        if(lookahead(1) == '=')
-        {
-            consume();
-            tok = Token(LTE, line, column);
-        }
-        else
-        {
-            tok = Token(LT, line, column);
-        }
-    }
-    else if(last == '>')
-    {
-        if(lookahead(1) == '=')
-        {
-            consume();
-            tok = Token(GTE, line, column);
-        }
-        else
-        {
-            tok = Token(GT, line, column);
-        }
-    }
-    else if(last == '|')
-    {
-        if(lookahead(1) == '|')
-        {
-            consume();
-            tok = Token(OR, line, column);
-        }
-        else
-        {
-            tok = Token(PIPE, line, column);
-        }
-    }
-    else if((last == '&') && (lookahead(1) == '&'))
-    {
-        consume();
-        tok = Token(AND, line, column);
-    }
-    else if(last == ':')
-    {
-        if(lookahead(1) == '=')
-        {
-            consume();
-            tok = Token(DEFN, line, column);
-        }
-        else
-        {
-            tok = Token(SEP, line, column);
-        }
-    }
-    else if(last == '@')
-    {
-        if(lookahead(1) == '=')
-        {
-            consume();
-            tok = Token(IMPORT, line, column);
-        }
-        else
-        {
-            tok = Token(MAP, line, column);
-        }
-    }
-
-    if (tok.type() == EOF)
-    {
-        Exception ex(line,column);
-        ex << "Unexpected token";
-        throw ex;
-    }
 }
 
 std::string DLLexer::EscapeSequence()

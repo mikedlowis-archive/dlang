@@ -57,7 +57,7 @@ void TestLexerThrowsException(std::string& input)
 namespace {
 
     //-------------------------------------------------------------------------
-    // Recognize Individual Operators
+    // Recognize and Ignore Whitespace
     //-------------------------------------------------------------------------
     TEST(Recognize_And_Ignore_Whitespace)
     {
@@ -67,7 +67,7 @@ namespace {
     }
 
     //-------------------------------------------------------------------------
-    // Recognize Individual Operators
+    // Recognize and Ignore Comments
     //-------------------------------------------------------------------------
     TEST(Recognize_And_Ignore_Comments)
     {
@@ -85,7 +85,7 @@ namespace {
     }
 
     //-------------------------------------------------------------------------
-    // Recognize Individual Operators
+    // Recognize Valid IDs
     //-------------------------------------------------------------------------
     TEST(Recognize_Valid_IDs)
     {
@@ -183,205 +183,6 @@ namespace {
     }
 
     //-------------------------------------------------------------------------
-    // Test Individual Operators
-    //-------------------------------------------------------------------------
-    TEST(Recognize_Left_Bracket)
-    {
-        std::string input("[");
-        eTokenTypes expected[] = { LBRACK, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Right_Bracket)
-    {
-        std::string input("]");
-        eTokenTypes expected[] = { RBRACK, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Left_Paren)
-    {
-        std::string input("(");
-        eTokenTypes expected[] = { LPAR, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Right_Paren)
-    {
-        std::string input(")");
-        eTokenTypes expected[] = { RPAR, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Left_Brace)
-    {
-        std::string input("{");
-        eTokenTypes expected[] = { LBRACE, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Right_Brace)
-    {
-        std::string input("}");
-        eTokenTypes expected[] = { RBRACE, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Comma)
-    {
-        std::string input(",");
-        eTokenTypes expected[] = { COMMA, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Addition_Op)
-    {
-        std::string input("+");
-        eTokenTypes expected[] = { ADD, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Multiplication_Op)
-    {
-        std::string input("*");
-        eTokenTypes expected[] = { MUL, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Division_Op)
-    {
-        std::string input("/");
-        eTokenTypes expected[] = { DIV, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Member_Accessor_Op)
-    {
-        std::string input(".");
-        eTokenTypes expected[] = { MEMB, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Macro_Op)
-    {
-        std::string input("%");
-        eTokenTypes expected[] = { MACRO, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Subtraction_Op)
-    {
-        std::string input("-");
-        eTokenTypes expected[] = { SUB, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Assignment_Op)
-    {
-        std::string input("=");
-        eTokenTypes expected[] = { ASSIGN, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Equal_Comparison_Op)
-    {
-        std::string input("==");
-        eTokenTypes expected[] = { EQ, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Not_Op)
-    {
-        std::string input("!");
-        eTokenTypes expected[] = { NOT, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Not_Equal_Op)
-    {
-        std::string input("!=");
-        eTokenTypes expected[] = { NE, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Less_Than_Op)
-    {
-        std::string input("<");
-        eTokenTypes expected[] = { LT, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Less_Than_Equal_Op)
-    {
-        std::string input("<=");
-        eTokenTypes expected[] = { LTE, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Greater_Than_Op)
-    {
-        std::string input(">");
-        eTokenTypes expected[] = { GT, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Greater_Than_Or_Equal_Op)
-    {
-        std::string input(">=");
-        eTokenTypes expected[] = { GTE, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Pipe)
-    {
-        std::string input("|");
-        eTokenTypes expected[] = { PIPE, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Or_Op)
-    {
-        std::string input("||");
-        eTokenTypes expected[] = { OR, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_And_Op)
-    {
-        std::string input("&&");
-        eTokenTypes expected[] = { AND, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Seperator)
-    {
-        std::string input(":");
-        eTokenTypes expected[] = { SEP, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Definition_Op)
-    {
-        std::string input(":=");
-        eTokenTypes expected[] = { DEFN, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Map_Op)
-    {
-        std::string input("@");
-        eTokenTypes expected[] = { MAP, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    TEST(Recognize_Import_Op)
-    {
-        std::string input("@=");
-        eTokenTypes expected[] = { IMPORT, (eTokenTypes)EOF };
-        TestLexerWithInput( input, expected );
-    }
-
-    //-------------------------------------------------------------------------
     // Test Exceptional Cases
     //-------------------------------------------------------------------------
     TEST(Throw_Exceptions_For_Exceptional_Cases)
@@ -398,14 +199,6 @@ namespace {
 
         std::string num_exception4("1.a");
         TestLexerThrowsException( num_exception4 );
-
-        // Make sure we throw an exception for an invalid operator
-        std::string op_exception1("^");
-        TestLexerThrowsException( op_exception1 );
-
-        // Make sure we throw an exception for an invalid operator
-        std::string multi_op_exception1("&");
-        TestLexerThrowsException( multi_op_exception1 );
     }
 
     //-------------------------------------------------------------------------
@@ -420,8 +213,8 @@ namespace {
 
     TEST(Handle_Recognition_At_The_End_Of_Input)
     {
-        std::string input("[");
-        eTokenTypes expected[] = { LBRACK, (eTokenTypes)EOF };
+        std::string input("a");
+        eTokenTypes expected[] = { ID, (eTokenTypes)EOF };
         TestLexerWithInput( input, expected );
     }
 
