@@ -4,7 +4,7 @@
 
 using namespace std;
 
-DLLexer::DLLexer(std::istream& in) : LLNLexer(in)
+DLLexer::DLLexer(std::istream& in) : LLNLexer(in), terminator_string("end")
 {
 }
 
@@ -22,9 +22,9 @@ bool DLLexer::isLetter(void)
             ((lookahead(1) >= 'A') && (lookahead(1) <= 'Z'));
 }
 
-bool DLLexer::isDigit(void)
+bool DLLexer::isDigit(char lach)
 {
-    return ((lookahead(1) >= '0') && (lookahead(1) <= '9'));
+    return ((lach >= '0') && (lach <= '9'));
 }
 
 bool DLLexer::isStringChar(void)
@@ -32,6 +32,16 @@ bool DLLexer::isStringChar(void)
     return (    (lookahead(1) != '"')
              && (lookahead(1) != '\r')
              && (lookahead(1) != '\n'));
+}
+
+void DLLexer::terminator(std::string term)
+{
+    terminator_string = term;
+}
+
+std::string DLLexer::terminator(void)
+{
+    return terminator_string;
 }
 
 Token DLLexer::next(void)
@@ -45,43 +55,48 @@ Token DLLexer::next(void)
     // If we have non-EOF chars then process them
     while ( !eof() && (ret.type() == EOF) )
     {
+        // Consume whitespace
         if (isWhiteSpace())
         {
             WS();
         }
+
+        // Consume and ignore comments
         else if(lookahead(1) == '#')
         {
             COMMENT();
         }
-        else if (isDigit())
+
+        // Consume positive or negative numbers
+        else if ( isDigit( lookahead(1) ) )
         {
             Number(ret,false);
         }
-        else if(lookahead(1) == '-')
+        else if( (lookahead(1) == '-') && isDigit( lookahead(2) ) )
         {
             consume();
-            if(isDigit())
-            {
-                Number(ret,true);
-            }
-            else
-            {
-                throw Exception(line,column);
-            }
+            Number(ret,true);
         }
+
+        // Consume character literals
         else if(lookahead(1) == '\'')
         {
             Char(ret);
         }
+
+        // Consume string literals
         else if(lookahead(1) == '"')
         {
             String(ret);
         }
+
+        // Consume symbol literals
         else if(lookahead(1) == '$')
         {
             Symbol(ret);
         }
-        //*
+
+        // Consume parentheses
         else if (lookahead(1) == '(')
         {
             consume();
@@ -92,10 +107,23 @@ Token DLLexer::next(void)
             consume();
             ret = Token( RPAR, ")", line, column );
         }
-        // */
+
+        // Everything else (except the unescaped terminator) is considered an ID
         else
         {
+            bool escaped = false;
+            if ( lookahead(1) == '\\' )
+            {
+                consume();
+                escaped = true;
+            }
+
             Id(ret);
+
+            if( escaped && (ret.text().compare( terminator_string ) == 0) )
+            {
+                ret.type( TERM );
+            }
         }
     }
 
@@ -129,7 +157,10 @@ void DLLexer::Id(Token& tok)
         oss << lookahead(1);
         consume();
     }
-    while(isLetter() || isDigit() || lookahead(1) == '_');
+    while( !isWhiteSpace() &&
+           ('(' != lookahead(1)) &&
+           (')' != lookahead(1)) );
+    //while(isLetter() || isDigit() || lookahead(1) == '_');
     tok = Token(ID, oss.str(), line, column);
 }
 
@@ -154,7 +185,7 @@ void DLLexer::Number(Token& tok, bool isNegative)
             consume();
         }
 
-        if( isDigit() )
+        if( isDigit( lookahead(1) ) )
         {
             // Capture the integer part
             do
@@ -162,7 +193,7 @@ void DLLexer::Number(Token& tok, bool isNegative)
                 oss << lookahead(1);
                 consume();
             }
-            while(isDigit());
+            while(isDigit( lookahead(1) ));
         }
         else
         {
@@ -188,7 +219,7 @@ std::string DLLexer::FloatingPoint(bool isNegative)
         oss << lookahead(1);
         consume();
     }
-    while(isDigit());
+    while(isDigit(lookahead(1)));
 
     // Capture the decimal point if we have one
     if(lookahead(1) == '.')
@@ -204,7 +235,7 @@ void DLLexer::Decimal(std::ostringstream& oss)
     oss << lookahead(1);
     consume();
 
-    if(!isDigit())
+    if(!isDigit(lookahead(1)))
     {
         Exception ex(line,column);
         ex << "Missing fractional portion of floating point number.";
@@ -216,7 +247,7 @@ void DLLexer::Decimal(std::ostringstream& oss)
         oss << lookahead(1);
         consume();
     }
-    while ( isDigit() );
+    while ( isDigit(lookahead(1)) );
 }
 
 void DLLexer::Char(Token& tok)
@@ -267,7 +298,7 @@ void DLLexer::Symbol(Token& tok)
         oss << lookahead(1);
         consume();
     }
-    while(isLetter() || isDigit() || lookahead(1) == '_');
+    while(isLetter() || isDigit(lookahead(1)) || lookahead(1) == '_');
     tok = Token( SYMBOL, oss.str(), line, column );
 }
 

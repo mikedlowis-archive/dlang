@@ -7,24 +7,27 @@
 typedef enum TokenTypes
 {
     // Symbols
-    PROGRAM  = 0,
-    DEFINE   = 1,
-    ASSIGN   = 2,
-    LAMBDA   = 3,
-    BEGIN    = 4,
-    IF       = 5,
-    APPLY    = 6,
-    ID_LIST  = 7,
-    EXP_LIST = 8,
-    LPAR     = 9,
-    RPAR     = 10,
+    PROGRAM    = 0,
+    DEFINE     = 1,
+    ASSIGN     = 2,
+    LAMBDA     = 3,
+    BEGIN      = 4,
+    IF         = 5,
+    APPLY      = 6,
+    ID_LIST    = 7,
+    EXP_LIST   = 8,
+    MACRO      = 9,
+    TRANSFORM  = 10,
+    LPAR       = 11,
+    RPAR       = 12,
+    TERM       = 13,
 
     // Datatypes
-    ID       = 11,
-    NUM      = 12,
-    CHAR     = 13,
-    STRING   = 14,
-    SYMBOL   = 15,
+    ID         = 14,
+    NUM        = 15,
+    CHAR       = 16,
+    STRING     = 17,
+    SYMBOL     = 18,
 } eTokenTypes;
 
 typedef struct {
@@ -33,14 +36,18 @@ typedef struct {
 } SingleCharMatch_T;
 
 class DLLexer : public LLNLexer {
+    protected:
+        std::string terminator_string;
     public:
         DLLexer(std::istream& in);
         bool isWhiteSpace(void);
         bool isLetter(void);
-        bool isDigit(void);
+        bool isDigit(char lach);
         bool isStringChar(void);
         void WS(void);
         void COMMENT(void);
+        void terminator(std::string term);
+        std::string terminator(void);
 
         Token next(void);
         void Id(Token& tok);
