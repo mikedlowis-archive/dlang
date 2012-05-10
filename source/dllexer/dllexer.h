@@ -18,16 +18,17 @@ typedef enum TokenTypes
     EXP_LIST   = 8,
     MACRO      = 9,
     TRANSFORM  = 10,
-    LPAR       = 11,
-    RPAR       = 12,
-    TERM       = 13,
+    MACRO_APP  = 11,
+    LPAR       = 12,
+    RPAR       = 13,
+    TERM       = 14,
 
     // Datatypes
-    ID         = 14,
-    NUM        = 15,
-    CHAR       = 16,
-    STRING     = 17,
-    SYMBOL     = 18,
+    ID         = 15,
+    NUM        = 16,
+    CHAR       = 17,
+    STRING     = 18,
+    SYMBOL     = 19,
 } eTokenTypes;
 
 typedef struct {

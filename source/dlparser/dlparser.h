@@ -30,7 +30,7 @@ class DLParser : public BTParser
         AST* CoreForm(void);
         AST* Application(void);
         AST* Literal(void);
-        AST* ExpList(void);
+        AST* ExpList(eTokenTypes term);
         AST* IdList(void);
 };
 

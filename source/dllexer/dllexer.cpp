@@ -120,7 +120,7 @@ Token DLLexer::next(void)
 
             Id(ret);
 
-            if( escaped && (ret.text().compare( terminator_string ) == 0) )
+            if( !escaped && (ret.text().compare( terminator_string ) == 0) )
             {
                 ret.type( TERM );
             }

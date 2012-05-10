@@ -1,17 +1,18 @@
 #include "dlparser.h"
 #include "exception.h"
 #include "common.h"
+#include "macroprocessor.h"
 
 using namespace std;
 
 DLParser::DLParser() : BTParser()
 {
-    core_forms.insert( pair<string,eTokenTypes>("define", DEFINE) );
-    core_forms.insert( pair<string,eTokenTypes>("set!",   ASSIGN) );
-    core_forms.insert( pair<string,eTokenTypes>("lambda", LAMBDA) );
-    core_forms.insert( pair<string,eTokenTypes>("begin",  BEGIN) );
-    core_forms.insert( pair<string,eTokenTypes>("if",     IF) );
-    core_forms.insert( pair<string,eTokenTypes>("macro",  MACRO) );
+    core_forms["define"] = DEFINE;
+    core_forms["set!"]   = ASSIGN;
+    core_forms["lambda"] = LAMBDA;
+    core_forms["begin"]  = BEGIN;
+    core_forms["if"]     = IF;
+    core_forms["macro"]  = MACRO;
 }
 
 DLParser::~DLParser()
@@ -20,17 +21,17 @@ DLParser::~DLParser()
 
 bool DLParser::isMacroName(void)
 {
-    return false;
+    return (macros.count( lookaheadToken(1).text() ) > 0);
 }
 
 bool DLParser::isCoreFormName(void)
 {
-    return false;
+    return (core_forms.count( lookaheadToken(1).text() ) > 0);
 }
 
 eTokenTypes DLParser::getCoreFormId(void)
 {
-    return (eTokenTypes)0;
+    return core_forms[ lookaheadToken(1).text() ];
 }
 
 void DLParser::parse(void)
@@ -87,6 +88,10 @@ AST* DLParser::Expression(void)
         ret = Application();
     }
 
+    // Register any new macros and expand any existing macros
+    MacroProcessor processor( macros );
+    processor.visit( ret );
+
     return ret;
 }
 
@@ -105,16 +110,16 @@ AST* DLParser::CoreForm(void)
             break;
 
         case LAMBDA:
-            ret = new AST(LAMBDA, 2, IdList(), ExpList());
+            ret = new AST(LAMBDA, 2, IdList(), ExpList(TERM));
             break;
 
         case BEGIN:
-            ret = new AST(BEGIN, 1, ExpList());
+            ret = new AST(BEGIN, 1, ExpList(TERM));
             break;
 
         case IF:
             ret = new AST(IF, 2, Expression(), Expression());
-            if(lookaheadType(1) != RPAR)
+            if(lookaheadType(1) != TERM)
             {
                 ret->addChild( Expression() );
             }
@@ -159,6 +164,23 @@ AST* DLParser::Application(void)
     // Macro Expression
     if ( isMacroName() )
     {
+        // Save current terminator
+
+        // Register the new terminator
+
+        // Consume the name
+        cout << "Macro Usage" << endl;
+        ret = new AST( MACRO_APP, 1, new AST( lookaheadToken(1) ));
+        consume();
+
+        // Consume the expressions
+        while( lookaheadType(1) != TERM )
+        {
+            ret->addChild( Expression() );
+        }
+        match(TERM);
+
+        // Reset the terminator to its old value
     }
 
     // Traditional Function Application
@@ -167,7 +189,7 @@ AST* DLParser::Application(void)
         ret = new AST( lookaheadToken(1) );
         consume();
         match(LPAR);
-        ret = new AST(APPLY, 2, ret, ExpList());
+        ret = new AST(APPLY, 2, ret, ExpList(RPAR));
         match(RPAR);
     }
 
@@ -204,10 +226,10 @@ AST* DLParser::Literal(void)
     return ret;
 }
 
-AST* DLParser::ExpList(void)
+AST* DLParser::ExpList(eTokenTypes term)
 {
     AST* ret = new AST(EXP_LIST);
-    while(RPAR != lookaheadType(1))
+    while(term != lookaheadType(1))
     {
         ret->addChild( Expression() );
     }

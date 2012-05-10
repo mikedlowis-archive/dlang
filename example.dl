@@ -11,53 +11,52 @@ foo(1 2)
 foo(1 2 3)
 
 # Definition and assignment
-#define foo 5 end
-#set! foo 6 end
+define foo 5 end
+set! foo 6 end
 
 # Lambda expressions
-#lambda () end
-#lambda (a) end
-#lambda (a b) end
-#lambda (a b c) end
-#
-#lambda ()
-#    foo()
-#end
-#
-#lambda (a)
-#    foo(a)
-#end
-#
-#lambda (a b)
-#    foo(a b)
-#end
-#
-#lambda (a b c)
-#    foo(a b c)
-#end
+lambda () end
+lambda (a) end
+lambda (a b) end
+lambda (a b c) end
+
+lambda ()
+    foo(a)
+end
+
+lambda (a)
+    foo(a)
+end
+
+lambda (a b)
+    foo(a b)
+end
+
+lambda (a b c)
+    foo(a b c)
+end
 
 # Begin block
-#begin end
-#
-#begin
-#    foo()
-#end
-#
-#begin
-#    foo()
-#    bar()
-#end
+begin end
+
+begin
+    foo()
+end
+
+begin
+    foo()
+    bar()
+end
 
 # If statement
-#if conditional
-#    if_branch
-#else
-#    else_branch
-#end
-#
-#if conditional
-#    if_branch
-#end
+if conditional
+    if_branch
+    else_branch
+end
+
+if conditional
+    if_branch
+end
 
 # Infix operator expression
 (1 add 1)
@@ -66,12 +65,12 @@ foo(1 2 3)
 (1 - (1 + 1))
 
 # Macros
-#macro let (:= =) ;
-#    (a := b)
-#        define a b end
-#    (a = b)
-#        set! a b end
-#end
-#
-#let foo := "bar" ;
-#let foo = 5 ;
+macro let (:= =) ;
+    (a := b)
+        define a b end
+    (a = b)
+        set! a b end
+end
+
+let foo := "bar" end
+let foo = 5 end
