@@ -51,6 +51,7 @@ end
 # If statement
 if conditional
     if_branch
+else
     else_branch
 end
 
@@ -64,13 +65,22 @@ end
 (1 add (1 add 1))
 (1 - (1 + 1))
 
+## Define an infix operator (No Precedence)
+#infix =
+#
+## Define dummy keywords (Whitespace)
+#keyword ;
+#
+#foo = (1 + 1) ;
+
 # Macros
 macro let (:= =) ;
     (a := b)
-        define a b end
+        define a b
+
     (a = b)
-        set! a b end
+        set! a b
 end
 
-let foo := "bar" end
-let foo = 5 end
+let foo := "bar" ;
+let foo = 5 ;

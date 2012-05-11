@@ -47,6 +47,7 @@ std::string DLLexer::terminator(void)
 Token DLLexer::next(void)
 {
     Token ret;
+    bool escaped = false;
 
     // Prime the buffer. For empty input strings this results in us finding
     // the EOF and skipping the loop
@@ -111,7 +112,6 @@ Token DLLexer::next(void)
         // Everything else (except the unescaped terminator) is considered an ID
         else
         {
-            bool escaped = false;
             if ( lookahead(1) == '\\' )
             {
                 consume();
@@ -119,11 +119,11 @@ Token DLLexer::next(void)
             }
 
             Id(ret);
+        }
 
-            if( !escaped && (ret.text().compare( terminator_string ) == 0) )
-            {
-                ret.type( TERM );
-            }
+        if( !escaped && (ret.text().compare( terminator_string ) == 0) )
+        {
+            ret.type( TERM );
         }
     }
 
