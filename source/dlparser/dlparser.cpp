@@ -169,7 +169,6 @@ AST* DLParser::Application(void)
         // Register the new terminator
 
         // Consume the name
-        cout << "Macro Usage" << endl;
         ret = new AST( MACRO_APP, 1, new AST( lookaheadToken(1) ));
         consume();
 
@@ -222,7 +221,21 @@ AST* DLParser::Application(void)
 AST* DLParser::Literal(void)
 {
     AST* ret = new AST( lookaheadToken(1) );
-    consume();
+
+    if( (ID     == lookaheadType(1)) ||
+        (CHAR   == lookaheadType(1)) ||
+        (STRING == lookaheadType(1)) ||
+        (SYMBOL == lookaheadType(1)) ||
+        (NUM    == lookaheadType(1)) )
+    {
+        consume();
+    }
+    else
+    {
+        Exception ex( lookaheadToken(1) );
+        throw ex;
+    }
+
     return ret;
 }
 
