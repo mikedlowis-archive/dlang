@@ -1,6 +1,6 @@
 #include "macroprocessor.h"
 
-MacroProcessor::MacroProcessor(std::set<std::string> &macros) : macro_registry(macros)
+MacroProcessor::MacroProcessor(std::map<std::string,Macro*> &macros) : macro_registry(macros)
 {
 }
 
@@ -24,7 +24,10 @@ void MacroProcessor::afterChildren(AST* cur, int depth)
 {
     if (cur->type() == MACRO)
     {
-        macro_registry.insert( (*(cur->children()->begin()))->text() );
+        std::string name = (*(cur->children()->begin()))->text();
+        Macro* macro = new Macro();
+        macro->name( name );
+        macro_registry[ macro->name() ] = macro;
     }
 }
 

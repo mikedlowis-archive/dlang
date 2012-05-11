@@ -1,15 +1,16 @@
 #ifndef MACRO_PROCESSOR_H
 #define MACRO_PROCESSOR_H
 
-#include <set>
+#include <map>
 #include "ivisitor.h"
 #include "dllexer.h"
+#include "macro.h"
 
 class MacroProcessor : public IVisitor {
     protected:
-        std::set<std::string>& macro_registry;
+        std::map<std::string,Macro*>& macro_registry;
     public:
-        MacroProcessor(std::set<std::string>& macros);
+        MacroProcessor(std::map<std::string,Macro*>& macros);
     private:
         void beforeVisit(AST* cur, int depth);
         void afterVisit(AST* cur, int depth);

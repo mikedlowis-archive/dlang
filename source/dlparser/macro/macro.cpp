@@ -1,10 +1,6 @@
 #include "macro.h"
 
-Macro::Macro()
-{
-}
-
-Macro::Macro(const std::list<Pattern>& patts) : patterns(patts)
+Macro::Macro() : str_name(""), str_terminator("")
 {
 }
 
@@ -12,13 +8,23 @@ Macro::~Macro()
 {
 }
 
-std::list<Pattern>::iterator Macro::begin()
+const std::string& Macro::name() const
 {
-    return patterns.begin();
+    return str_name;
 }
 
-std::list<Pattern>::iterator Macro::end()
+void Macro::name(std::string& name)
 {
-    return patterns.end();
+    str_name = name;
+}
+
+const std::string& Macro::terminator() const
+{
+    return str_terminator;
+}
+
+void Macro::terminator(std::string& term)
+{
+    str_terminator = term;
 }
 

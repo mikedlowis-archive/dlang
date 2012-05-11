@@ -1,18 +1,23 @@
 #ifndef MACRO_H
 #define MACRO_H
 
-#include <list>
-#include "pattern.h"
+#include <string>
 
 class Macro {
     private:
-        std::list<Pattern> patterns;
+        std::string str_name;
+        std::string str_terminator;
     public:
         Macro();
-        Macro(const std::list<Pattern>& patts);
         ~Macro();
-        std::list<Pattern>::iterator begin();
-        std::list<Pattern>::iterator end();
+        const std::string& name() const;
+        void name(std::string& name);
+        //const std::string& keywords() const;
+        //void keywords(std::string& nm);
+        const std::string& terminator() const;
+        void terminator(std::string& term);
+        //const std::string& transforms() const;
+        //void transforms(std::string& nm);
 };
 
 #endif
