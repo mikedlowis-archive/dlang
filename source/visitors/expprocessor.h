@@ -1,16 +1,16 @@
-#ifndef MACRO_PROCESSOR_H
-#define MACRO_PROCESSOR_H
+#ifndef EXP_PROCESSOR_H
+#define EXP_PROCESSOR_H
 
 #include <map>
 #include "ivisitor.h"
 #include "dllexer.h"
 #include "macro.h"
 
-class MacroProcessor : public IVisitor {
+class ExpProcessor : public IVisitor {
     protected:
         std::map<std::string,Macro*>& macro_registry;
     public:
-        MacroProcessor(std::map<std::string,Macro*>& macros);
+        ExpProcessor(std::map<std::string,Macro*>& macros);
     private:
         void beforeVisit(AST* cur, int depth);
         void afterVisit(AST* cur, int depth);

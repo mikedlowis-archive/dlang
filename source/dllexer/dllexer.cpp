@@ -126,7 +126,6 @@ Token DLLexer::next(void)
     {
         ret.type( TERM );
     }
-    cout << terminator_string << " " << escaped << " " << ret.type() << " " << ret.text() << "|"<< endl;
 
     return ret;
 }

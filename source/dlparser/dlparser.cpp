@@ -1,7 +1,7 @@
 #include "dlparser.h"
 #include "exception.h"
 #include "common.h"
-#include "macroprocessor.h"
+#include "expprocessor.h"
 
 using namespace std;
 
@@ -72,8 +72,8 @@ AST* DLParser::Expression(void)
         }
     }
 
-    // Register any new macros and expand any existing macros
-    MacroProcessor processor( macros );
+    // Register any new syntaxes and expand any existing syntax uses
+    ExpProcessor processor( macros );
     processor.visit( ret );
 
     return ret;
