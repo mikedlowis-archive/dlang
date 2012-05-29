@@ -97,16 +97,23 @@ Token DLLexer::next(void)
             Symbol(ret);
         }
 
+        // Consume a comma
+        else if(lookahead(1) == ',')
+        {
+            ret = Token( COMMA, ",", line, column );
+            consume();
+        }
+
         // Consume parentheses
         else if (lookahead(1) == '(')
         {
-            consume();
             ret = Token( LPAR, "(", line, column );
+            consume();
         }
         else if (lookahead(1) == ')')
         {
-            consume();
             ret = Token( RPAR, ")", line, column );
+            consume();
         }
 
         // Everything else (except the unescaped terminator) is considered an ID
@@ -159,7 +166,9 @@ void DLLexer::Id(Token& tok)
     }
     while( !isWhiteSpace() &&
            ('(' != lookahead(1)) &&
-           (')' != lookahead(1)) );
+           (')' != lookahead(1)) &&
+           ('#' != lookahead(1)) &&
+           (EOF != lookahead(1)) );
     //while(isLetter() || isDigit() || lookahead(1) == '_');
     tok = Token(ID, oss.str(), line, column);
 }
@@ -241,13 +250,15 @@ void DLLexer::Decimal(std::ostringstream& oss)
         ex << "Missing fractional portion of floating point number.";
         throw ex;
     }
-
-    do
+    else
     {
-        oss << lookahead(1);
-        consume();
+        do
+        {
+            oss << lookahead(1);
+            consume();
+        }
+        while ( isDigit(lookahead(1)) );
     }
-    while ( isDigit(lookahead(1)) );
 }
 
 void DLLexer::Char(Token& tok)

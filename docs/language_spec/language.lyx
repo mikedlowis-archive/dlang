@@ -149,7 +149,6 @@ Numbers in DLang consist of several subtypes: Int, Float, BigInt, BigFloat,
  The Complex subtype represents numbers consisting of a real and imaginary
  part.
  Both the real and imaginary parts are represented internally as BigFloats.
- 
 \end_layout
 
 \begin_layout Standard
@@ -239,7 +238,7 @@ Boolean Values
 \begin_layout Standard
 Booleans are a special subtype of Integers that can only have a value of
  zero or one.
- Booleans can 
+ Booleans can
 \end_layout
 
 \begin_layout Subsection
@@ -410,6 +409,231 @@ Optimizations
 
 \begin_layout Section
 Formal Syntax and Semantics
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+ID     := [^
+\backslash
+r
+\backslash
+n '"#
+\backslash
+(
+\backslash
+)]
+\end_layout
+
+\begin_layout Plain Layout
+
+CHAR   := '(
+\backslash
+.|[^'])'
+\end_layout
+
+\begin_layout Plain Layout
+
+SYMBOL := 
+\backslash
+$[^
+\backslash
+r
+\backslash
+n '"#
+\backslash
+(
+\backslash
+)]
+\end_layout
+
+\begin_layout Plain Layout
+
+STRING := "[^
+\backslash
+r]*"
+\end_layout
+
+\begin_layout Plain Layout
+
+NUMBER := -?[0-9]+(
+\backslash
+.[0-9]+)?(e[0-9]+)?
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Expression := CoreForm
+\end_layout
+
+\begin_layout Plain Layout
+
+            | FuncApp
+\end_layout
+
+\begin_layout Plain Layout
+
+            | BasicExp
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+CoreForm := 'define' ID Expression
+\end_layout
+
+\begin_layout Plain Layout
+
+          | 'set!' ID Expression
+\end_layout
+
+\begin_layout Plain Layout
+
+          | 'begin' ExpList* TERM
+\end_layout
+
+\begin_layout Plain Layout
+
+          | 'if' Expression Expression 'else' Expression? TERM
+\end_layout
+
+\begin_layout Plain Layout
+
+		  | 'quote' '(' Expression ')'
+\end_layout
+
+\begin_layout Plain Layout
+
+          | 'lambda' IdList ExpList? TERM
+\end_layout
+
+\begin_layout Plain Layout
+
+    	  | 'macro' IdList ExpList? TERM
+\end_layout
+
+\begin_layout Plain Layout
+
+          | 'syntax' ID IdList ID ExpList TERM
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+FuncApp := BasicExp '(' ParamList ')'
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+BasicExp := MacroName ExpList? TERM
+\end_layout
+
+\begin_layout Plain Layout
+
+          | '(' Expression (ID Expression)* ')'
+\end_layout
+
+\begin_layout Plain Layout
+
+          | Literal
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Literal := ID
+\end_layout
+
+\begin_layout Plain Layout
+
+         | CHAR
+\end_layout
+
+\begin_layout Plain Layout
+
+         | SYMBOL
+\end_layout
+
+\begin_layout Plain Layout
+
+         | STRING
+\end_layout
+
+\begin_layout Plain Layout
+
+         | NUMBER
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ParamList := '(' (Expression (',' Expression)*)? ')'
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+ExpList := Expression*
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+IdList := '(' ID* ')'
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body

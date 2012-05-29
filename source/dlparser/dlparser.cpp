@@ -54,18 +54,20 @@ AST* DLParser::Expression(void)
     AST* ret = NULL;
 
     // Expression := CoreForm
+    //             | FuncApp
     //             | BasicExp
     //
     // CoreForm := 'define' ID Expression TERM
-    //           | 'set' ID Expression TERM
+    //           | 'set!' ID Expression TERM
     //           | 'lambda' IdList ExpList? TERM
     //           | 'begin' ExpList* TERM
-    //           | 'if' Expression Expression Expression? TERM
+    //           | 'if' Expression Expression 'else' Expression? TERM
     //           | 'macro' ID IdList ID ExpList TERM
     //
+    // FuncApp := BasicExp '(' ParamList ')'
+    //
     // BasicExp := MacroName ExpList? TERM
-    //           | '(' Expression ID Expression ')'
-    //           | ID '(' ExpList ')'
+    //           | '(' Expression (ID Expression)* ')'
     //           | Literal
     //
     // Literal := ID
@@ -74,7 +76,9 @@ AST* DLParser::Expression(void)
     //          | STRING
     //          | NUMBER
     //
-    // ExpList := Expression+
+    // ParamList := '(' (Expression (',' Expression)*)? ')'
+    //
+    // ExpList := Expression*
     //
     // IdList := '(' ID* ')'
     //
@@ -85,7 +89,11 @@ AST* DLParser::Expression(void)
     }
     else
     {
-        ret = Application();
+        ret = BasicExp();
+        //if ( speculate_ParamList() )
+        //{
+        //    ret + ParamList()
+        //}
     }
 
     // Register any new macros and expand any existing macros
@@ -111,10 +119,12 @@ AST* DLParser::CoreForm(void)
 
         case LAMBDA:
             ret = new AST(LAMBDA, 2, IdList(), ExpList(TERM));
+            match(TERM);
             break;
 
         case BEGIN:
             ret = new AST(BEGIN, 1, ExpList(TERM));
+            match(TERM);
             break;
 
         case IF:
@@ -123,6 +133,7 @@ AST* DLParser::CoreForm(void)
             {
                 ret->addChild( Expression() );
             }
+            match(TERM);
             break;
 
         case MACRO:
@@ -147,17 +158,22 @@ AST* DLParser::CoreForm(void)
                 transform->addChild( Expression() );
                 ret->addChild( transform );
             }
+            match(TERM);
             break;
 
         default:
             throw Exception( lookaheadToken(1) );
             break;
     }
-    match(TERM);
     return ret;
 }
 
-AST* DLParser::Application(void)
+AST* DLParser::FuncApp(void)
+{
+    return NULL;
+}
+
+AST* DLParser::BasicExp(void)
 {
     AST* ret = NULL;
 
@@ -182,15 +198,15 @@ AST* DLParser::Application(void)
         // Reset the terminator to its old value
     }
 
-    // Traditional Function Application
-    else if( (lookaheadType(1) == ID) && (lookaheadType(2) == LPAR) )
-    {
-        ret = new AST( lookaheadToken(1) );
-        consume();
-        match(LPAR);
-        ret = new AST(APPLY, 2, ret, ExpList(RPAR));
-        match(RPAR);
-    }
+    //// Traditional Function Application
+    //else if( (lookaheadType(1) == ID) && (lookaheadType(2) == LPAR) )
+    //{
+    //    ret = new AST( lookaheadToken(1) );
+    //    consume();
+    //    match(LPAR);
+    //    ret = new AST(APPLY, 2, ret, ExpList(RPAR));
+    //    match(RPAR);
+    //}
 
     // Infix Function Application
     else if( lookaheadType(1) == LPAR )
@@ -236,6 +252,20 @@ AST* DLParser::Literal(void)
         throw ex;
     }
 
+    return ret;
+}
+
+AST* DLParser::ParamList(void)
+{
+    AST* ret = new AST(EXP_LIST);
+    match(LPAR);
+    ret->addChild( Expression() );
+    if( COMMA == lookaheadType(1) )
+    {
+        match(COMMA);
+        ret->addChild( Expression() );
+    }
+    match(RPAR);
     return ret;
 }
 

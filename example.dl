@@ -4,15 +4,23 @@
 1.0
 $foo
 
+# Infix operator expression
+(1 add 1)
+((1 add 1) add 1)
+(1 add (1 add 1))
+(1 - (1 + 1))
+
 # Function Application
 foo()
 foo(1)
 foo(1 2)
 foo(1 2 3)
+foo(1,2,3)
+(foo . $bar)(1, 2, 3)
 
 # Definition and assignment
-define foo 5 end
-set! foo 6 end
+define foo 5
+set! foo 6
 
 # Lambda expressions
 lambda () end
@@ -59,12 +67,6 @@ if conditional
     if_branch
 end
 
-# Infix operator expression
-(1 add 1)
-((1 add 1) add 1)
-(1 add (1 add 1))
-(1 - (1 + 1))
-
 ## Define an infix operator (No Precedence)
 #infix =
 #
@@ -74,11 +76,11 @@ end
 #foo = (1 + 1) ;
 
 # Macros
-macro let (:= =) ;
-    (a := b)
+macro let ( := = ) ;
+    ( a := b )
         define a b
 
-    (a = b)
+    ( a = b )
         set! a b
 end
 

@@ -21,14 +21,15 @@ typedef enum TokenTypes
     MACRO_APP  = 11,
     LPAR       = 12,
     RPAR       = 13,
-    TERM       = 14,
+    COMMA      = 14,
+    TERM       = 15,
 
     // Datatypes
-    ID         = 15,
-    NUM        = 16,
-    CHAR       = 17,
-    STRING     = 18,
-    SYMBOL     = 19,
+    ID         = 16,
+    NUM        = 17,
+    CHAR       = 18,
+    STRING     = 19,
+    SYMBOL     = 20,
 } eTokenTypes;
 
 typedef struct {
