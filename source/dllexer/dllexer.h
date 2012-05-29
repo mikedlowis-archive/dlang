@@ -6,30 +6,34 @@
 
 typedef enum TokenTypes
 {
-    // Symbols
+    // Core Forms
     PROGRAM    = 0,
     DEFINE     = 1,
     ASSIGN     = 2,
-    LAMBDA     = 3,
+    IF         = 3,
     BEGIN      = 4,
-    IF         = 5,
-    APPLY      = 6,
-    ID_LIST    = 7,
-    EXP_LIST   = 8,
-    MACRO      = 9,
-    TRANSFORM  = 10,
-    MACRO_APP  = 11,
-    LPAR       = 12,
-    RPAR       = 13,
-    COMMA      = 14,
-    TERM       = 15,
+    QUOTE      = 5,
+    LAMBDA     = 6,
+    MACRO      = 7,
+    SYNTAX     = 8,
+
+    // Punctuation and Symbols
+    LPAR       = 10,
+    RPAR       = 11,
+    TERM       = 12,
+
+    // Actions and Virtual nodes
+    APPLY      = 20,
+    EXPAND     = 21,
+    TRANSFORM  = 22,
+    LIST       = 23,
 
     // Datatypes
-    ID         = 16,
-    NUM        = 17,
-    CHAR       = 18,
-    STRING     = 19,
-    SYMBOL     = 20,
+    ID         = 30,
+    NUM        = 31,
+    CHAR       = 32,
+    STRING     = 33,
+    SYMBOL     = 34,
 } eTokenTypes;
 
 typedef struct {

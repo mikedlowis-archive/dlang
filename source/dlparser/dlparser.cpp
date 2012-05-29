@@ -9,10 +9,12 @@ DLParser::DLParser() : BTParser()
 {
     core_forms["define"] = DEFINE;
     core_forms["set!"]   = ASSIGN;
-    core_forms["lambda"] = LAMBDA;
-    core_forms["begin"]  = BEGIN;
     core_forms["if"]     = IF;
+    core_forms["begin"]  = BEGIN;
+    core_forms["quote"]  = QUOTE;
+    core_forms["lambda"] = LAMBDA;
     core_forms["macro"]  = MACRO;
+    core_forms["syntax"] = SYNTAX;
 }
 
 DLParser::~DLParser()
@@ -54,15 +56,17 @@ AST* DLParser::Expression(void)
     AST* ret = NULL;
 
     // Expression := CoreForm
-    //             | FuncApp
     //             | BasicExp
+    //             | FuncApp
     //
     // CoreForm := 'define' ID Expression TERM
     //           | 'set!' ID Expression TERM
-    //           | 'lambda' IdList ExpList? TERM
     //           | 'begin' ExpList* TERM
+    //           | 'quote' ExpList* TERM
     //           | 'if' Expression Expression 'else' Expression? TERM
-    //           | 'macro' ID IdList ID ExpList TERM
+    //           | 'lambda' IdList ExpList? TERM
+    //           | 'macro' IdList ExpList? TERM
+    //           | 'syntax' ID IdList ID ExpList TERM
     //
     // FuncApp := BasicExp '(' ParamList ')'
     //
@@ -90,10 +94,14 @@ AST* DLParser::Expression(void)
     else
     {
         ret = BasicExp();
-        //if ( speculate_ParamList() )
-        //{
-        //    ret + ParamList()
-        //}
+
+        // Traditional Function Application
+        if( lookaheadType(1) == LPAR )
+        {
+            match(LPAR);
+            ret = new AST(APPLY, 2, ret, ExpList(RPAR));
+            match(RPAR);
+        }
     }
 
     // Register any new macros and expand any existing macros
@@ -106,38 +114,48 @@ AST* DLParser::Expression(void)
 AST* DLParser::CoreForm(void)
 {
     AST* ret = NULL;
+    std::string term = ((DLLexer*)lexer)->terminator();
     eTokenTypes form_id = getCoreFormId();
     consume(); // Throw away the form name (we don't need it anymore)
     switch( form_id )
     {
         case DEFINE:
         case ASSIGN:
+            ((DLLexer*)lexer)->terminator(";");
             ret = new AST( lookaheadToken(1) );
             match(ID);
             ret = new AST(form_id, 2, ret, Expression());
             break;
 
-        case LAMBDA:
-            ret = new AST(LAMBDA, 2, IdList(), ExpList(TERM));
-            match(TERM);
-            break;
-
         case BEGIN:
+            ((DLLexer*)lexer)->terminator("end");
             ret = new AST(BEGIN, 1, ExpList(TERM));
-            match(TERM);
             break;
 
         case IF:
+            ((DLLexer*)lexer)->terminator("end");
             ret = new AST(IF, 2, Expression(), Expression());
             if(lookaheadType(1) != TERM)
             {
                 ret->addChild( Expression() );
             }
-            match(TERM);
             break;
 
+        //case QUOTE:
+        //    match(LPAR);
+        //    ret = new AST(QUOTE, 1, Expression());
+        //    ((DLLexer*)lexer)->terminator(")");
+        //    break;
+
+        case LAMBDA:
         case MACRO:
-            ret = new AST(MACRO);
+            ((DLLexer*)lexer)->terminator("end");
+            ret = new AST(form_id, 2, IdList(), ExpList(TERM));
+            break;
+
+        case SYNTAX:
+            ((DLLexer*)lexer)->terminator("end");
+            ret = new AST(SYNTAX);
 
             // Get the macro name
             ret->addChild( new AST( lookaheadToken(1) ) );
@@ -158,13 +176,15 @@ AST* DLParser::CoreForm(void)
                 transform->addChild( Expression() );
                 ret->addChild( transform );
             }
-            match(TERM);
             break;
 
+        case QUOTE:
         default:
             throw Exception( lookaheadToken(1) );
             break;
     }
+    match(TERM);
+    ((DLLexer*)lexer)->terminator( term );
     return ret;
 }
 
@@ -185,7 +205,7 @@ AST* DLParser::BasicExp(void)
         // Register the new terminator
 
         // Consume the name
-        ret = new AST( MACRO_APP, 1, new AST( lookaheadToken(1) ));
+        ret = new AST( EXPAND, 1, new AST( lookaheadToken(1) ));
         consume();
 
         // Consume the expressions
@@ -197,16 +217,6 @@ AST* DLParser::BasicExp(void)
 
         // Reset the terminator to its old value
     }
-
-    //// Traditional Function Application
-    //else if( (lookaheadType(1) == ID) && (lookaheadType(2) == LPAR) )
-    //{
-    //    ret = new AST( lookaheadToken(1) );
-    //    consume();
-    //    match(LPAR);
-    //    ret = new AST(APPLY, 2, ret, ExpList(RPAR));
-    //    match(RPAR);
-    //}
 
     // Infix Function Application
     else if( lookaheadType(1) == LPAR )
@@ -222,7 +232,7 @@ AST* DLParser::BasicExp(void)
         operand2 = Expression();
         match(RPAR);
 
-        ret = new AST( APPLY, 2, operation, new AST(EXP_LIST, 2, operand1, operand2) );
+        ret = new AST( APPLY, 2, operation, new AST(LIST, 2, operand1, operand2) );
     }
 
     // Literal
@@ -255,23 +265,9 @@ AST* DLParser::Literal(void)
     return ret;
 }
 
-AST* DLParser::ParamList(void)
-{
-    AST* ret = new AST(EXP_LIST);
-    match(LPAR);
-    ret->addChild( Expression() );
-    if( COMMA == lookaheadType(1) )
-    {
-        match(COMMA);
-        ret->addChild( Expression() );
-    }
-    match(RPAR);
-    return ret;
-}
-
 AST* DLParser::ExpList(eTokenTypes term)
 {
-    AST* ret = new AST(EXP_LIST);
+    AST* ret = new AST(LIST);
     while(term != lookaheadType(1))
     {
         ret->addChild( Expression() );
@@ -281,7 +277,7 @@ AST* DLParser::ExpList(eTokenTypes term)
 
 AST* DLParser::IdList(void)
 {
-    AST* ret = new AST(ID_LIST);
+    AST* ret = new AST(LIST);
     match(LPAR);
     while(ID == lookaheadType(1))
     {

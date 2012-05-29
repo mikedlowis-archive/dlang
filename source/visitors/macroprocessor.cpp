@@ -14,7 +14,8 @@ void MacroProcessor::afterVisit(AST* cur, int depth)
 
 void MacroProcessor::beforeChildren(AST* cur, int depth)
 {
-    if (cur->type() == MACRO_APP)
+    // If we reached a syntax use then expand it
+    if (cur->type() == EXPAND)
     {
         //expandMacro(cur);
     }
@@ -22,7 +23,8 @@ void MacroProcessor::beforeChildren(AST* cur, int depth)
 
 void MacroProcessor::afterChildren(AST* cur, int depth)
 {
-    if (cur->type() == MACRO)
+    // If we have a new syntax definition then register it
+    if (cur->type() == SYNTAX)
     {
         std::string name = (*(cur->children()->begin()))->text();
         Macro* macro = new Macro();

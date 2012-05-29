@@ -15,12 +15,34 @@ foo()
 foo(1)
 foo(1 2)
 foo(1 2 3)
-foo(1,2,3)
-(foo . $bar)(1, 2, 3)
+(foo . $bar)(1 2 3)
 
 # Definition and assignment
-define foo 5
-set! foo 6
+define foo 5;
+set! foo 6;
+
+# If statement
+if conditional
+    if_branch
+#else
+    else_branch
+end
+
+if conditional
+    if_branch
+end
+
+# Begin block
+begin end
+
+begin
+    foo()
+end
+
+begin
+    foo()
+    bar()
+end
 
 # Lambda expressions
 lambda () end
@@ -44,45 +66,39 @@ lambda (a b c)
     foo(a b c)
 end
 
-# Begin block
-begin end
+# Macro expressions
+macro () end
+macro (a) end
+macro (a b) end
+macro (a b c) end
 
-begin
-    foo()
+macro ()
+    foo(a)
 end
 
-begin
-    foo()
-    bar()
+macro (a)
+    foo(a)
 end
 
-# If statement
-if conditional
-    if_branch
-else
-    else_branch
+macro (a b)
+    foo(a b)
 end
 
-if conditional
-    if_branch
+macro (a b c)
+    foo(a b c)
 end
 
-## Define an infix operator (No Precedence)
-#infix =
+# Quoting Expressions
+#quote( (1 + 1) )
+
+# Syntactic Extensions
+#syntax let ( := = ) ;
+#    ( a := b )
+#        define a b ;
 #
-## Define dummy keywords (Whitespace)
-#keyword ;
-#
-#foo = (1 + 1) ;
+#    ( a = b )
+#        set! a b ;
+#end
 
-# Macros
-macro let ( := = ) ;
-    ( a := b )
-        define a b
-
-    ( a = b )
-        set! a b
-end
-
-let foo := "bar" ;
-let foo = 5 ;
+#let foo := "bar" ;
+#let foo = 5 ;

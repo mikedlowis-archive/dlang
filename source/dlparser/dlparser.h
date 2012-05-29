@@ -27,7 +27,6 @@ class DLParser : public BTParser
         AST* FuncApp(void);
         AST* BasicExp(void);
         AST* Literal(void);
-        AST* ParamList(void);
         AST* ExpList(eTokenTypes term);
         AST* IdList(void);
 };

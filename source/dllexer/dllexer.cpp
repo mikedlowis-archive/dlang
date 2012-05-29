@@ -97,13 +97,6 @@ Token DLLexer::next(void)
             Symbol(ret);
         }
 
-        // Consume a comma
-        else if(lookahead(1) == ',')
-        {
-            ret = Token( COMMA, ",", line, column );
-            consume();
-        }
-
         // Consume parentheses
         else if (lookahead(1) == '(')
         {
@@ -127,12 +120,13 @@ Token DLLexer::next(void)
 
             Id(ret);
         }
-
-        if( !escaped && (ret.text().compare( terminator_string ) == 0) )
-        {
-            ret.type( TERM );
-        }
     }
+
+    if( !escaped && (ret.text().compare( terminator_string ) == 0) )
+    {
+        ret.type( TERM );
+    }
+    cout << terminator_string << " " << escaped << " " << ret.type() << " " << ret.text() << "|"<< endl;
 
     return ret;
 }
