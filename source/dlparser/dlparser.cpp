@@ -55,38 +55,6 @@ AST* DLParser::Expression(void)
 {
     AST* ret = NULL;
 
-    // Expression := CoreForm
-    //             | BasicExp
-    //             | FuncApp
-    //
-    // CoreForm := 'define' ID Expression TERM
-    //           | 'set!' ID Expression TERM
-    //           | 'begin' ExpList* TERM
-    //           | 'quote' ExpList* TERM
-    //           | 'if' Expression Expression 'else' Expression? TERM
-    //           | 'lambda' IdList ExpList? TERM
-    //           | 'macro' IdList ExpList? TERM
-    //           | 'syntax' ID IdList ID ExpList TERM
-    //
-    // FuncApp := BasicExp '(' ParamList ')'
-    //
-    // BasicExp := MacroName ExpList? TERM
-    //           | '(' Expression (ID Expression)* ')'
-    //           | Literal
-    //
-    // Literal := ID
-    //          | CHAR
-    //          | SYMBOL
-    //          | STRING
-    //          | NUMBER
-    //
-    // ParamList := '(' (Expression (',' Expression)*)? ')'
-    //
-    // ExpList := Expression*
-    //
-    // IdList := '(' ID* ')'
-    //
-
     if( isCoreFormName() )
     {
         ret = CoreForm();

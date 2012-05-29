@@ -490,12 +490,12 @@ Expression := CoreForm
 
 \begin_layout Plain Layout
 
-            | FuncApp
+            | BasicExp
 \end_layout
 
 \begin_layout Plain Layout
 
-            | BasicExp
+            | FuncApp
 \end_layout
 
 \begin_layout Plain Layout
@@ -548,7 +548,7 @@ CoreForm := 'define' ID Expression
 
 \begin_layout Plain Layout
 
-FuncApp := BasicExp '(' ParamList ')'
+FuncApp := BasicExp '(' ExpList ')'
 \end_layout
 
 \begin_layout Plain Layout
@@ -597,15 +597,6 @@ Literal := ID
 \begin_layout Plain Layout
 
          | NUMBER
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-ParamList := '(' (Expression (',' Expression)*)? ')'
 \end_layout
 
 \begin_layout Plain Layout
