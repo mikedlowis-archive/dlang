@@ -333,51 +333,72 @@ namespace {
         delete lexer;
     }
 
-    //TEST(Recognize_Valid_String_Chars)
-    //{
-    //    DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
-    //    while( lexer->lookahead(1) != EOF )
-    //    {
-    //        CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
-    //        (void)lexer->next();
-    //        lexer->WS();
-    //    }
-    //    delete lexer;
-    //}
+    TEST(Recognize_Valid_String_Chars)
+    {
+        // Fill buffer with valid string characters
+        std::stringstream ss;
+        for(int i = 0; i < 256; i++)
+        {
+            if( (i != '\r') && (i != '\n') && (i != '"') )
+            {
+                ss << (char) i;
+            }
+        }
 
-    //TEST(Recognize_Invalid_String_Chars)
-    //{
-    //    DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
-    //    while( lexer->lookahead(1) != EOF )
-    //    {
-    //        CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
-    //        (void)lexer->next();
-    //        lexer->WS();
-    //    }
-    //    delete lexer;
-    //}
+        // Test that the lexer recognizes all valid string chars
+        DLLexer* lexer = SetupLexer( ss.str() );
+        for(int i = 0; i < 256; i++)
+        {
+            CHECK( true == lexer->isStringChar() );
+            lexer->consume();
+        }
+        delete lexer;
+    }
 
-    //TEST(Recognize_Valid_ID_Chars)
-    //{
-    //    DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
-    //    while( lexer->lookahead(1) != EOF )
-    //    {
-    //        CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
-    //        (void)lexer->next();
-    //        lexer->WS();
-    //    }
-    //    delete lexer;
-    //}
+    TEST(Recognize_Invalid_String_Chars)
+    {
+        DLLexer* lexer = SetupLexer( "\r\n\"" );
+        CHECK( false == lexer->isDigit( lexer->lookahead(1) ) );
+        lexer->consume();
+        CHECK( false == lexer->isDigit( lexer->lookahead(1) ) );
+        lexer->consume();
+        CHECK( false == lexer->isDigit( lexer->lookahead(1) ) );
+        lexer->consume();
+        delete lexer;
+    }
 
-    //TEST(Recognize_Invalid_ID_Chars)
-    //{
-    //    DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
-    //    while( lexer->lookahead(1) != EOF )
-    //    {
-    //        CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
-    //        (void)lexer->next();
-    //        lexer->WS();
-    //    }
-    //    delete lexer;
-    //}
+    TEST(Recognize_Valid_ID_Chars)
+    {
+        // Fill buffer with valid ID characters
+        std::stringstream ss;
+        for(int i = 0; i < 255; i++)
+        {
+            if( (i != '\r') && (i != '\n') && (i != ' ') && (i != '\t') &&
+                (i != '(') && (i != ')') && (i != '#') && (i != EOF) )
+            {
+                ss << (char) i;
+            }
+        }
+
+        // Test that the lexer recognizes all valid ID chars
+        DLLexer* lexer = SetupLexer( ss.str() );
+        for(int i = 0; i < ss.str().size(); i++)
+        {
+            CHECK( true == lexer->isIDChar() );
+            lexer->consume();
+        }
+        delete lexer;
+    }
+
+    TEST(Recognize_Invalid_ID_Chars)
+    {
+        DLLexer* lexer = SetupLexer( "\r\n \t()#" );
+        for(int i = 0; i < 8; i++)
+        {
+            CHECK( false == lexer->isIDChar() );
+            lexer->consume();
+        }
+        delete lexer;
+    }
+
 }
