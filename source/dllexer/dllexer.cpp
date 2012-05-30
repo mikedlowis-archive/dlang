@@ -161,12 +161,6 @@ void DLLexer::Id(Token& tok)
         consume();
     }
     while( isIDChar() );
-    //while( !isWhiteSpace() &&
-    //       ('(' != lookahead(1)) &&
-    //       (')' != lookahead(1)) &&
-    //       ('#' != lookahead(1)) &&
-    //       (EOF != lookahead(1)) );
-    //while(isLetter() || isDigit() || lookahead(1) == '_');
     tok = Token(ID, oss.str(), line, column);
 }
 

@@ -305,4 +305,79 @@ namespace {
         delete lexer;
     }
 
+    //-------------------------------------------------------------------------
+    // Test Character Classifier Functions
+    //-------------------------------------------------------------------------
+    TEST(Recognize_Valid_Whitespace_Chars)
+    {
+        Token tok;
+        DLLexer* lexer = SetupLexer( " |\t|\r|\n" );
+        do
+        {
+            CHECK( true == lexer->isWhiteSpace() );
+            tok = lexer->next();
+        }
+        while( tok.type() != EOF );
+        delete lexer;
+    }
+
+    TEST(Recognize_Valid_Digit_Chars)
+    {
+        DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
+        while( lexer->lookahead(1) != EOF )
+        {
+            CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
+            (void)lexer->next();
+            lexer->WS();
+        }
+        delete lexer;
+    }
+
+    //TEST(Recognize_Valid_String_Chars)
+    //{
+    //    DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
+    //    while( lexer->lookahead(1) != EOF )
+    //    {
+    //        CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
+    //        (void)lexer->next();
+    //        lexer->WS();
+    //    }
+    //    delete lexer;
+    //}
+
+    //TEST(Recognize_Invalid_String_Chars)
+    //{
+    //    DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
+    //    while( lexer->lookahead(1) != EOF )
+    //    {
+    //        CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
+    //        (void)lexer->next();
+    //        lexer->WS();
+    //    }
+    //    delete lexer;
+    //}
+
+    //TEST(Recognize_Valid_ID_Chars)
+    //{
+    //    DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
+    //    while( lexer->lookahead(1) != EOF )
+    //    {
+    //        CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
+    //        (void)lexer->next();
+    //        lexer->WS();
+    //    }
+    //    delete lexer;
+    //}
+
+    //TEST(Recognize_Invalid_ID_Chars)
+    //{
+    //    DLLexer* lexer = SetupLexer( "0 1 2 3 4 5 6 7 8 9 " );
+    //    while( lexer->lookahead(1) != EOF )
+    //    {
+    //        CHECK( true == lexer->isDigit( lexer->lookahead(1) ) );
+    //        (void)lexer->next();
+    //        lexer->WS();
+    //    }
+    //    delete lexer;
+    //}
 }
