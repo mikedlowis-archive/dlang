@@ -8,9 +8,9 @@
 
 class ExpProcessor : public IVisitor {
     protected:
-        std::map<std::string,Syntax*>& macro_registry;
+        std::map<std::string,Syntax*>& syntax_registry;
     public:
-        ExpProcessor(std::map<std::string,Syntax*>& macros);
+        ExpProcessor(std::map<std::string,Syntax*>& syntaxes);
     private:
         void beforeVisit(AST* cur, int depth);
         void afterVisit(AST* cur, int depth);

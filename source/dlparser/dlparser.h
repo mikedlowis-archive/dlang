@@ -10,11 +10,11 @@ class DLParser : public BTParser
 {
     private:
         std::map<std::string,eTokenTypes> core_forms;
-        std::map<std::string,Syntax*> macros;
+        std::map<std::string,Syntax*> syntaxes;
     public:
         DLParser();
         ~DLParser();
-        bool isMacroName(void);
+        bool isSyntaxName(void);
         bool isCoreFormName(void);
         eTokenTypes getCoreFormId(void);
         void parse(void);

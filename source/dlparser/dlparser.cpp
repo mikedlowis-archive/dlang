@@ -21,9 +21,9 @@ DLParser::~DLParser()
 {
 }
 
-bool DLParser::isMacroName(void)
+bool DLParser::isSyntaxName(void)
 {
-    return (macros.count( lookaheadToken(1).text() ) > 0);
+    return (syntaxes.count( lookaheadToken(1).text() ) > 0);
 }
 
 bool DLParser::isCoreFormName(void)
@@ -73,7 +73,7 @@ AST* DLParser::Expression(void)
     }
 
     // Register any new syntaxes and expand any existing syntax uses
-    ExpProcessor processor( macros );
+    ExpProcessor processor( syntaxes );
     processor.visit( ret );
 
     return ret;
@@ -166,7 +166,7 @@ AST* DLParser::BasicExp(void)
     AST* ret = NULL;
 
     // Macro Expression
-    if ( isMacroName() )
+    if ( isSyntaxName() )
     {
         // Save current terminator
 
