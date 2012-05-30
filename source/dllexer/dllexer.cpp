@@ -16,12 +16,6 @@ bool DLLexer::isWhiteSpace(void)
            (lookahead(1) == '\n');
 }
 
-bool DLLexer::isLetter(void)
-{
-    return  ((lookahead(1) >= 'a') && (lookahead(1) <= 'z')) ||
-            ((lookahead(1) >= 'A') && (lookahead(1) <= 'Z'));
-}
-
 bool DLLexer::isDigit(char lach)
 {
     return ((lach >= '0') && (lach <= '9'));
@@ -32,6 +26,15 @@ bool DLLexer::isStringChar(void)
     return (    (lookahead(1) != '"')
              && (lookahead(1) != '\r')
              && (lookahead(1) != '\n'));
+}
+
+bool DLLexer::isIDChar(void)
+{
+    return ( !isWhiteSpace() &&
+            ('(' != lookahead(1)) &&
+            (')' != lookahead(1)) &&
+            ('#' != lookahead(1)) &&
+            (EOF != lookahead(1)) );
 }
 
 void DLLexer::terminator(std::string term)
@@ -100,13 +103,13 @@ Token DLLexer::next(void)
         // Consume parentheses
         else if (lookahead(1) == '(')
         {
-            ret = Token( LPAR, "(", line, column );
             consume();
+            ret = Token( LPAR, "(", line, column );
         }
         else if (lookahead(1) == ')')
         {
-            ret = Token( RPAR, ")", line, column );
             consume();
+            ret = Token( RPAR, ")", line, column );
         }
 
         // Everything else (except the unescaped terminator) is considered an ID
@@ -157,11 +160,12 @@ void DLLexer::Id(Token& tok)
         oss << lookahead(1);
         consume();
     }
-    while( !isWhiteSpace() &&
-           ('(' != lookahead(1)) &&
-           (')' != lookahead(1)) &&
-           ('#' != lookahead(1)) &&
-           (EOF != lookahead(1)) );
+    while( isIDChar() );
+    //while( !isWhiteSpace() &&
+    //       ('(' != lookahead(1)) &&
+    //       (')' != lookahead(1)) &&
+    //       ('#' != lookahead(1)) &&
+    //       (EOF != lookahead(1)) );
     //while(isLetter() || isDigit() || lookahead(1) == '_');
     tok = Token(ID, oss.str(), line, column);
 }
@@ -302,7 +306,7 @@ void DLLexer::Symbol(Token& tok)
         oss << lookahead(1);
         consume();
     }
-    while(isLetter() || isDigit(lookahead(1)) || lookahead(1) == '_');
+    while( isIDChar() );
     tok = Token( SYMBOL, oss.str(), line, column );
 }
 

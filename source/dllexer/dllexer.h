@@ -47,7 +47,7 @@ class DLLexer : public LLNLexer {
     public:
         DLLexer(std::istream& in);
         bool isWhiteSpace(void);
-        bool isLetter(void);
+        bool isIDChar(void);
         bool isDigit(char lach);
         bool isStringChar(void);
         void WS(void);

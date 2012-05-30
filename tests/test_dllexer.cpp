@@ -216,61 +216,76 @@ namespace {
         delete lexer;
     }
 
-    ////-------------------------------------------------------------------------
-    //// Test String Recognition
-    ////-------------------------------------------------------------------------
-    //TEST(Recognize_Valid_Strings)
-    //{
-    //    std::string input(
-    //        // Make Sure we recognize all valid characters for a symbol
-    //        "\"\" \n"
-    //        "\"a\" \n"
-    //        "\"\\a\" \n"
-    //    );
-    //    eTokenTypes expected[] = {
-    //        STRING, STRING, STRING, (eTokenTypes)EOF
-    //    };
-    //    TestLexerWithInput( input, expected );
-    //}
+    //-------------------------------------------------------------------------
+    // Test String Recognition
+    //-------------------------------------------------------------------------
+    TEST(Recognize_Valid_Strings)
+    {
+        DLLexer* lexer = SetupLexer(
+            // Make Sure we recognize all valid characters for a symbol
+            "\"\" \n"
+            "\"a\" \n"
+            "\"\\a\" \n"
+        );
+        CHECK_TOKEN( STRING, "",     1,   2 );
+        CHECK_TOKEN( STRING, "a",    2,   3 );
+        CHECK_TOKEN( STRING, "\\a",  3,   4 );
+        CHECK_TOKEN( EOF,    "",    -1,  -1 );
+        delete lexer;
+    }
 
-    ////-------------------------------------------------------------------------
-    //// Test Symbol Recognition
-    ////-------------------------------------------------------------------------
-    //TEST(Recognize_Valid_Symbols)
-    //{
-    //    std::string input(
-    //        // Make Sure we recognize all valid characters for a symbol
-    //        "$abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_\n"
-    //        "$ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_\n"
-    //        "$a_123\n"
-    //        "$a123\n"
-    //        "$a_\n"
-    //        "$a_a\n"
-    //    );
-    //    eTokenTypes expected[] = {
-    //        SYMBOL, SYMBOL, SYMBOL, SYMBOL, SYMBOL, SYMBOL, (eTokenTypes)EOF
-    //    };
-    //    TestLexerWithInput( input, expected );
-    //}
+    //-------------------------------------------------------------------------
+    // Test Symbol Recognition
+    //-------------------------------------------------------------------------
+    TEST(Recognize_Valid_Symbols)
+    {
+        DLLexer* lexer = SetupLexer(
+            // Make Sure we recognize all valid characters for a symbol
+            "$abc\n"
+            "$ABC\n"
+            "$a_123\n"
+            "$a123\n"
+            "$a_\n"
+            "$a_a\n"
+        );
+        CHECK_TOKEN( SYMBOL, "abc",    1,   4 );
+        CHECK_TOKEN( SYMBOL, "ABC",    2,   4 );
+        CHECK_TOKEN( SYMBOL, "a_123",  3,   6 );
+        CHECK_TOKEN( SYMBOL, "a123",   4,   5 );
+        CHECK_TOKEN( SYMBOL, "a_",     5,   3 );
+        CHECK_TOKEN( SYMBOL, "a_a",    6,   4 );
+        CHECK_TOKEN( EOF,    "",       -1,  -1 );
+        delete lexer;
+    }
 
-    ////-------------------------------------------------------------------------
-    //// Recognize Valid IDs
-    ////-------------------------------------------------------------------------
-    //TEST(Recognize_Valid_IDs)
-    //{
-    //    std::string input(
-    //        // Make Sure we recognize all valid characters for an ID
-    //        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_\n"
-    //        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_\n"
-    //        "a_123\n"
-    //        "a123\n"
-    //        "a_\n"
-    //        "a_a\n"
-    //    );
-    //    eTokenTypes expected[] = { ID, ID, ID, ID, ID, ID, (eTokenTypes)EOF };
-    //    TestLexerWithInput( input, expected );
-    //}
+    //-------------------------------------------------------------------------
+    // Test Expression Terminator Recognition
+    //-------------------------------------------------------------------------
+    TEST(Recognize_Default_Expression_Terminator)
+    {
+        DLLexer* lexer = SetupLexer("end");
+        CHECK_TOKEN( TERM, "end",  1,  3 );
+        CHECK_TOKEN( EOF,  "",    -1, -1 );
+        delete lexer;
+    }
 
+    TEST(Recognize_Overridden_Expression_Terminator)
+    {
+        DLLexer* lexer = SetupLexer(";");
+        lexer->terminator( ";" );
+        CHECK_TOKEN( TERM, ";",    1,  1 );
+        CHECK_TOKEN( EOF,  "",    -1, -1 );
+        delete lexer;
+    }
+
+    TEST(Recognize_Overridden_Punctuation_Expression_Terminator)
+    {
+        DLLexer* lexer = SetupLexer(")");
+        lexer->terminator( ")" );
+        CHECK_TOKEN( TERM, ")",    1,  1 );
+        CHECK_TOKEN( EOF,  "",    -1, -1 );
+        delete lexer;
+    }
 
     //-------------------------------------------------------------------------
     // Test General Lexer Corner Cases
