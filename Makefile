@@ -63,7 +63,7 @@ all: release test
 release: $(PROJ_NAME)
 
 test: $(TEST_RUNNER)
-	$(TEST_RUNNER)
+	./$(TEST_RUNNER)
 
 # Binaries
 $(PROJ_NAME): parseutils $(SRC_OBJS)

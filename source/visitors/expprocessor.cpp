@@ -1,6 +1,6 @@
 #include "expprocessor.h"
 
-ExpProcessor::ExpProcessor(std::map<std::string,Macro*> &macros) : macro_registry(macros)
+ExpProcessor::ExpProcessor(std::map<std::string,Syntax*> &macros) : macro_registry(macros)
 {
 }
 
@@ -27,7 +27,7 @@ void ExpProcessor::afterChildren(AST* cur, int depth)
     if (cur->type() == SYNTAX)
     {
         std::string name = (*(cur->children()->begin()))->text();
-        Macro* macro = new Macro();
+        Syntax* macro = new Syntax();
         macro->name( name );
         macro_registry[ macro->name() ] = macro;
     }

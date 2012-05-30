@@ -1,15 +1,15 @@
-#ifndef MACRO_H
-#define MACRO_H
+#ifndef Syntax_H
+#define Syntax_H
 
 #include <string>
 
-class Macro {
+class Syntax {
     private:
         std::string str_name;
         std::string str_terminator;
     public:
-        Macro();
-        ~Macro();
+        Syntax();
+        ~Syntax();
         const std::string& name() const;
         void name(std::string& name);
         //const std::string& keywords() const;

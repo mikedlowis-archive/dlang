@@ -4,13 +4,13 @@
 #include <map>
 #include "btparser.h"
 #include "dllexer.h"
-#include "macro.h"
+#include "syntax.h"
 
 class DLParser : public BTParser
 {
     private:
         std::map<std::string,eTokenTypes> core_forms;
-        std::map<std::string,Macro*> macros;
+        std::map<std::string,Syntax*> macros;
     public:
         DLParser();
         ~DLParser();

@@ -5,7 +5,6 @@
 #include "dlparser.h"
 #include "scheme.h"
 #include "common.h"
-#include "macro.h"
 #include "options.h"
 #include "astprinter.h"
 

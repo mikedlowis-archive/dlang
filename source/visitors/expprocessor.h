@@ -4,13 +4,13 @@
 #include <map>
 #include "ivisitor.h"
 #include "dllexer.h"
-#include "macro.h"
+#include "syntax.h"
 
 class ExpProcessor : public IVisitor {
     protected:
-        std::map<std::string,Macro*>& macro_registry;
+        std::map<std::string,Syntax*>& macro_registry;
     public:
-        ExpProcessor(std::map<std::string,Macro*>& macros);
+        ExpProcessor(std::map<std::string,Syntax*>& macros);
     private:
         void beforeVisit(AST* cur, int depth);
         void afterVisit(AST* cur, int depth);
