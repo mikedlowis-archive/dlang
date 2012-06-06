@@ -18,8 +18,16 @@ foo(1 2 3)
 (foo . $bar)(1 2 3)
 
 # Definition and assignment
-define foo 5;
-set! foo 6;
+def foo 5
+set foo 6
+
+def max lambda(a b)
+    if (False == (a > b))
+        a
+    #else
+        b
+    end
+end
 
 # If statement
 if conditional

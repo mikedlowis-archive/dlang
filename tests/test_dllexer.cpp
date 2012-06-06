@@ -269,24 +269,6 @@ namespace {
         delete lexer;
     }
 
-    TEST(Recognize_Overridden_Expression_Terminator)
-    {
-        DLLexer* lexer = SetupLexer(";");
-        lexer->terminator( ";" );
-        CHECK_TOKEN( TERM, ";",    1,  1 );
-        CHECK_TOKEN( EOF,  "",    -1, -1 );
-        delete lexer;
-    }
-
-    TEST(Recognize_Overridden_Punctuation_Expression_Terminator)
-    {
-        DLLexer* lexer = SetupLexer(")");
-        lexer->terminator( ")" );
-        CHECK_TOKEN( TERM, ")",    1,  1 );
-        CHECK_TOKEN( EOF,  "",    -1, -1 );
-        delete lexer;
-    }
-
     //-------------------------------------------------------------------------
     // Test General Lexer Corner Cases
     //-------------------------------------------------------------------------

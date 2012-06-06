@@ -42,8 +42,6 @@ typedef struct {
 } SingleCharMatch_T;
 
 class DLLexer : public LLNLexer {
-    protected:
-        std::string terminator_string;
     public:
         DLLexer(std::istream& in);
         bool isWhiteSpace(void);
@@ -52,8 +50,6 @@ class DLLexer : public LLNLexer {
         bool isStringChar(void);
         void WS(void);
         void COMMENT(void);
-        void terminator(std::string term);
-        std::string terminator(void);
 
         Token next(void);
         void Id(Token& tok);

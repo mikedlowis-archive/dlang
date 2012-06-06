@@ -3,7 +3,6 @@
 #include <sstream>
 #include <fstream>
 #include "dlparser.h"
-#include "scheme.h"
 #include "common.h"
 #include "options.h"
 #include "astprinter.h"
@@ -31,8 +30,6 @@ int main(int argc, char** argv)
 
         // Setup Parser and Visitors
         DLParser parser;
-        //Scheme printer(output);
-        //Scheme debug_printer(std::cout);
         ASTPrinter debug_printer;
         parser.input(new DLLexer(input));
 
@@ -41,17 +38,15 @@ int main(int argc, char** argv)
 
         // Post process the AST (converts to scheme and prints to output file)
         parser.process( debug_printer );
-        //parser.process( printer );
 
         // Close the output file
         output.close();
 
         // Compile the temporary file with chicken scheme
         //system( string("csc -O5 -v " + temp_fname).c_str() );
-        (void)temp_fname;
 
-        //cout << "Removing temporary files..." << endl;
-        //(void)remove( temp_fname.c_str() );
+        cout << "Removing temporary files..." << endl;
+        (void)remove( temp_fname.c_str() );
     }
     else
     {

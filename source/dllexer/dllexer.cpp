@@ -4,7 +4,7 @@
 
 using namespace std;
 
-DLLexer::DLLexer(std::istream& in) : LLNLexer(in), terminator_string("end")
+DLLexer::DLLexer(std::istream& in) : LLNLexer(in)
 {
 }
 
@@ -35,16 +35,6 @@ bool DLLexer::isIDChar(void)
             (')' != lookahead(1)) &&
             ('#' != lookahead(1)) &&
             (EOF != lookahead(1)) );
-}
-
-void DLLexer::terminator(std::string term)
-{
-    terminator_string = term;
-}
-
-std::string DLLexer::terminator(void)
-{
-    return terminator_string;
 }
 
 Token DLLexer::next(void)
@@ -125,7 +115,7 @@ Token DLLexer::next(void)
         }
     }
 
-    if( !escaped && (ret.text().compare( terminator_string ) == 0) )
+    if( !escaped && (ret.text().compare( "end" ) == 0) )
     {
         ret.type( TERM );
     }

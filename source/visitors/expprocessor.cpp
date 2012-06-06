@@ -6,14 +6,19 @@ ExpProcessor::ExpProcessor(std::map<std::string,Syntax*> &syntaxes) : syntax_reg
 
 void ExpProcessor::beforeVisit(AST* cur, int depth)
 {
+    (void)cur;
+    (void)depth;
 }
 
 void ExpProcessor::afterVisit(AST* cur, int depth)
 {
+    (void)cur;
+    (void)depth;
 }
 
 void ExpProcessor::beforeChildren(AST* cur, int depth)
 {
+    (void)depth;
     // If we reached a syntax use then expand it
     if (cur->type() == EXPAND)
     {
@@ -23,6 +28,7 @@ void ExpProcessor::beforeChildren(AST* cur, int depth)
 
 void ExpProcessor::afterChildren(AST* cur, int depth)
 {
+    (void)depth;
     // If we have a new syntax definition then register it
     if (cur->type() == SYNTAX)
     {
@@ -35,9 +41,13 @@ void ExpProcessor::afterChildren(AST* cur, int depth)
 
 void ExpProcessor::beforeChild(AST* cur, int depth)
 {
+    (void)cur;
+    (void)depth;
 }
 
 void ExpProcessor::afterChild(AST* cur, int depth)
 {
+    (void)cur;
+    (void)depth;
 }
 

@@ -1,3 +1,6 @@
 [submodule "deps/parse-utils"]
     path = deps/parse-utils
     url = git://github.com/mikedlowis/parse-utils.git
+[submodule "deps/opts"]
+	path = deps/opts
+	url = https://github.com/mikedlowis/opts.git
