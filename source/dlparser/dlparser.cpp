@@ -12,7 +12,7 @@ DLParser::DLParser() : BTParser()
     core_forms["if"]     = IF;
     core_forms["begin"]  = BEGIN;
     core_forms["quote"]  = QUOTE;
-    core_forms["lambda"] = LAMBDA;
+    core_forms["func"] = LAMBDA;
     core_forms["macro"]  = MACRO;
     core_forms["syntax"] = SYNTAX;
 }

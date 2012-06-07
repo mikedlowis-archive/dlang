@@ -82,7 +82,7 @@ $(test): $(lib) $(test_objects)
 	@./$(test)
 
 clean:
-	-@$(RM) $(objects) $(test_objects) $(dependencies) $(test_dependencies) $(test) $(lib) 2> /dev/null
+	-@$(RM) -f $(objects) $(test_objects) $(dependencies) $(test_dependencies) $(test) $(lib) 2> /dev/null
 
 %.o : %.cpp
 	@echo $<
