@@ -6,16 +6,18 @@
 
 typedef enum TokenTypes
 {
+    UNKNOWN    = 0,
+
     // Core Forms
-    PROGRAM    = 0,
-    DEFINE     = 1,
-    ASSIGN     = 2,
-    IF         = 3,
-    BEGIN      = 4,
-    QUOTE      = 5,
-    LAMBDA     = 6,
-    MACRO      = 7,
-    SYNTAX     = 8,
+    PROGRAM    = 1,
+    DEFINE     = 2,
+    ASSIGN     = 3,
+    IF         = 4,
+    BEGIN      = 5,
+    QUOTE      = 6,
+    LAMBDA     = 7,
+    MACRO      = 8,
+    SYNTAX     = 9,
 
     // Punctuation and Symbols
     LPAR       = 10,

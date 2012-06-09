@@ -33,7 +33,12 @@ bool DLParser::isCoreFormName(void)
 
 eTokenTypes DLParser::getCoreFormId(void)
 {
-    return core_forms[ lookaheadToken(1).text() ];
+    eTokenTypes type = UNKNOWN;
+    if ( isCoreFormName() )
+    {
+        type = core_forms[ lookaheadToken(1).text() ];
+    }
+    return type;
 }
 
 void DLParser::parse(void)
@@ -151,11 +156,6 @@ AST* DLParser::CoreForm(void)
     return ret;
 }
 
-AST* DLParser::FuncApp(void)
-{
-    return NULL;
-}
-
 AST* DLParser::BasicExp(void)
 {
     AST* ret = NULL;
@@ -176,7 +176,8 @@ AST* DLParser::BasicExp(void)
     }
 
     // Infix Function Application
-    else*/ if( lookaheadType(1) == LPAR )
+    else*/
+    if( lookaheadType(1) == LPAR )
     {
         AST* operation = NULL;
         AST* operand1  = NULL;

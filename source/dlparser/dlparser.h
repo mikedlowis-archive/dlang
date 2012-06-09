@@ -8,7 +8,7 @@
 
 class DLParser : public BTParser
 {
-    private:
+    protected:
         std::map<std::string,eTokenTypes> core_forms;
         std::map<std::string,Syntax*> syntaxes;
     public:
@@ -19,7 +19,6 @@ class DLParser : public BTParser
         eTokenTypes getCoreFormId(void);
         void parse(void);
 
-    private:
         // Entry Rules
         AST* Program(void);
         AST* Expression(void);
