@@ -3,7 +3,6 @@
 #include <sstream>
 #include <fstream>
 #include "dlparser.h"
-#include "common.h"
 #include "options.h"
 #include "astprinter.h"
 

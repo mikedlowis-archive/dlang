@@ -1,6 +1,5 @@
 #include "dlparser.h"
 #include "exception.h"
-#include "common.h"
 #include "expprocessor.h"
 
 using namespace std;

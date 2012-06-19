@@ -1,6 +1,5 @@
 #include "dllexer.h"
 #include "exception.h"
-#include "common.h"
 
 using namespace std;
 
