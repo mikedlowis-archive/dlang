@@ -21,7 +21,7 @@ foo(1 2 3)
 def foo 5
 set foo 6
 
-def max lambda(a b)
+def max func(a b)
     if (False == (a > b))
         a
     #else
@@ -53,24 +53,24 @@ begin
 end
 
 # Lambda expressions
-lambda () end
-lambda (a) end
-lambda (a b) end
-lambda (a b c) end
+func () end
+func (a) end
+func (a b) end
+func (a b c) end
 
-lambda ()
+func ()
     foo(a)
 end
 
-lambda (a)
+func (a)
     foo(a)
 end
 
-lambda (a b)
+func (a b)
     foo(a b)
 end
 
-lambda (a b c)
+func (a b c)
     foo(a b c)
 end
 
